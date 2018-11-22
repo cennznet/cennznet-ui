@@ -26,7 +26,8 @@
     "demo:ui": "webpack-serve --config packages/ui-react/webpack.config.js --content packages/ui-react --port 3000",
     "deploy:ghpages": "gh-pages -d packages/apps/build",
     "vanitygen": "node packages/app-vanitygen/scripts/vanitygen.js",
-    "start": "cd packages/apps && webpack-serve --config webpack.config.js --port 3000"
+    "start": "cd packages/apps && webpack-serve --config webpack.config.js --port 3000",
+    "surge": "yarn build && surge packages/apps/build/ cennznet-explorer.surge.sh"
   },
   "devDependencies": {
     "@babel/core": "^7.1.6",
