@@ -26,37 +26,21 @@ const CHAINS: ChainsInfo = [
   },
 ];
 
-console.log(config);
-
-const getEndPoints = (config: any) => {
-  switch (config.shortEnv) {
-    case 'dev':
-      return [
-        {
-          text: 'Development Node (https://cennznet-duo.centrality.me)',
-          value: 'wss://cennznet-duo.centrality.me',
-        },
-      ];
-    case 'uat':
-      return [
-        {
-          text: 'UAT Node (https://cennznet-duo.centrality.cloud)',
-          value: 'wss://cennznet-duo.centrality.cloud',
-        },
-      ];
-    case 'prod':
-      return [
-        {
-          text: 'Production Node (https://cennznet-duo.centralityapp.com)',
-          value: 'wss://cennznet-duo.centralityapp.com',
-        },
-      ];
-    default:
-      return [{ text: 'Local Node (127.0.0.1:9944)', value: 'ws://127.0.0.1:9944/' }];
-  }
-};
-
-const ENDPOINTS: Options = getEndPoints(config);
+const ENDPOINTS: Options = [
+  {
+    text: 'Development Node (https://cennznet-duo.centrality.me)',
+    value: 'wss://cennznet-duo.centrality.me',
+  },
+  {
+    text: 'UAT Node (https://cennznet-duo.centrality.cloud)',
+    value: 'wss://cennznet-duo.centrality.cloud',
+  },
+  {
+    text: 'Production Node (https://cennznet-duo.centralityapp.com)',
+    value: 'wss://cennznet-duo.centralityapp.com',
+  },
+  { text: 'Local Node (127.0.0.1:9944)', value: 'ws://127.0.0.1:9944/' },
+];
 
 const LANGUAGES: Options = [{ value: 'default', text: 'Default browser language (auto-detect)' }];
 
