@@ -57,6 +57,10 @@ const LANGUAGES: Options = [{ value: 'default', text: 'Default browser language 
 
 const UIMODES: Options = [{ value: 'full', text: 'Fully featured' }, { value: 'light', text: 'Basic features only' }];
 
-const UITHEMES: Options = [{ value: 'substrate', text: 'Substrate' }, { value: 'polkadot', text: 'Polkadot' }];
+const UITHEMES: Options = [
+  { value: 'centrality', text: 'Centrality' },
+  { value: 'substrate', text: 'Substrate' },
+  { value: 'polkadot', text: 'Polkadot' },
+];
 
 export { CHAINS, ENDPOINTS, LANGUAGES, UIMODES, UITHEMES };

@@ -11,6 +11,7 @@ import settings from '@polkadot/ui-app/settings';
 import { Icon, Menu } from '@polkadot/ui-app/index';
 
 import polkadotLogo from '../static/polkadot-white.svg';
+import centralityLogo from '../static/centrality.svg';
 import substrateLogo from '../static/parity-substrate-white.svg';
 import routing from '../routing';
 import translate from '../translate';
@@ -21,11 +22,12 @@ type Props = I18nProps & {
 };
 
 const LOGOS: Map<string | undefined, any> = new Map([
+  ['centrality', centralityLogo],
   ['polkadot', polkadotLogo],
   ['substrate', substrateLogo]
 ]);
 
-const LOGO = LOGOS.get(settings.uiTheme) || polkadotLogo;
+const LOGO = LOGOS.get(settings.uiTheme) || centralityLogo;
 
 class SideBar extends React.PureComponent<Props> {
   render () {

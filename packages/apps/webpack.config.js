@@ -31,9 +31,7 @@ const packages = [
   'ui-signer'
 ];
 
-const DEFAULT_THEME = process.env.TRAVIS_BRANCH === 'next'
-  ? 'substrate'
-  : 'polkadot';
+const DEFAULT_THEME = 'centrality';
 
 function createWebpack ({ alias = {}, context, name = 'index' }) {
   const pkgJson = require(path.join(context, 'package.json'));

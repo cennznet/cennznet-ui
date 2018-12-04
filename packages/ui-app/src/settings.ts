@@ -27,6 +27,7 @@ class Settings implements SettingsStruct {
     this._apiUrl = settings.apiUrl || ENDPOINTS[0].value || process.env.WS_URL;
     this._i18nLang = settings.i18nLang || LANGUAGES[0].value;
     this._uiMode = settings.uiMode || process.env.UI_MODE || UIMODES[0].value;
+    console.log(process.env.UI_THEME);
     this._uiTheme = settings.uiTheme || process.env.UI_THEME || UITHEMES[0].value;
   }
 
