@@ -27,8 +27,18 @@ const CHAINS: ChainsInfo = [
 
 const ENDPOINT_OPTIONS: Options = [
   {
-    text: 'Development Node (https://cennznet-duo.centrality.me)',
-    value: 'wss://cennznet-duo.centrality.me',
+    text: 'Development Node 0 (cennznet-node-0.centrality.me)',
+    value: 'ws://cennznet-node-0.centrality.me:9944',
+    host: 'cennznet-ui.centrality.me',
+  },
+  {
+    text: 'Development Node 1 (cennznet-node-1.centrality.me)',
+    value: 'ws://cennznet-node-1.centrality.me:9944',
+    host: 'cennznet-ui.centrality.me',
+  },
+  {
+    text: 'Development Node 2 (cennznet-node-2.centrality.me)',
+    value: 'ws://cennznet-node-2.centrality.me:9944',
     host: 'cennznet-ui.centrality.me',
   },
   {
@@ -45,8 +55,8 @@ const ENDPOINT_OPTIONS: Options = [
 ];
 
 const defaultEnvEndpoints = (hostname: string) => {
-  const matches = ENDPOINT_OPTIONS.filter(item => item.host == hostname)[0];
-  let options = ENDPOINT_OPTIONS.filter(item => item.host !== hostname);
+  const matches = ENDPOINT_OPTIONS.find(item => item.host === hostname);
+  let options = ENDPOINT_OPTIONS.filter(item => item !== matches);
   matches && options.unshift(matches);
   return options;
 };
