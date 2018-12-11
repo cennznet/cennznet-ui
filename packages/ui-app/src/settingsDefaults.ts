@@ -29,27 +29,32 @@ const ENDPOINT_OPTIONS: Options = [
   {
     text: 'Development Node 0 (cennznet-node-0.centrality.me)',
     value: 'ws://cennznet-node-0.centrality.me:9944',
-    host: 'cennznet-ui.centrality.me',
+    host: 'cennznet-ui.centrality.me'
   },
   {
     text: 'Development Node 1 (cennznet-node-1.centrality.me)',
     value: 'ws://cennznet-node-1.centrality.me:9944',
-    host: 'cennznet-ui.centrality.me',
+    host: 'cennznet-ui.centrality.me'
   },
   {
     text: 'Development Node 2 (cennznet-node-2.centrality.me)',
     value: 'ws://cennznet-node-2.centrality.me:9944',
-    host: 'cennznet-ui.centrality.me',
+    host: 'cennznet-ui.centrality.me'
   },
   {
     text: 'UAT Node (https://cennznet-duo.centrality.cloud)',
     value: 'wss://cennznet-duo.centrality.cloud',
-    host: 'cennznet-ui.centrality.cloud',
+    host: 'cennznet-ui.centrality.cloud'
   },
   {
     text: 'Production Node (https://cennznet-duo.centralityapp.com)',
     value: 'wss://cennznet-duo.centralityapp.com',
-    host: 'cennznet-ui.centralityapp.com',
+    host: 'cennznet-ui.centralityapp.com'
+  },
+  {
+    text: 'Cennz Infra (cennz-infra.centrality.me)',
+    value: 'ws://cennz-infra.centrality:9944',
+    host: 'cennz-infra.centrality.me'
   },
   { text: 'Local Node (127.0.0.1:9944)', value: 'ws://127.0.0.1:9944/', host: 'localhost' },
 ];
