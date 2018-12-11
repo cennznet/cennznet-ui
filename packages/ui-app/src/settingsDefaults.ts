@@ -54,7 +54,7 @@ const ENDPOINT_OPTIONS: Options = [
   {
     text: 'Cennz Infra (cennz-infra.centrality.me)',
     value: 'ws://cennz-infra.centrality:9944',
-    host: 'cennz-infra.centrality.me'
+    host: 'cennznet-ui.centrality.me'
   },
   { text: 'Local Node (127.0.0.1:9944)', value: 'ws://127.0.0.1:9944/', host: 'localhost' },
 ];
