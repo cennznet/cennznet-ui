@@ -126,7 +126,7 @@ class InputAddress extends React.PureComponent<Props, State> {
         onSearch={this.onSearch}
         options={
           isDisabled && actualValue
-            ? [makeOption(actualValue)]
+            ? [makeOption(actualValue.toString())]
             : optionsAll[type]
         }
         style={style}

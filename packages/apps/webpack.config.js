@@ -26,7 +26,8 @@ const packages = [
   'app-vanitygen',
   'ui-app',
   'ui-react-rx',
-  'ui-signer'
+  'ui-signer',
+  'ui-settings'
 ];
 
 const DEFAULT_THEME = 'centrality';
