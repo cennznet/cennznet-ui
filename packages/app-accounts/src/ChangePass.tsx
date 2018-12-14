@@ -8,7 +8,7 @@ import { I18nProps } from '@polkadot/ui-app/types';
 import React from 'react';
 import { AddressSummary, Button, Modal, Password } from '@polkadot/ui-app/index';
 import { ActionStatus } from '@polkadot/ui-app/Status/types';
-import keyring from '@polkadot/ui-keyring/index';
+import keyring from '@polkadot/ui-keyring';
 
 import translate from './translate';
 
@@ -118,9 +118,9 @@ class ChangePass extends React.PureComponent<Props, State> {
     const { account, onClose, onStatusChange, t } = this.props;
     const { newPass, oldPass } = this.state;
 
-    const status: ActionStatus = {
+    const status = {
       action: 'changePassword'
-    };
+    } as ActionStatus;
 
     try {
       if (!account.isLocked()) {
@@ -142,14 +142,14 @@ class ChangePass extends React.PureComponent<Props, State> {
       keyring.encryptAccount(account, newPass);
 
       status.value = account.address();
-      status.success = true;
+      status.status = 'success';
       status.message = t('status.change-password', {
-        defaultValue: 'Password Changed'
+        defaultValue: 'password changed'
       });
     } catch (error) {
       this.setState({ isNewValid: false });
 
-      status.success = false;
+      status.status = 'error';
       status.message = error.message;
 
       return;
