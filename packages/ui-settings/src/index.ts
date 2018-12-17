@@ -1,17 +1,18 @@
-// Copyright 2017-2018 @polkadot/ui-app authors & contributors
+// Copyright 2017-2018 @polkadot/ui-settings authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import store from 'store';
 
-import { ChainsInfo, Options, CHAINS, ENDPOINTS, LANGUAGES, UIMODES, UITHEMES } from './settingsDefaults';
+import typeRegistry from '@polkadot/types/codec/typeRegistry';
+import { u32 } from '@polkadot/types';
 
-export interface SettingsStruct {
-  apiUrl: string;
-  i18nLang: string;
-  uiMode: string;
-  uiTheme: string;
-}
+import { CHAINS, ENDPOINTS, LANGUAGES, UIMODES, UITHEMES } from './defaults';
+import { ChainsInfo, Options, SettingsStruct } from './types';
+
+typeRegistry.register({
+  AssetId: u32
+});
 
 class Settings implements SettingsStruct {
   private _apiUrl: string;
@@ -27,7 +28,6 @@ class Settings implements SettingsStruct {
     this._apiUrl = settings.apiUrl || ENDPOINTS[0].value || process.env.WS_URL;
     this._i18nLang = settings.i18nLang || LANGUAGES[0].value;
     this._uiMode = settings.uiMode || process.env.UI_MODE || UIMODES[0].value;
-    console.log(process.env.UI_THEME);
     this._uiTheme = settings.uiTheme || process.env.UI_THEME || UITHEMES[0].value;
   }
 

@@ -9,7 +9,7 @@ import { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
 
 import React from 'react';
 import { AddressSummary, Button, Input, InputAddress } from '@polkadot/ui-app/index';
-import keyring from '@polkadot/ui-keyring/index';
+import keyring from '@polkadot/ui-keyring';
 
 import Backup from './Backup';
 import ChangePass from './ChangePass';
@@ -258,10 +258,10 @@ class Editor extends React.PureComponent<Props, State> {
       return;
     }
 
-    const status: ActionStatus = {
+    const status = {
       action: 'edit',
       value: current.address()
-    };
+    } as ActionStatus;
 
     try {
       keyring.saveAccountMeta(current, {
@@ -269,12 +269,12 @@ class Editor extends React.PureComponent<Props, State> {
         whenEdited: Date.now()
       });
 
-      status.success = !!(current.getMeta().name === editedName);
+      status.status = current.getMeta().name === editedName ? 'success' : 'error';
       status.message = t('status.editted', {
-        defaultValue: `Edited to: ${editedName}`
+        defaultValue: 'name edited'
       });
     } catch (error) {
-      status.success = false;
+      status.status = 'error';
       status.message = error.message;
     }
 
@@ -339,21 +339,21 @@ class Editor extends React.PureComponent<Props, State> {
     this.setState(
       this.createState(null),
       () => {
-        const status: ActionStatus = {
+        const status = {
           action: 'forget',
           value: current.address()
-        };
+        } as ActionStatus;
 
         try {
           keyring.forgetAccount(
             current.address()
           );
-          status.success = true;
+          status.status = 'success';
           status.message = t('status.forgotten', {
-            defaultValue: 'Forgotten'
+            defaultValue: 'account forgotten'
           });
         } catch (err) {
-          status.success = false;
+          status.status = 'error';
           status.message = err.message;
         }
 

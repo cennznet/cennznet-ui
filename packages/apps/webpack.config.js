@@ -25,10 +25,9 @@ const packages = [
   'app-transfer',
   'app-vanitygen',
   'ui-app',
-  'ui-identicon',
-  'ui-keyring',
   'ui-react-rx',
-  'ui-signer'
+  'ui-signer',
+  'ui-settings'
 ];
 
 const DEFAULT_THEME = 'centrality';

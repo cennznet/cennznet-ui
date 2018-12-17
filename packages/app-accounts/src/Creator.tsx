@@ -10,7 +10,7 @@ import { AddressSummary, Button, Dropdown, Input, Modal, Password } from '@polka
 import { InputAddress } from '@polkadot/ui-app/InputAddress';
 import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util';
 import { mnemonicToSeed, mnemonicValidate, naclKeypairFromSeed, randomAsU8a } from '@polkadot/util-crypto';
-import keyring from '@polkadot/ui-keyring/index';
+import keyring from '@polkadot/ui-keyring';
 
 import translate from './translate';
 import FileSaver from 'file-saver';
@@ -356,9 +356,9 @@ class Creator extends React.PureComponent<Props, State> {
     const { onCreateAccount, onStatusChange, t } = this.props;
     const { name, password, seed, seedType } = this.state;
 
-    const status: ActionStatus = {
+    const status = {
       action: 'create'
-    };
+    } as ActionStatus;
 
     try {
       const pair = seedType === 'bip'
@@ -371,14 +371,14 @@ class Creator extends React.PureComponent<Props, State> {
       FileSaver.saveAs(blob, `${pair.address()}.json`);
 
       status.value = pair.address();
-      status.success = !!(pair);
+      status.status = pair ? 'success' : 'error';
       status.message = t('status.created', {
-        defaultValue: `Created Account`
+        defaultValue: `created account`
       });
 
       InputAddress.setLastValue('account', pair.address());
     } catch (err) {
-      status.success = false;
+      status.status = 'error';
       status.message = err.message;
     }
 

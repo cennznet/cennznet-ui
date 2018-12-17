@@ -8,7 +8,7 @@ import { I18nProps } from '@polkadot/ui-app/types';
 import React from 'react';
 import { AddressSummary, Button, Input, InputAddress } from '@polkadot/ui-app/index';
 import { ActionStatus } from '@polkadot/ui-app/Status/types';
-import keyring from '@polkadot/ui-keyring/index';
+import keyring from '@polkadot/ui-keyring';
 import { decodeAddress } from '@polkadot/keyring';
 
 import Forgetting from './Forgetting';
@@ -192,10 +192,10 @@ class Editor extends React.PureComponent<Props, State> {
       return;
     }
 
-    const status: ActionStatus = {
+    const status = {
       action: 'edit',
       value: current.address()
-    };
+    } as ActionStatus;
 
     try {
       keyring.saveAddress(current.address(), {
@@ -203,12 +203,12 @@ class Editor extends React.PureComponent<Props, State> {
         whenEdited: Date.now()
       });
 
-      status.success = !!(current.getMeta().name === editedName);
+      status.status = current.getMeta().name === editedName ? 'success' : 'error';
       status.message = t('status.editted', {
-        defaultValue: `Edited to: ${editedName}`
+        defaultValue: 'name edited'
       });
     } catch (e) {
-      status.success = false;
+      status.status = 'error';
       status.message = t('status.error', {
         defaultValue: e.message
       });
@@ -248,21 +248,21 @@ class Editor extends React.PureComponent<Props, State> {
     this.setState(
       this.createState(null),
       () => {
-        const status: ActionStatus = {
+        const status = {
           action: 'forget',
           value: current.address()
-        };
+        } as ActionStatus;
 
         try {
           keyring.forgetAddress(
             current.address()
           );
-          status.success = true;
+          status.status = 'success';
           status.message = t('status.forgotten', {
-            defaultValue: 'Forgotten'
+            defaultValue: 'address forgotten'
           });
         } catch (err) {
-          status.success = false;
+          status.status = 'error';
           status.message = t('status.error', {
             defaultValue: err.message
           });

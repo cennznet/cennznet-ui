@@ -1,79 +1,64 @@
-// Copyright 2017-2018 @polkadot/ui-signer authors & contributors
+// Copyright 2017-2018 @polkadot/ui-app authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { I18nProps } from '@polkadot/ui-app/types';
-import { QueueTx, QueueTx$Status } from '@polkadot/ui-signer/types';
-import { ActionStatus } from '@polkadot/ui-app/Status/types';
+import { I18nProps } from '../types';
+import { QueueStatus, QueueTx, QueueTx$Status } from './types';
 
 import React from 'react';
-import { AddressMini, Icon } from '@polkadot/ui-app/index';
-import classes from '@polkadot/ui-app/util/classes';
 import { Method } from '@polkadot/types';
 
+import AddressMini from '../AddressMini';
+import Icon from '../Icon';
+import classes from '../util/classes';
 import translate from '../translate';
 
 type Props = I18nProps & {
-  status?: ActionStatus,
+  stqueue?: Array<QueueStatus>,
   txqueue?: Array<QueueTx>
 };
 
 class Status extends React.PureComponent<Props> {
   render () {
-    const { txqueue, status } = this.props;
-    let available;
+    const { stqueue = [], txqueue = [] } = this.props;
+    const allst: Array<QueueStatus> = stqueue.filter(({ isCompleted }) => !isCompleted);
+    const alltx: Array<QueueTx> = txqueue.filter(({ status }) =>
+      !['completed', 'incomplete'].includes(status)
+    );
 
-    if (txqueue) {
-      available = txqueue.filter(({ status }) =>
-        !['completed', 'incomplete'].includes(status)
-      );
-    }
-
-    if (!status && !available) {
+    if (!allst.length && !alltx.length) {
       return null;
     }
 
     return (
-      <div className='app--account-Status'>
-        {
-          available
-            ? available.map(this.renderItem)
-            : this.renderStatus(status)
-        }
+      <div className='ui--Status'>
+        {alltx.map(this.renderItem)}
+        {allst.map(this.renderStatus)}
       </div>
     );
   }
 
-  private renderStatus = (status?: ActionStatus) => {
-    const { t } = this.props;
-
-    if (!status) {
-      return null;
-    }
-
+  private renderStatus = ({ action, id, message, status, value }: QueueStatus) => {
     return (
       <div
-        className={classes('app--account-Status-Item', status.success ? 'success' : 'error')}
+        className={classes('item', status)}
+        key={id}
       >
-        <div className='desc'>
-          <div className='header'>
-            {
-              status.success
-                ? t('status.header', {
-                  defaultValue: 'Success'
-                })
-                : t('status.header', {
-                  defaultValue: 'Failed'
-                })
-            }
+        <div className='wrapper'>
+          <div className='container'>
+            <div className='desc'>
+              <div className='header'>
+                {action}
+              </div>
+              <AddressMini value={value} />
+              <div className='status'>
+                {message}
+              </div>
+            </div>
+            <div className='short'>
+              <Icon name={this.iconName(status)} />
+            </div>
           </div>
-          <AddressMini value={status.value} />
-          <div className='status'>
-            {status.message}
-          </div>
-        </div>
-        <div className='short'>
-          <Icon name={this.iconName(status)} />
         </div>
       </div>
     );
@@ -95,32 +80,45 @@ class Status extends React.PureComponent<Props> {
 
     return (
       <div
-        className={classes('ui--signer-Status-Item', status)}
+        className={classes('item', status)}
         key={id}
       >
-        <div className='desc'>
-          <div className='header'>
-            {section}.{method}
+        <div className='wrapper'>
+          <div className='container'>
+            <div className='desc'>
+              <div className='header'>
+                {section}.{method}
+              </div>
+              <div className='status'>
+                {status}
+              </div>
+            </div>
+            <div className='short'>
+              <Icon
+                loading={icon === 'spinner'}
+                name={icon}
+              />
+            </div>
           </div>
-          <div className='status'>
-            {status}
-          </div>
-        </div>
-        <div className='short'>
-          <Icon
-            loading={icon === 'spinner'}
-            name={icon}
-          />
         </div>
       </div>
     );
   }
 
-  private iconName = (status: ActionStatus): any => {
-    return status.success ? 'check' : 'ban';
+  private iconName = (status: string) => {
+    switch (status) {
+      case 'error':
+        return 'ban';
+
+      case 'received':
+        return 'telegram plane';
+
+      default:
+        return 'check';
+    }
   }
 
-  private signerIconName = (status: QueueTx$Status): any => {
+  private signerIconName = (status: QueueTx$Status) => {
     switch (status) {
       case 'cancelled':
         return 'ban';
