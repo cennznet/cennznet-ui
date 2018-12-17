@@ -8,14 +8,15 @@ import './SideBar.css';
 
 import React from 'react';
 import { Icon, Menu } from '@polkadot/ui-app/index';
+import polkadotLogo from '@polkadot/ui-assets/polkadot-white.svg';
+import substrateLogo from '@polkadot/ui-assets/parity-substrate-white.svg';
 import settings from '@polkadot/ui-settings';
 
-import polkadotLogo from '../static/polkadot-white.svg';
-import centralityLogo from '../static/centrality.svg';
-import substrateLogo from '../static/parity-substrate-white.svg';
 import routing from '../routing';
 import translate from '../translate';
 import Item from './Item';
+
+import centralityLogo from '../static/centrality.svg';
 
 type Props = I18nProps & {
   children?: React.ReactNode
