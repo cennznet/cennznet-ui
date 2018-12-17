@@ -34,6 +34,7 @@
     "@polkadot/api-observable": "^0.33.19",
     "@polkadot/rpc-rx": "^0.33.19",
     "@polkadot/types": "^0.33.19",
+    "@polkadot/ui-settings": "^0.23.2",
     "rxjs-compat": "^6.3.2"
   }
 }
