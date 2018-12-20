@@ -40,7 +40,7 @@ const components: ComponentMap = {
   'KeyValue': KeyValue,
   'Vec<KeyValue>': KeyValueArray,
   'MisbehaviorReport': Unknown,
-  'ParachainId': Amount,
+  'ParaId': Amount,
   'PropIndex': Amount,
   'Proposal': Proposal,
   'ReferendumIndex': Amount,
