@@ -113,7 +113,7 @@ export default class ApiWrapper extends React.PureComponent<Props, State> {
       const chain = value
         ? value.toString()
         : null;
-      const found: any = settings.availableChains.find(({ name }) => name === chain) || {
+      const found: any = settings.availableChains.find(({ name }: any) => name === chain) || {
         networkId: 0,
         tokenDecimals: 0,
         tokenSymbol: undefined

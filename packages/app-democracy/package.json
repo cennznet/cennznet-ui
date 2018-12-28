@@ -1,6 +1,6 @@
 {
   "name": "@polkadot/app-democracy",
-  "version": "0.21.0",
+  "version": "0.21.6",
   "description": "A referendum & proposal app",
   "main": "index.js",
   "scripts": {},
@@ -10,10 +10,10 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
+    "@polkadot/ui-settings": "^0.24.12",
     "@babel/runtime": "^7.2.0",
-    "@polkadot/keyring": "^0.33.26",
-    "@polkadot/storage": "^0.35.9",
-    "@polkadot/ui-react-rx": "^0.21.0",
-    "@polkadot/ui-settings": "^0.23.2"
+    "@polkadot/keyring": "^0.33.27",
+    "@polkadot/storage": "^0.35.11",
+    "@polkadot/ui-react-rx": "^0.21.6"
   }
 }
