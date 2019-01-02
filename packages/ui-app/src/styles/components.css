@@ -184,8 +184,21 @@ header .ui--Button-Group {
   margin-left: 0.25rem !important;
 }
 
+.ui--Input {
+  &.disabled {
+    overflow: hidden;
+
+    input {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
 .ui--InputFile {
   align-items: center;
+  background: #fff;
   border: 1px dashed rgba(34, 36, 38, 0.15);
   border-radius: $small-corner;
   display: flex;
@@ -202,12 +215,18 @@ header .ui--Button-Group {
 
   &:hover {
     background: #fefefe;
+    border-style: solid;
     cursor: pointer;
   }
 
   .label {
     color: rgba(0, 0, 0, .6);
   }
+}
+
+.ui--Static {
+  overflow: hidden;
+  word-break: break-all;
 }
 
 .ui--Status {
