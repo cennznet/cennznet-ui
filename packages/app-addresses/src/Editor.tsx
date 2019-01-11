@@ -1,4 +1,4 @@
-// Copyright 2017-2018 @polkadot/app-addresses authors & contributors
+// Copyright 2017-2019 @polkadot/app-addresses authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
@@ -193,8 +193,8 @@ class Editor extends React.PureComponent<Props, State> {
     }
 
     const status = {
-      action: 'edit',
-      value: current.address()
+      account: current.address(),
+      action: 'edit'
     } as ActionStatus;
 
     try {
@@ -249,8 +249,8 @@ class Editor extends React.PureComponent<Props, State> {
       this.createState(null),
       () => {
         const status = {
-          action: 'forget',
-          value: current.address()
+          account: current.address(),
+          action: 'forget'
         } as ActionStatus;
 
         try {

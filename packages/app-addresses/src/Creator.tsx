@@ -1,4 +1,4 @@
-// Copyright 2017-2018 @polkadot/app-addresses authors & contributors
+// Copyright 2017-2019 @polkadot/app-addresses authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
@@ -169,7 +169,7 @@ class Creator extends React.PureComponent<Props, State> {
     try {
       keyring.saveAddress(address, { name });
 
-      status.value = address;
+      status.account = address;
       status.status = address ? 'success' : 'error';
       status.message = t('status.created', {
         defaultValue: 'address created'

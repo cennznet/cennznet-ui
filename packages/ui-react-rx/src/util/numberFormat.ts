@@ -1,16 +1,21 @@
-// Copyright 2017-2018 @polkadot/ui-react-rx authors & contributors
+// Copyright 2017-2019 @polkadot/ui-react-rx authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import BN from 'bn.js';
-import { UInt } from '@polkadot/types/codec';
+import { Compact } from '@polkadot/types/codec';
+import { bnToBn } from '@polkadot/util';
 
 import decimalFormat from './decimalFormat';
 
-export default function numberFormat (value?: UInt | BN | number | null): string {
-  if (value === undefined || value === null) {
+export default function numberFormat (_value?: Compact | BN | number | null): string {
+  if (!_value) {
     return '0';
   }
 
-  return decimalFormat((value as number).toString());
+  const value = _value instanceof Compact
+    ? _value.toBn()
+    : bnToBn(_value);
+
+  return decimalFormat(value.toString());
 }

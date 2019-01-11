@@ -1,4 +1,4 @@
-// Copyright 2017-2018 @polkadot/app-accounts authors & contributors
+// Copyright 2017-2019 @polkadot/app-accounts authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
@@ -370,7 +370,7 @@ class Creator extends React.PureComponent<Props, State> {
 
       FileSaver.saveAs(blob, `${pair.address()}.json`);
 
-      status.value = pair.address();
+      status.account = pair.address();
       status.status = pair ? 'success' : 'error';
       status.message = t('status.created', {
         defaultValue: `created account`
