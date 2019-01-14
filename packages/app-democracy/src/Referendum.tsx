@@ -4,15 +4,15 @@
 
 import { I18nProps } from '@polkadot/ui-app/types';
 import { RawParam } from '@polkadot/ui-params/types';
-import { DerivedReferendumVote } from '@polkadot/ui-react-rx/derive/types';
+import { DerivedReferendumVote } from '@polkadot/ui-api/derive/types';
 
 import BN from 'bn.js';
 import React from 'react';
 import { ReferendumInfo } from '@polkadot/types';
 import { Chart, Static } from '@polkadot/ui-app/index';
 import VoteThreshold from '@polkadot/ui-params/Param/VoteThreshold';
-import { withCall, withMulti } from '@polkadot/ui-react-rx/with/index';
-import { balanceFormat, numberFormat } from '@polkadot/ui-react-rx/util/index';
+import { withCall, withMulti } from '@polkadot/ui-api/index';
+import { balanceFormat, numberFormat } from '@polkadot/ui-reactive/util/index';
 import settings from '@polkadot/ui-settings';
 
 import Item from './Item';
@@ -29,6 +29,7 @@ const COLORS_NAY = settings.uiTheme === 'substrate'
 type Props = I18nProps & {
   derive_chain_bestNumber?: BN,
   derive_democracy_referendumVotesFor?: Array<DerivedReferendumVote>,
+  query_democracy_publicDelay?: BN,
   idNumber: BN,
   value: ReferendumInfo
 };
@@ -112,24 +113,38 @@ class Referendum extends React.PureComponent<Props, State> {
   }
 
   private renderExtra () {
-    const { derive_chain_bestNumber, t, value: { end, threshold } } = this.props;
+    const { derive_chain_bestNumber, query_democracy_publicDelay, t, value: { end, threshold } } = this.props;
 
     if (!derive_chain_bestNumber) {
       return null;
     }
 
+    const enactBlock = (query_democracy_publicDelay || new BN(0)).add(end);
+
     return (
       <div className='democracy--Referendum-info'>
         <Static
           label={t('referendum.endLabel', {
-            defaultValue: 'remaining time'
+            defaultValue: 'ending at'
           })}
         >
           {t('referendum.endInfo', {
-            defaultValue: '{{remaining}} blocks remaining, ending at block #{{blockNumber}}',
+            defaultValue: 'block #{{blockNumber}}, {{remaining}} blocks remaining',
             replace: {
               blockNumber: numberFormat(end),
               remaining: numberFormat(end.sub(derive_chain_bestNumber).subn(1))
+            }
+          })}
+        </Static>
+        <Static
+          label={t('referendum.enactLabel', {
+            defaultValue: 'activate at (if passed)'
+          })}
+        >
+          {t('referendum.enactInfo', {
+            defaultValue: 'block #{{blockNumber}}',
+            replace: {
+              blockNumber: numberFormat(enactBlock)
             }
           })}
         </Static>
@@ -178,5 +193,6 @@ export default withMulti(
   Referendum,
   translate,
   withCall('derive.chain.bestNumber'),
-  withCall('derive.democracy.referendumVotesFor', { paramProp: 'idNumber' })
+  withCall('derive.democracy.referendumVotesFor', { paramProp: 'idNumber' }),
+  withCall('query.democracy.publicDelay')
 );

@@ -3,26 +3,28 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { I18nProps } from '@polkadot/ui-app/types';
-import { ApiProps } from '@polkadot/ui-react-rx/types';
+import { ApiProps } from '@polkadot/ui-api/types';
 
 import React from 'react';
 import { AddressMini, Call } from '@polkadot/ui-app/index';
-import { Extrinsic, Method, SignedBlock } from '@polkadot/types';
-import { withCall, withMulti } from '@polkadot/ui-react-rx/with/index';
-import { numberFormat } from '@polkadot/ui-react-rx/util/index';
+import { EventRecord, Extrinsic, Method, SignedBlock } from '@polkadot/types';
+import { withCall, withMulti } from '@polkadot/ui-api/index';
+import { numberFormat } from '@polkadot/ui-reactive/util/index';
 
 import BlockHeader from '../BlockHeader';
 import translate from '../translate';
+import Events from './Events';
 import Logs from './Logs';
 
 type Props = ApiProps & I18nProps & {
+  query_system_events?: Array<EventRecord>,
   rpc_chain_getBlock?: SignedBlock,
   value: string
 };
 
 class BlockByHash extends React.PureComponent<Props> {
   render () {
-    const { rpc_chain_getBlock } = this.props;
+    const { query_system_events, rpc_chain_getBlock } = this.props;
 
     if (!rpc_chain_getBlock || !rpc_chain_getBlock.block) {
       return null;
@@ -38,7 +40,10 @@ class BlockByHash extends React.PureComponent<Props> {
         />
       </header>,
       this.renderExtrinsics(),
-      // this.renderJustification(),
+      <Events
+        key='events'
+        value={query_system_events}
+      />,
       <Logs
         key='logs'
         value={header.digest.logs}
@@ -68,7 +73,7 @@ class BlockByHash extends React.PureComponent<Props> {
   }
 
   // FIXME This is _very_ similar to what we have in democracy/Item
-  private renderExtrinsic = (extrinsic: Extrinsic, index?: number) => {
+  private renderExtrinsic = (extrinsic: Extrinsic, index: number) => {
     const { value } = this.props;
     const { meta, method, section } = Method.findFunction(extrinsic.callIndex);
 
@@ -80,7 +85,7 @@ class BlockByHash extends React.PureComponent<Props> {
         <article className='explorer--Container'>
           <div className='header'>
             <h3>
-              {section}.{method}
+              #{numberFormat(index)}:&nbsp;{section}.{method}
             </h3>
             <div className='description'>{
               meta && meta.documentation && meta.documentation.length
@@ -94,38 +99,6 @@ class BlockByHash extends React.PureComponent<Props> {
       </div>
     );
   }
-
-  // Bft/Rhohenderon only
-  // private renderJustification () {
-  //   const { getBlock, t, value } = this.props;
-  //   const { justification: { signatures } } = getBlock;
-
-  //   if (!signatures || !signatures.length) {
-  //     return null;
-  //   }
-
-  //   return (
-  //     <section key='justification'>
-  //       <h1>{t('block.justifications', {
-  //         defaultValue: 'justifications'
-  //       })}</h1>
-  //       <div className='explorer--BlockByHash-flexable'>
-  //         {signatures.map(({ authorityId, signature }) => (
-  //           <div
-  //             className='explorer--BlockByHash-justification-signature'
-  //             key={`${value}:justification:${authorityId}`}
-  //           >
-  //             <AddressMini value={authorityId}>
-  //               <span>
-  //                 {u8aToHex(signature.toU8a(), 64)}
-  //               </span>
-  //             </AddressMini>
-  //           </div>
-  //         ))}
-  //       </div>
-  //     </section>
-  //   );
-  // }
 
   private renderSigner (extrinsic: Extrinsic) {
     const { t } = this.props;
@@ -150,5 +123,6 @@ class BlockByHash extends React.PureComponent<Props> {
 export default withMulti(
   BlockByHash,
   translate,
-  withCall('rpc.chain.getBlock', { paramProp: 'value' })
+  withCall('rpc.chain.getBlock', { paramProp: 'value' }),
+  withCall('query.system.events', { atProp: 'value' })
 );

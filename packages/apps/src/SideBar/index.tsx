@@ -76,6 +76,14 @@ class SideBar extends React.PureComponent<Props> {
               <Icon name='github' /> GitHub
             </a>
           </Menu.Item>
+          <Menu.Item className='apps--SideBar-Item'>
+            <a
+              className='apps--SideBar-Item-NavLink'
+              href='https://github.com/w3f/Web3-wiki/wiki/Polkadot'
+            >
+              <Icon name='book' /> Wiki
+            </a>
+          </Menu.Item>
           <Menu.Divider hidden />
           {children}
         </Menu>

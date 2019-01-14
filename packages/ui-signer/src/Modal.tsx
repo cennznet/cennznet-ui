@@ -3,7 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { SubmittableSendResult } from '@polkadot/api/types';
-import { ApiProps } from '@polkadot/ui-react-rx/types';
+import { PromiseSubscription } from '@polkadot/api/promise/types';
+import { ApiProps } from '@polkadot/ui-api/types';
 import { I18nProps, BareProps } from '@polkadot/ui-app/types';
 import { RpcMethod } from '@polkadot/jsonrpc/types';
 import { QueueTx, QueueTx$MessageSetStatus, QueueTx$Result, QueueTx$Status } from '@polkadot/ui-app/Status/types';
@@ -13,13 +14,13 @@ import SubmittableExtrinsic from '@polkadot/api/promise/SubmittableExtrinsic';
 import { decodeAddress } from '@polkadot/keyring';
 import { Button, Modal } from '@polkadot/ui-app/index';
 import keyring from '@polkadot/ui-keyring';
-import { withApi, withMulti } from '@polkadot/ui-react-rx/with/index';
+import { withApi, withMulti } from '@polkadot/ui-api/index';
+import { assert } from '@polkadot/util';
 import { format } from '@polkadot/util/logger';
 
 import ExtrinsicDisplay from './Extrinsic';
 import Unlock from './Unlock';
 import translate from './translate';
-import { UnsubFunction } from '@polkadot/api/promise/types';
 
 type BaseProps = BareProps & {
   queue: Array<QueueTx>,
@@ -72,7 +73,7 @@ class Signer extends React.PureComponent<Props, State> {
     };
   }
 
-  async componentDidUpdate (prevProps: Props, prevState: State) {
+  async componentDidUpdate () {
     const { currentItem } = this.state;
 
     if (currentItem && currentItem.status === 'queued' && !currentItem.extrinsic) {
@@ -212,7 +213,7 @@ class Signer extends React.PureComponent<Props, State> {
     });
   }
 
-  private onKeyDown = async (event: React.KeyboardEvent<Element>): Promise<any> => {
+  private onKeyDown = async (event: React.KeyboardEvent<Element>) => {
     if (event.key === 'Enter') {
       await this.onSend();
     }
@@ -230,7 +231,7 @@ class Signer extends React.PureComponent<Props, State> {
     queueSetTxStatus(currentItem.id, 'cancelled');
   }
 
-  private onSend = async (): Promise<any> => {
+  private onSend = async (): Promise<void> => {
     const { currentItem, password } = this.state;
 
     // This should never be executed
@@ -255,13 +256,13 @@ class Signer extends React.PureComponent<Props, State> {
     queueSetTxStatus(id, status, result, error);
   }
 
-  private sendExtrinsic = ({ accountNonce, accountId, extrinsic, id, isUnsigned }: QueueTx, password?: string) => {
-    if (!extrinsic || !accountId) {
-      return;
-    }
+  private async sendExtrinsic ({ accountId, extrinsic, id, isUnsigned }: QueueTx, password?: string): Promise<void> {
+    assert(extrinsic, 'Expected an extrinsic to be supplied to sendExtrinsic');
 
     if (!isUnsigned) {
-      const unlockError = this.unlockAccount(accountId, password);
+      assert(accountId, 'Expected an accountId with signed transactions');
+
+      const unlockError = this.unlockAccount(accountId as string, password);
 
       if (unlockError) {
         this.setState({ unlockError });
@@ -269,21 +270,16 @@ class Signer extends React.PureComponent<Props, State> {
       }
     }
 
-    const { apiPromise, queueSetTxStatus } = this.props;
+    const submittable = extrinsic as SubmittableExtrinsic;
+    const { queueSetTxStatus } = this.props;
 
     queueSetTxStatus(id, 'sending');
 
-    const pair = keyring.getPair(accountId);
-
     if (!isUnsigned) {
-      console.log(`sendExtrinsic: from=${pair.address()}, nonce=${accountNonce}, blockHash=${apiPromise.genesisHash.toHex()}`);
-
-      extrinsic.sign(pair, accountNonce, apiPromise.genesisHash);
+      return this.makeExtrinsicCall(submittable, id, submittable.signAndSend, keyring.getPair(accountId as string));
     } else {
-      console.log(`sendInherent: from=${pair.address()}, nonce=${accountNonce}`);
+      return this.makeExtrinsicCall(submittable, id, submittable.send);
     }
-
-    this.submitExtrinsic(extrinsic, id);
   }
 
   private async submitRpc ({ method, section }: RpcMethod, values: Array<any>): Promise<QueueTx$Result> {
@@ -308,15 +304,11 @@ class Signer extends React.PureComponent<Props, State> {
     }
   }
 
-  private submitExtrinsic (extrinsic: SubmittableExtrinsic, id: number) {
+  private async makeExtrinsicCall (extrinsic: SubmittableExtrinsic, id: number, extrinsicCall: (...params: Array<any>) => any, ..._params: Array<any>): Promise<void> {
     const { queueSetTxStatus } = this.props;
 
     try {
-      const encoded = extrinsic.toJSON();
-
-      console.log('submitAndWatchExtrinsic: encode ::', encoded);
-
-      const unsubscribe = extrinsic.send((result: SubmittableSendResult) => {
+      const subscription = await extrinsicCall.apply(extrinsic, [..._params, async (result: SubmittableSendResult) => {
         const status = result.type.toLowerCase() as QueueTx$Status;
 
         console.log('submitAndWatchExtrinsic: updated status ::', result);
@@ -324,13 +316,14 @@ class Signer extends React.PureComponent<Props, State> {
         queueSetTxStatus(id, status, result);
 
         if (status === 'finalised') {
+          const unsubscribe = await subscription;
+
           unsubscribe();
         }
-      }) as UnsubFunction;
+      }]) as PromiseSubscription;
     } catch (error) {
-      console.error('submitAndWatchExtrinsic:', error);
-
-      queueSetTxStatus(id, 'error', null, error);
+      console.error('error.message', error.message);
+      queueSetTxStatus(id, 'error', {}, error);
     }
   }
 }
