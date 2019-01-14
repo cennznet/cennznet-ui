@@ -184,9 +184,7 @@ function createWebpack ({ alias = {}, context, name = 'index' }) {
       new HtmlWebpackPlugin({
         inject: true,
         template: path.join(context, `${hasPublic ? 'public/' : ''}${name}.html`),
-        PAGE_TITLE: process.env.UI_THEME === 'substrate'
-          ? 'Substrate Apps Portal'
-          : 'Polkadot Apps Portal'
+        PAGE_TITLE: 'CENNZnet Portal'
       }),
       new webpack.optimize.SplitChunksPlugin(),
       new MiniCssExtractPlugin({
