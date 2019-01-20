@@ -36,9 +36,9 @@ export default class ApiWrapper extends React.PureComponent<Props, State> {
     const { url } = props;
     const provider = new WsProvider(url);
     const setApi = (provider: ProviderInterface): void => {
-      const apiPromise = new ApiPromise(provider);
+      const api = new ApiPromise(provider);
 
-      this.setState({ apiPromise }, () => {
+      this.setState({ api }, () => {
         this.updateSubscriptions();
       });
     };
@@ -48,7 +48,7 @@ export default class ApiWrapper extends React.PureComponent<Props, State> {
     this.state = {
       isApiConnected: false,
       isApiReady: false,
-      apiPromise: new ApiPromise(provider),
+      api: new ApiPromise(provider),
       setApiUrl
     } as State;
   }
@@ -58,7 +58,7 @@ export default class ApiWrapper extends React.PureComponent<Props, State> {
   }
 
   private updateSubscriptions () {
-    const { apiPromise } = this.state;
+    const { api } = this.state;
 
     [
       this.subscribeIsConnected,
@@ -66,7 +66,7 @@ export default class ApiWrapper extends React.PureComponent<Props, State> {
       this.subscribeChain
     ].map((fn: Function) => {
       try {
-        return fn(apiPromise);
+        return fn(api);
       } catch (error) {
         console.error(error);
         return null;
@@ -76,28 +76,27 @@ export default class ApiWrapper extends React.PureComponent<Props, State> {
 
   private subscribeChain = async (api: ApiPromise) => {
     const [properties = new ChainProperties(), value] = await Promise.all([
-      api.rpc.system.properties(),
-      api.rpc.system.chain()
+      api.rpc.system.properties() as Promise<ChainProperties | undefined>,
+      api.rpc.system.chain() as Promise<any>
     ]);
 
     const chain = value
       ? value.toString()
       : null;
     const found = settings.availableChains.find(({ name }) => name === chain) || {
-      // default should be 42 here, see setAdressPrefix below and change with below
-      networkId: undefined, // 42
+      networkId: 42,
       tokenDecimals: 0,
       tokenSymbol: undefined
     };
 
-    console.log('found chain', chain, [...properties.entries()]);
+    console.log('api: found chain', chain, [...properties.entries()]);
 
-    balanceFormat.setDefaultDecimals(properties.get('tokenDecimals') || found.tokenDecimals);
+    // first setup the UI helpers
+    balanceFormat.setDefaultDecimals(properties.get('tokenDecimals') || found.tokenDecimals || 0);
     InputNumber.setUnit(properties.get('tokenSymbol') || found.tokenSymbol);
 
-    // setup keyring only after prefix has been set. The networkId is handled slightly differently here
-    // to allow overrides by settings first - revert to normal above when we get rid of invalid specs
-    keyring.setAddressPrefix(found.networkId as any || properties.get('networkId') || 42);
+    // setup keyring (loadAll) only after prefix has been set
+    keyring.setAddressPrefix(properties.get('networkId') || found.networkId as any || 42);
     keyring.setDevMode(isTestChain(chain || ''));
     keyring.loadAll();
 
@@ -127,13 +126,13 @@ export default class ApiWrapper extends React.PureComponent<Props, State> {
   }
 
   render () {
-    const { apiDefaultTx, apiPromise, chain, isApiConnected, isApiReady, setApiUrl } = this.state;
+    const { api, apiDefaultTx, chain, isApiConnected, isApiReady, setApiUrl } = this.state;
 
     return (
       <ApiContext.Provider
         value={{
+          api,
           apiDefaultTx,
-          apiPromise,
           isApiConnected,
           isApiReady: isApiReady && !!chain,
           setApiUrl

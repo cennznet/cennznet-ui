@@ -15,33 +15,35 @@ export type BareProps = {
 };
 
 export type ApiProps = {
+  api: ApiPromise,
+  apiDefaultTx: SubmittableExtrinsicFunction,
   isApiConnected: boolean,
   isApiReady: boolean,
-  apiDefaultTx: SubmittableExtrinsicFunction,
-  apiPromise: ApiPromise,
   setApiUrl: (url?: string) => void
 };
 
-export type OnChangeCb$Obs<T> = { next: (value?: T) => any };
-export type OnChangeCb$Fn<T> = (value?: T) => void;
+export type OnChangeCb$Obs = { next: (value?: any) => any };
+export type OnChangeCb$Fn = (value?: any) => any;
 
-export type OnChangeCb<T> = OnChangeCb$Obs<T> | OnChangeCb$Fn<T> | undefined;
+export type OnChangeCb = OnChangeCb$Obs | OnChangeCb$Fn;
 
-export type ChangeProps<T> = {
-  rxChange?: OnChangeCb<T>
+export type ChangeProps = {
+  callOnResult?: OnChangeCb
 };
 
 export type ParamProps = {
-  params?: Array<any>
+  params?: any
 };
 
-export type RxProps<T> = {
-  rxUpdated?: boolean;
-  rxUpdatedAt?: number;
-  value?: T;
+export type CallState = {
+  callResult?: any;
+  callUpdated?: boolean;
+  callUpdatedAt?: number;
 };
 
-export type BaseProps<T> = BareProps & ApiProps & ChangeProps<T> & ParamProps & RxProps<T> & {
+export type CallProps = ApiProps & CallState;
+
+export type BaseProps<T> = BareProps & CallProps & ChangeProps & ParamProps & {
   children?: React.ReactNode,
   label?: string,
   render?: (value?: T) => React.ReactNode

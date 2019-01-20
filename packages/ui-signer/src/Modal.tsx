@@ -3,14 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { SubmittableSendResult } from '@polkadot/api/types';
-import { PromiseSubscription } from '@polkadot/api/promise/types';
+import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
 import { ApiProps } from '@polkadot/ui-api/types';
 import { I18nProps, BareProps } from '@polkadot/ui-app/types';
 import { RpcMethod } from '@polkadot/jsonrpc/types';
 import { QueueTx, QueueTx$MessageSetStatus, QueueTx$Result, QueueTx$Status } from '@polkadot/ui-app/Status/types';
 
 import React from 'react';
-import SubmittableExtrinsic from '@polkadot/api/promise/SubmittableExtrinsic';
 import { Button, Modal } from '@polkadot/ui-app/index';
 import keyring from '@polkadot/ui-keyring';
 import { withApi, withMulti } from '@polkadot/ui-api/index';
@@ -114,9 +113,7 @@ class Signer extends React.PureComponent<Props, State> {
             isNegative
             onClick={this.onCancel}
             tabIndex={3}
-            text={t('extrinsic.cancel', {
-              defaultValue: 'Cancel'
-            })}
+            text={t('Cancel')}
           />
           <Button.Or />
           <Button
@@ -126,12 +123,8 @@ class Signer extends React.PureComponent<Props, State> {
             tabIndex={2}
             text={
               currentItem.isUnsigned
-                ? t('extrinsic.unsignedSend', {
-                  defaultValue: 'Submit (no signature)'
-                })
-                : t('extrinsic.signedSend', {
-                  defaultValue: 'Sign and Submit'
-                })
+                ? t('Submit (no signature)')
+                : t('Sign and Submit')
             }
           />
         </Button.Group>
@@ -164,7 +157,7 @@ class Signer extends React.PureComponent<Props, State> {
     return (
       <Unlock
         autoFocus
-        error={unlockError && t(unlockError.key, unlockError.value)}
+        error={unlockError ? t(unlockError.key, unlockError.value) : undefined}
         onChange={this.onChangePassword}
         onKeyDown={this.onKeyDown}
         password={password}
@@ -282,10 +275,10 @@ class Signer extends React.PureComponent<Props, State> {
   }
 
   private async submitRpc ({ method, section }: RpcMethod, values: Array<any>): Promise<QueueTx$Result> {
-    const { apiPromise } = this.props;
+    const { api } = this.props;
 
     try {
-      const result = await (apiPromise.rpc as any)[section][method](...values);
+      const result = await (api.rpc as any)[section][method](...values);
 
       console.log('submitRpc: result ::', format(result));
 
@@ -307,7 +300,11 @@ class Signer extends React.PureComponent<Props, State> {
     const { queueSetTxStatus } = this.props;
 
     try {
-      const subscription = await extrinsicCall.apply(extrinsic, [..._params, async (result: SubmittableSendResult) => {
+      const unsubscribe = await extrinsicCall.apply(extrinsic, [..._params, async (result: SubmittableSendResult) => {
+        if (!result || !result.type || !result.status) {
+          return;
+        }
+
         const status = result.type.toLowerCase() as QueueTx$Status;
 
         console.log('submitAndWatchExtrinsic: updated status ::', result);
@@ -315,11 +312,9 @@ class Signer extends React.PureComponent<Props, State> {
         queueSetTxStatus(id, status, result);
 
         if (status === 'finalised') {
-          const unsubscribe = await subscription;
-
           unsubscribe();
         }
-      }]) as PromiseSubscription;
+      }]);
     } catch (error) {
       console.error('error.message', error.message);
       queueSetTxStatus(id, 'error', {}, error);

@@ -19,7 +19,8 @@ const BipWorker = require('worker-loader?name=[name].[hash:8].js!./bipWorker');
 
 type Props = I18nProps & {
   onStatusChange: (status: ActionStatus) => void,
-  onCreateAccount: () => void
+  onCreateAccount: () => void,
+  passthrough: string | null
 };
 
 type SeedType = 'bip' | 'raw';
@@ -39,17 +40,25 @@ type State = {
   showWarning: boolean
 };
 
-function formatSeed (seed: string): Uint8Array {
-  return isHex(seed)
+function isHexSeed (seed: string): boolean {
+  return isHex(seed) && seed.length === 66;
+}
+
+function rawValidate (seed: string): boolean {
+  return seed.length <= 32 || isHexSeed(seed);
+}
+
+function rawToSeed (seed: string): Uint8Array {
+  return isHexSeed(seed)
     ? hexToU8a(seed)
-    : stringToU8a((seed as string).padEnd(32, ' '));
+    : stringToU8a(seed.padEnd(32, ' '));
 }
 
 function addressFromSeed (seed: string, seedType: SeedType): string {
   const keypair = naclKeypairFromSeed(
     seedType === 'bip'
       ? mnemonicToSeed(seed)
-      : formatSeed(seed)
+      : rawToSeed(seed)
   );
 
   return keyring.encodeAddress(
@@ -77,10 +86,10 @@ class Creator extends React.PureComponent<Props, State> {
       });
     };
     this.state = {
-      ...this.emptyState(),
+      ...this.emptyState(this.props.passthrough),
       seedOptions: [
-        { value: 'bip', text: t('seedType.bip', { defaultValue: 'Mnemonic' }) },
-        { value: 'raw', text: t('seedType.raw', { defaultValue: 'Raw seed' }) }
+        { value: 'bip', text: t('Mnemonic') },
+        { value: 'raw', text: t('Raw seed') }
       ]
     };
   }
@@ -114,18 +123,14 @@ class Creator extends React.PureComponent<Props, State> {
       <Button.Group>
         <Button
           onClick={this.onDiscard}
-          text={t('creator.discard', {
-            defaultValue: 'Reset'
-          })}
+          text={t('Reset')}
         />
         <Button.Or />
         <Button
           isDisabled={!isValid}
           isPrimary
           onClick={this.onShowWarning}
-          text={t('creator.save', {
-            defaultValue: 'Save'
-          })}
+          text={t('Save')}
         />
       </Button.Group>
     );
@@ -142,9 +147,7 @@ class Creator extends React.PureComponent<Props, State> {
             autoFocus
             className='full'
             isError={!isNameValid}
-            label={t('creator.name', {
-              defaultValue: 'name the account'
-            })}
+            label={t('name the account')}
             onChange={this.onChangeName}
             value={name}
           />
@@ -157,20 +160,14 @@ class Creator extends React.PureComponent<Props, State> {
             isError={!isSeedValid}
             label={
               seedType === 'bip'
-                ? t('creator.seed.bip', {
-                  defaultValue: 'create from the following mnemonic seed'
-                })
-                : t('creator.seed.raw', {
-                  defaultValue: 'create from the following seed (hex or string)'
-                })
+                ? t('create from the following mnemonic seed')
+                : t('create from the following seed (hex or string)')
             }
             onChange={this.onChangeSeed}
             placeholder={
               isBipBusy
-                ? t('creator.seed.bipBusy', {
-                  defaultValue: 'Generating Mnemeonic seed'
-                })
-                : null
+                ? t('Generating Mnemeonic seed')
+                : undefined
             }
             value={isBipBusy ? '' : seed}
           >
@@ -186,9 +183,7 @@ class Creator extends React.PureComponent<Props, State> {
           <Password
             className='full'
             isError={!isPassValid}
-            label={t('creator.password', {
-              defaultValue: 'encrypt it using the password'
-            })}
+            label={t('encrypt it using the password')}
             onChange={this.onChangePass}
             value={password}
           />
@@ -215,17 +210,13 @@ class Creator extends React.PureComponent<Props, State> {
           <Button
             isNegative
             onClick={this.onHideWarning}
-            text={t('seedWarning.cancel', {
-              defaultValue: 'Cancel'
-            })}
+            text={t('Cancel')}
           />
           <Button.Or />
           <Button
             isPrimary
             onClick={this.onCommit}
-            text={t('seedWarning.continue', {
-              defaultValue: 'Create and backup account'
-            })}
+            text={t('Create and backup account')}
           />
         </Button.Group>
       </Modal.Actions>
@@ -238,18 +229,12 @@ class Creator extends React.PureComponent<Props, State> {
 
     return [
       <Modal.Header key='header'>
-        {t('seedWarning.header', {
-          defaultValue: 'Important notice!'
-        })}
+        {t('sImportant notice!')}
       </Modal.Header>,
       <Modal.Content key='content'>
-        {t('seedWarning.content', {
-          defaultValue: 'We will provide you with a generated backup file after your account is created. As long as you have access to your account you can always redownload this file later.'
-        })}
+        {t('We will provide you with a generated backup file after your account is created. As long as you have access to your account you can always redownload this file later.')}
         <Modal.Description>
-          {t('seedWarning.description', {
-            defaultValue: 'Please make sure to save this file in a secure location as it is the only way to restore your account.'
-          })}
+          {t('Please make sure to save this file in a secure location as it is the only way to restore your account.')}
         </Modal.Description>
         <AddressSummary
           className='accounts--Modal-Address'
@@ -259,7 +244,7 @@ class Creator extends React.PureComponent<Props, State> {
     ];
   }
 
-  private generateSeed (seedType: SeedType): State {
+  private generateSeed (seedType: SeedType, passthrough?: string | null): State {
     if (seedType === 'bip') {
       this.bipWorker.postMessage('create');
 
@@ -269,7 +254,7 @@ class Creator extends React.PureComponent<Props, State> {
       } as State;
     }
 
-    const seed = u8aToHex(randomAsU8a());
+    const seed = passthrough || u8aToHex(randomAsU8a());
     const address = addressFromSeed(seed, seedType);
 
     return {
@@ -279,11 +264,13 @@ class Creator extends React.PureComponent<Props, State> {
     } as State;
   }
 
-  private emptyState (): State {
-    const { seedType } = this.state;
+  private emptyState (passthrough?: string | null): State {
+    const seedType = passthrough
+      ? 'raw'
+      : this.state.seedType;
 
     return {
-      ...this.generateSeed(seedType),
+      ...this.generateSeed(seedType, passthrough),
       isNameValid: true,
       isPassValid: false,
       isSeedValid: true,
@@ -303,11 +290,7 @@ class Creator extends React.PureComponent<Props, State> {
         const isNameValid = !!name;
         const isSeedValid = seedType === 'bip'
           ? mnemonicValidate(seed)
-          : (
-            isHex(seed)
-              ? seed.length === 66
-              : (seed as string).length <= 32
-          );
+          : rawValidate(seed);
         const isPassValid = keyring.isPassValid(password);
 
         if (isSeedValid && seed !== prevState.seed) {
@@ -363,7 +346,7 @@ class Creator extends React.PureComponent<Props, State> {
     try {
       const pair = seedType === 'bip'
         ? keyring.createAccountMnemonic(seed, password, { name })
-        : keyring.createAccount(formatSeed(seed), password, { name });
+        : keyring.createAccount(rawToSeed(seed), password, { name });
 
       const json = pair.toJson(password);
       const blob = new Blob([JSON.stringify(json)], { type: 'application/json; charset=utf-8' });
@@ -372,20 +355,17 @@ class Creator extends React.PureComponent<Props, State> {
 
       status.account = pair.address();
       status.status = pair ? 'success' : 'error';
-      status.message = t('status.created', {
-        defaultValue: `created account`
-      });
+      status.message = t('created account');
 
       InputAddress.setLastValue('account', pair.address());
-    } catch (err) {
+    } catch (error) {
       status.status = 'error';
-      status.message = err.message;
+      status.message = error.message;
     }
 
     this.onHideWarning();
 
     onCreateAccount();
-
     onStatusChange(status);
   }
 

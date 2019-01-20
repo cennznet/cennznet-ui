@@ -2,14 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { ApiProps, RxProps } from '../types';
-import { HOC, Options } from './types';
+import { ApiProps, CallState, Subtract } from '../types';
+import { Options } from './types';
 
 import React from 'react';
 import { assert, isUndefined } from '@polkadot/util';
 
-import derive from '../derive/index';
-import { intervalTimer, isEqual, triggerChange } from '../util/index';
+import { isEqual, triggerChange } from '../util/index';
 import echoTransform from '../transform/echo';
 import withApi from './api';
 
@@ -18,7 +17,7 @@ interface Method {
   at: (hash: Uint8Array | string, ...params: Array<any>) => Promise<any>;
 }
 
-type State<T> = RxProps<T> & {
+type State = CallState & {
   destroy?: () => void,
   propName: string,
   timerId: number
@@ -28,22 +27,23 @@ const NOOP = () => {
   // ignore
 };
 
-export default function withCall<T, P extends ApiProps> (endpoint: string, { at, atProp, rxChange, params = [], paramProp = 'params', propName, transform = echoTransform }: Options<T> = {}): HOC<T> {
-  return (Inner: React.ComponentType<ApiProps>): React.ComponentType<any> => {
-    class WithPromise extends React.Component<P, State<T>> {
-      state: State<T>;
+export default function withCall<P extends ApiProps> (endpoint: string, { at, atProp, callOnResult, params = [], paramName = 'params', propName, transform = echoTransform }: Options = {}): (Inner: React.ComponentType<ApiProps>) => React.ComponentType<any> {
+  return (Inner: React.ComponentType<ApiProps>): React.ComponentType<Subtract<P, ApiProps>> => {
+    class WithPromise extends React.Component<P, State> {
+      state: State;
+      isActive: boolean = true;
 
       constructor (props: P) {
         super(props);
 
-        const [area, section, method] = endpoint.split('.');
+        const [, section, method] = endpoint.split('.');
 
         this.state = {
-          propName: `${area}_${section}_${method}`,
-          rxUpdated: false,
-          rxUpdatedAt: 0,
-          timerId: -1,
-          value: void 0
+          propName: `${section}_${method}`,
+          callResult: void 0,
+          callUpdated: false,
+          callUpdatedAt: 0,
+          timerId: -1
         };
       }
 
@@ -51,7 +51,7 @@ export default function withCall<T, P extends ApiProps> (endpoint: string, { at,
         const newParams = this.getParams(this.props);
         const oldParams = this.getParams(prevProps);
 
-        if (!isEqual(newParams, oldParams)) {
+        if (this.isActive && !isEqual(newParams, oldParams)) {
           this
             .subscribe(newParams)
             .then(NOOP)
@@ -60,8 +60,17 @@ export default function withCall<T, P extends ApiProps> (endpoint: string, { at,
       }
 
       componentDidMount () {
-        this.setState({
-          timerId: intervalTimer(this)
+        const timerId = window.setInterval(() => {
+          const elapsed = Date.now() - (this.state.callUpdatedAt || 0);
+          const callUpdated = elapsed <= 1500;
+
+          if (callUpdated !== this.state.callUpdated) {
+            this.nextState({ callUpdated });
+          }
+        }, 500);
+
+        this.nextState({
+          timerId
         });
 
         this
@@ -73,6 +82,8 @@ export default function withCall<T, P extends ApiProps> (endpoint: string, { at,
       componentWillUnmount () {
         const { timerId } = this.state;
 
+        this.isActive = false;
+
         if (timerId !== -1) {
           clearInterval(timerId);
         }
@@ -80,8 +91,14 @@ export default function withCall<T, P extends ApiProps> (endpoint: string, { at,
         this.unsubscribe();
       }
 
+      private nextState (state: Partial<State>) {
+        if (this.isActive) {
+          this.setState(state as State);
+        }
+      }
+
       private getParams (props: any): Array<any> {
-        const paramValue = props[paramProp];
+        const paramValue = props[paramName];
 
         if (atProp) {
           at = props[atProp];
@@ -97,7 +114,7 @@ export default function withCall<T, P extends ApiProps> (endpoint: string, { at,
       }
 
       private getApiMethod (newParams: Array<any>): [Method, Array<any>, boolean] {
-        const { apiPromise } = this.props;
+        const { api } = this.props;
 
         if (endpoint === 'subscribe') {
           const [fn, ...params] = newParams;
@@ -115,33 +132,21 @@ export default function withCall<T, P extends ApiProps> (endpoint: string, { at,
         assert(['rpc', 'query', 'derive'].includes(area), `Unknown api.${area}, expected rpc, query or derive`);
         assert(!at || area === 'query', 'Only able todo an at query on the api.query interface');
 
-        if (area === 'derive') {
-          const apiSection = (derive as any)[section];
-
-          assert(apiSection && apiSection[method], `Unable to find api.derive.${section}.${method}`);
-
-          return [
-            apiSection[method](apiPromise),
-            newParams,
-            true
-          ];
-        }
-
-        const apiSection = (apiPromise as any)[area][section];
+        const apiSection = (api as any)[area][section];
 
         assert(apiSection && apiSection[method], `Unable to find api.${area}.${section}.${method}`);
 
         return [
           apiSection[method],
           newParams,
-          (area === 'query' && (!at && !atProp)) || method.startsWith('subscribe')
+          area === 'derive' || (area === 'query' && (!at && !atProp)) || method.startsWith('subscribe')
         ];
       }
 
       private async subscribe (newParams: Array<any>) {
-        const { apiPromise } = this.props;
+        const { api } = this.props;
 
-        await apiPromise.isReady;
+        await api.isReady;
 
         try {
           const [apiMethod, params, isSubscription] = this.getApiMethod(newParams);
@@ -151,13 +156,13 @@ export default function withCall<T, P extends ApiProps> (endpoint: string, { at,
           this.unsubscribe();
 
           if (isSubscription) {
-            const destroy = await apiMethod(...params, (value?: T) =>
+            const destroy = await apiMethod(...params, (value?: any) =>
               this.triggerUpdate(this.props, value)
             );
 
-            this.setState({ destroy });
+            this.nextState({ destroy });
           } else {
-            const value: T = at
+            const value: any = at
               ? await apiMethod.at(at, ...params)
               : await apiMethod(...params);
 
@@ -176,20 +181,20 @@ export default function withCall<T, P extends ApiProps> (endpoint: string, { at,
         }
       }
 
-      private triggerUpdate (props: any, _value?: T): void {
+      private triggerUpdate (props: any, value?: any): void {
         try {
-          const value = (props.transform || transform)(_value);
+          const callResult = (props.transform || transform)(value);
 
-          if (isEqual(value, this.state.value)) {
+          if (!this.isActive || isEqual(callResult, this.state.callResult)) {
             return;
           }
 
-          triggerChange(value, rxChange, props.rxChange);
+          triggerChange(callResult, callOnResult, props.callOnResult);
 
-          this.setState({
-            rxUpdated: true,
-            rxUpdatedAt: Date.now(),
-            value
+          this.nextState({
+            callResult,
+            callUpdated: true,
+            callUpdatedAt: Date.now()
           });
         } catch (error) {
           console.error(endpoint, '::', error.message);
@@ -197,12 +202,12 @@ export default function withCall<T, P extends ApiProps> (endpoint: string, { at,
       }
 
       render () {
-        const { rxUpdated, rxUpdatedAt, value } = this.state;
+        const { callUpdated, callUpdatedAt, callResult } = this.state;
         const _props = {
           ...this.props,
-          rxUpdated,
-          rxUpdatedAt,
-          [propName || this.state.propName]: value
+          callUpdated,
+          callUpdatedAt,
+          [propName || this.state.propName]: callResult
         };
 
         return (

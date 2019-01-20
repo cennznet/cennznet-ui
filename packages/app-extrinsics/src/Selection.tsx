@@ -8,7 +8,6 @@ import { QueueTx$ExtrinsicAdd } from '@polkadot/ui-app/Status/types';
 import { ApiProps } from '@polkadot/ui-api/types';
 
 import React from 'react';
-import SubmittableExtrinsic from '@polkadot/api/promise/SubmittableExtrinsic';
 import { Method } from '@polkadot/types';
 import { Button } from '@polkadot/ui-app/index';
 import { withApi, withMulti } from '@polkadot/ui-api/index';
@@ -35,11 +34,11 @@ class Selection extends React.PureComponent<Props, State> {
   } as State;
 
   render () {
-    const { apiDefaultTx, apiPromise, t } = this.props;
+    const { apiDefaultTx, api, t } = this.props;
     const { isValid, accountId } = this.state;
     const defaultExtrinsic = (() => {
       try {
-        return apiPromise.tx.balances.transfer;
+        return api.tx.balances.transfer;
       } catch (error) {
         return apiDefaultTx;
       }
@@ -49,42 +48,32 @@ class Selection extends React.PureComponent<Props, State> {
       <div className='extrinsics--Selection'>
         <Account
           isInput={false}
-          label={t('display.sender', {
-            defaultValue: 'using the selected account'
-          })}
+          label={t('using the selected account')}
           onChange={this.onChangeSender}
           type='account'
         />
         <ExtrinsicDisplay
           defaultValue={defaultExtrinsic}
-          labelMethod={t('display.method', {
-            defaultValue: 'submit the following extrinsic'
-          })}
+          labelMethod={t('submit the following extrinsic')}
           onChange={this.onChangeExtrinsic}
         />
         <Nonce
-          label={t('display.nonce', {
-            defaultValue: 'with an index'
-          })}
-          rxChange={this.onChangeNonce}
+          label={t('with an index')}
+          callOnResult={this.onChangeNonce}
           value={accountId}
         />
         <Button.Group>
           <Button
             isDisabled={!isValid}
             onClick={this.onQueueInherent}
-            text={t('submit.label', {
-              defaultValue: 'Submit Inherent'
-            })}
+            text={t('Submit Inherent')}
           />
           <Button.Or />
           <Button
             isDisabled={!isValid}
             isPrimary
             onClick={this.onQueueExtrinsic}
-            text={t('submit.label', {
-              defaultValue: 'Submit Transaction'
-            })}
+            text={t('Submit Transaction')}
           />
         </Button.Group>
       </div>
@@ -124,18 +113,20 @@ class Selection extends React.PureComponent<Props, State> {
   }
 
   private onQueue (isUnsigned: boolean): void {
-    const { apiPromise, queueExtrinsic } = this.props;
+    const { api, queueExtrinsic } = this.props;
     const { method, isValid, accountId } = this.state;
 
     if (!isValid || !method) {
       return;
     }
 
+    const fn = Method.findFunction(method.callIndex);
+
     queueExtrinsic({
       accountId: isUnsigned
         ? undefined
         : accountId,
-      extrinsic: new SubmittableExtrinsic(apiPromise, method),
+      extrinsic: api.tx[fn.section][fn.method](...method.args),
       isUnsigned
     });
   }

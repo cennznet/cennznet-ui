@@ -2,8 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { DerivedBalances, DerivedBalancesMap } from '@polkadot/api-derive/types';
 import { I18nProps } from '@polkadot/ui-app/types';
-import { DerivedBalances, DerivedBalancesMap } from '@polkadot/ui-api/derive/types';
 
 import BN from 'bn.js';
 import React from 'react';
@@ -18,13 +18,13 @@ type Props = I18nProps & {
   balances: DerivedBalancesMap,
   intentions: Array<string>,
   lastLengthChange?: BN,
-  query_staking_validatorCount?: BN,
+  staking_validatorCount?: BN,
   validators: Array<string>
 };
 
 class Summary extends React.PureComponent<Props> {
   render () {
-    const { className, intentions, style, t, query_staking_validatorCount, validators } = this.props;
+    const { className, intentions, style, t, staking_validatorCount, validators } = this.props;
 
     return (
       <summary
@@ -32,18 +32,10 @@ class Summary extends React.PureComponent<Props> {
         style={style}
       >
         <section>
-          <CardSummary
-            label={t('summary.validators', {
-              defaultValue: 'validators'
-            })}
-          >
-            {validators.length}/{query_staking_validatorCount ? query_staking_validatorCount.toString() : '-'}
+          <CardSummary label={t('validators')}>
+            {validators.length}/{staking_validatorCount ? staking_validatorCount.toString() : '-'}
           </CardSummary>
-          <CardSummary
-            label={t('summary.intentions', {
-              defaultValue: 'intentions'
-            })}
-          >
+          <CardSummary label={t('intentions')}>
             {intentions.length}
           </CardSummary>
         </section>
@@ -51,11 +43,7 @@ class Summary extends React.PureComponent<Props> {
           <SummarySession withBroken={false} />
         </section>
         <section>
-          <CardSummary
-            label={t('summary.balances', {
-              defaultValue: 'balances'
-            })}
-          >
+          <CardSummary label={t('balances')}>
             {this.renderBalances()}
           </CardSummary>
         </section>
@@ -76,16 +64,14 @@ class Summary extends React.PureComponent<Props> {
 
     return (
       <div className='staking--Summary-text'>
-        <div>{t('summary.balance.validator', {
-          defaultValue: 'lowest validator {{validatorLow}}',
+        <div>{t('lowest validator {{validatorLow}}', {
           replace: {
             validatorLow: validatorLow && validatorLow.stakingBalance
               ? `${balanceFormat(validatorLow.stakingBalance)} ${nominatedLow}`
               : '-'
           }
         })}</div>
-        <div>{t('summary.balance.stake', {
-          defaultValue: 'highest intention {{intentionHigh}}',
+        <div>{t('highest intention {{intentionHigh}}', {
           replace: {
             intentionHigh: intentionHigh
               ? `${balanceFormat(intentionHigh.stakingBalance)} ${nominatedHigh}`

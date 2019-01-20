@@ -10,19 +10,13 @@ import { assert } from '@polkadot/util';
 
 import { ApiConsumer } from '../ApiContext';
 
-export default function withApi <T, P extends ApiProps> (Inner: React.ComponentType<P>, defaultProps: DefaultProps<T> = {}): React.ComponentType<any> {
+export default function withApi <P extends ApiProps> (Inner: React.ComponentType<P>, defaultProps: DefaultProps = {}): React.ComponentType<any> {
   return class WithApi extends React.PureComponent<Subtract<P, ApiProps>> {
-    constructor (props: any) {
-      super(props);
-
-      assert(Inner, `Expected 'withApi' to wrap a React Component`);
-    }
-
     render () {
       return (
         <ApiConsumer>
-          {(apiProps: ApiProps) => {
-            assert(apiProps && apiProps.apiPromise, `Application root must be wrapped inside 'rx-react/Api' to provide API context`);
+          {(apiProps?: ApiProps) => {
+            assert(apiProps && apiProps.api, `Application root must be wrapped inside 'rx-react/Api' to provide API context`);
 
             return (
               // @ts-ignore Something here with the props are going wonky

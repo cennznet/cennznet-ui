@@ -16,7 +16,7 @@ import IdentityIcon from './IdentityIcon';
 import translate from './translate';
 
 export type Props = I18nProps & {
-  derive_balances_accountIdAndIndex?: [AccountId | undefined, AccountIndex | undefined],
+  accounts_idAndIndex?: [AccountId?, AccountIndex?],
   balance?: Balance | Array<Balance>,
   children?: React.ReactNode,
   name?: string,
@@ -25,7 +25,7 @@ export type Props = I18nProps & {
   withIndex?: boolean,
   identIconSize?: number,
   isShort?: boolean,
-  query_session_validators?: Array<AccountId>,
+  session_validators?: Array<AccountId>,
   withCopy?: boolean,
   withIcon?: boolean,
   withNonce?: boolean
@@ -35,8 +35,8 @@ const DEFAULT_ADDR = '5'.padEnd(16, 'x');
 
 class AddressSummary extends React.PureComponent<Props> {
   render () {
-    const { derive_balances_accountIdAndIndex = [], className, style } = this.props;
-    const [accountId, accountIndex] = derive_balances_accountIdAndIndex;
+    const { accounts_idAndIndex = [], className, style } = this.props;
+    const [accountId, accountIndex] = accounts_idAndIndex;
     const isValid = accountId || accountIndex;
 
     return (
@@ -82,8 +82,8 @@ class AddressSummary extends React.PureComponent<Props> {
   }
 
   protected renderAccountId () {
-    const { derive_balances_accountIdAndIndex = [], name, isShort = true } = this.props;
-    const [accountId, accountIndex] = derive_balances_accountIdAndIndex;
+    const { accounts_idAndIndex = [], name, isShort = true } = this.props;
+    const [accountId, accountIndex] = accounts_idAndIndex;
 
     if (!accountId && accountIndex) {
       return null;
@@ -110,8 +110,8 @@ class AddressSummary extends React.PureComponent<Props> {
   }
 
   protected renderAccountIndex () {
-    const { derive_balances_accountIdAndIndex = [] } = this.props;
-    const [, accountIndex] = derive_balances_accountIdAndIndex;
+    const { accounts_idAndIndex = [] } = this.props;
+    const [, accountIndex] = accounts_idAndIndex;
 
     if (!accountIndex) {
       return null;
@@ -140,24 +140,22 @@ class AddressSummary extends React.PureComponent<Props> {
       <BalanceDisplay
         balance={balance}
         className='ui--AddressSummary-balance'
-        label={t('addressSummary.balance', {
-          defaultValue: 'balance '
-        })}
+        label={t('balance ')}
         value={value}
       />
     );
   }
 
   protected renderIcon (className: string = 'ui--AddressSummary-icon', size?: number) {
-    const { derive_balances_accountIdAndIndex = [], identIconSize = 96, query_session_validators, value, withIcon = true } = this.props;
+    const { accounts_idAndIndex = [], identIconSize = 96, session_validators, value, withIcon = true } = this.props;
 
     if (!withIcon) {
       return null;
     }
 
-    const [_accountId] = derive_balances_accountIdAndIndex;
+    const [_accountId] = accounts_idAndIndex;
     const accountId = (_accountId || '').toString();
-    const isValidator = (query_session_validators || []).find((validator) =>
+    const isValidator = (session_validators || []).find((validator) =>
       validator.toString() === accountId
     );
 
@@ -172,8 +170,8 @@ class AddressSummary extends React.PureComponent<Props> {
   }
 
   protected renderNonce () {
-    const { derive_balances_accountIdAndIndex = [], t, withNonce = true } = this.props;
-    const [accountId] = derive_balances_accountIdAndIndex;
+    const { accounts_idAndIndex = [], t, withNonce = true } = this.props;
+    const [accountId] = accounts_idAndIndex;
 
     if (!withNonce || !accountId) {
       return null;
@@ -184,9 +182,7 @@ class AddressSummary extends React.PureComponent<Props> {
         className='ui--AddressSummary-nonce'
         params={accountId.toString()}
       >
-        {t('addressSummary.transactions', {
-          defaultValue: ' transactions'
-        })}
+        {t(' transactions')}
       </Nonce>
     );
   }
@@ -214,6 +210,6 @@ export {
 export default withMulti(
   AddressSummary,
   translate,
-  withCall('derive.balances.accountIdAndIndex', { paramProp: 'value' }),
+  withCall('derive.accounts.idAndIndex', { paramName: 'value' }),
   withCall('query.session.validators')
 );
