@@ -5,13 +5,13 @@
 import store from 'store';
 
 import typeRegistry from '@polkadot/types/codec/typeRegistry';
-import { u32 } from '@polkadot/types';
 
 import { CHAINS, ENDPOINTS, LANGUAGES, UIMODES, UITHEMES } from './defaults';
 import { ChainsInfo, Options, SettingsStruct } from './types';
 
 typeRegistry.register({
-  AssetId: u32
+  AssetId: 'u32',
+  AssetOptions: { total_supply: 'Balance' }
 });
 
 class Settings implements SettingsStruct {
