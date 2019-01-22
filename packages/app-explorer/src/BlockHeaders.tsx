@@ -45,8 +45,9 @@ class BlockHeaders extends React.PureComponent<Props> {
 
     return (
       <div className='explorer--BlockHeaders'>
-        {headers.map((header) => (
+        {headers.map((header, index) => (
           <BlockHeader
+            isSummary={index !== 0}
             key={header.blockNumber.toString()}
             value={header}
             withLink={!header.blockNumber.isZero()}
@@ -57,4 +58,4 @@ class BlockHeaders extends React.PureComponent<Props> {
   }
 }
 
-export default withCall('rpc.chain.subscribeNewHead', { propName: 'headers', transform })(BlockHeaders);
+export default withCall('derive.chain.subscribeNewHead', { propName: 'headers', transform })(BlockHeaders);

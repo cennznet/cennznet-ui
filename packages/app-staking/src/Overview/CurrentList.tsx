@@ -7,14 +7,18 @@ import { I18nProps } from '@polkadot/ui-app/types';
 
 import React from 'react';
 import { AccountId, Balance } from '@polkadot/types';
+import { HeaderExtended } from '@polkadot/types/Header';
+import { withCall, withMulti } from '@polkadot/ui-api/with';
 import { AddressMini, AddressRow } from '@polkadot/ui-app/index';
 import keyring from '@polkadot/ui-keyring';
 
 import translate from '../translate';
+import { numberFormat } from '@polkadot/ui-reactive/util';
 
 type Props = I18nProps & {
   balances: DerivedBalancesMap,
   balanceArray: (_address: AccountId | string) => Array<Balance> | undefined,
+  chain_subscribeNewHead?: HeaderExtended,
   current: Array<string>,
   next: Array<string>
 };
@@ -68,12 +72,20 @@ class CurrentList extends React.PureComponent<Props> {
   }
 
   private renderColumn (addresses: Array<string>, defaultName: string) {
-    const { balances, balanceArray, t } = this.props;
+    const { balances, balanceArray, chain_subscribeNewHead, t } = this.props;
 
     if (addresses.length === 0) {
       return (
         <div key='none'>{t('no addresses found')}</div>
       );
+    }
+
+    let lastBlock: string = '';
+    let lastAuthor: string;
+
+    if (chain_subscribeNewHead) {
+      lastBlock = `#${numberFormat(chain_subscribeNewHead.blockNumber)}`;
+      lastAuthor = (chain_subscribeNewHead.author || '').toString();
     }
 
     return (
@@ -82,22 +94,30 @@ class CurrentList extends React.PureComponent<Props> {
           const nominators = (balances[address] || {}).nominators || [];
 
           return (
-            <article key={address}>
+            <article
+              className='ui--hoverable'
+              key={address}
+            >
               <AddressRow
                 balance={balanceArray(address)}
-                name={this.getDisplayName(address, defaultName)}
-                value={address}
-                withCopy={false}
-                withNonce={false}
-              >
-                {nominators.map(({ accountId }) =>
+                children={nominators.map(({ accountId }) =>
                   <AddressMini
                     key={accountId.toString()}
                     value={accountId}
                     withBalance
                   />
                 )}
-              </AddressRow>
+                name={this.getDisplayName(address, defaultName)}
+                value={address}
+                withCopy={false}
+                withNonce={false}
+              />
+              <div
+                className={['blockNumber', lastAuthor === address ? 'latest' : ''].join(' ')}
+                key='lastBlock'
+              >
+                {lastAuthor === address ? lastBlock : ''}
+              </div>
             </article>
           );
         })}
@@ -106,4 +126,8 @@ class CurrentList extends React.PureComponent<Props> {
   }
 }
 
-export default translate(CurrentList);
+export default withMulti(
+  CurrentList,
+  translate,
+  withCall('derive.chain.subscribeNewHead')
+);
