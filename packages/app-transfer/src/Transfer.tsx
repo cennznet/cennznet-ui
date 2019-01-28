@@ -2,19 +2,18 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { BitLength, I18nProps } from '@polkadot/ui-app/types';
+import { I18nProps } from '@polkadot/ui-app/types';
 import { QueueProps } from '@polkadot/ui-app/Status/types';
 import { ApiProps } from '@polkadot/ui-api/types';
 
 import BN from 'bn.js';
 import React from 'react';
 import { Extrinsic } from '@polkadot/types';
-import { BitLengthOption } from '@polkadot/ui-app/constants';
-import { AddressSummary, InputAddress, InputNumber } from '@polkadot/ui-app/index';
+import { AddressSummary, InputAddress, InputBalance } from '@polkadot/ui-app/index';
 import { withApi, withMulti } from '@polkadot/ui-api/index';
 import { QueueConsumer } from '@polkadot/ui-app/Status/Context';
 import keyring from '@polkadot/ui-keyring';
-import FeeDisplay from '@polkadot/ui-signer/Fees';
+import Checks from '@polkadot/ui-signer/Checks';
 
 import Submit from './Submit';
 import translate from './translate';
@@ -28,8 +27,6 @@ type State = {
   hasAvailable: boolean,
   recipientId: string | null
 };
-
-const DEFAULT_BITLENGTH = BitLengthOption.CHAIN_SPEC as BitLength;
 
 const ZERO = new BN(0);
 
@@ -54,35 +51,26 @@ class Transfer extends React.PureComponent<Props, State> {
 
     return (
       <div className='transfer--Transfer'>
-        <div className='ui--row'>
-          <div className='medium'>
+        <div className='transfer--Transfer-info'>
+          {this.renderAddress(accountId)}
+          <div className='transfer--Transfer-data'>
             <InputAddress
-              label={t('transfer from my account')}
+              label={t('from my source account')}
               onChange={this.onChangeFrom}
               type='account'
             />
-          </div>
-          <div className='medium'>
             <InputAddress
               label={t('to the recipient address')}
               onChange={this.onChangeTo}
               type='all'
             />
-          </div>
-        </div>
-        <div className='transfer--Transfer-info'>
-          {this.renderAddress(accountId)}
-          <div className='transfer--Transfer-data'>
-            <InputNumber
+            <InputBalance
               autoFocus
-              bitLength={DEFAULT_BITLENGTH}
               isError={!hasAvailable}
-              isSi
-              label={t('send a value of')}
+              label={t('transfer a value of')}
               onChange={this.onChangeAmount}
             />
-            <FeeDisplay
-              className='medium'
+            <Checks
               accountId={accountId}
               extrinsic={extrinsic}
               onChange={this.onChangeFees}

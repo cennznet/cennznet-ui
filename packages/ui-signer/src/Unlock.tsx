@@ -52,18 +52,15 @@ class Unlock extends React.PureComponent<Props, State> {
 
     return (
       <div className='ui--signer-Signer-Unlock'>
-        <div className='ui--row'>
-          <Password
-            autoFocus={autoFocus}
-            className='medium'
-            isError={isError}
-            label={label || t('unlock account using the password')}
-            onChange={onChange}
-            onKeyDown={onKeyDown}
-            tabIndex={tabIndex}
-            value={password}
-          />
-        </div>
+        <Password
+          autoFocus={autoFocus}
+          isError={isError}
+          label={label || t('unlock account with password')}
+          onChange={onChange}
+          onKeyDown={onKeyDown}
+          tabIndex={tabIndex}
+          value={password}
+        />
       </div>
     );
   }

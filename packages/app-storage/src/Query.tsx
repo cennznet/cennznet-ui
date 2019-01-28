@@ -106,27 +106,26 @@ class Query extends React.PureComponent<Props, State> {
 
     return (
       <div className='storage--Query storage--actionrow'>
-        <Labelled
-          className='storage--actionrow-value'
-          label={
-            <div className='ui--Param-text'>
-              <div className='ui--Param-text name'>{this.keyToName(key)}</div>
-              {this.renderInputs()}
-              <div className='ui--Param-text'>{
-                isU8a(key)
-                  ? 'Data'
-                  : key.meta.type.toString()
-              }</div>
-            </div>
-          }
-        >
-          <Component />
-        </Labelled>
-        <Labelled className='storage--actionrow-buttons'>
+        <div className='storage--actionrow-value'>
+          <Labelled
+            label={
+              <div className='ui--Param-text'>
+                {this.keyToName(key)}: {
+                  isU8a(key)
+                    ? 'Data'
+                    : key.meta.type.toString()
+                }
+              </div>
+            }
+          >
+            <Component />
+          </Labelled>
+        </div>
+        <div className='storage--actionrow-buttons'>
           <div className='container'>
             {this.renderButtons()}
           </div>
-        </Labelled>
+        </div>
       </div>
     );
   }
@@ -161,22 +160,6 @@ class Query extends React.PureComponent<Props, State> {
     }
 
     return buttons;
-  }
-
-  private renderInputs () {
-    const { inputs } = this.state;
-
-    if (inputs.length === 0) {
-      return (
-        <div className='ui--Param-text name'>:</div>
-      );
-    }
-
-    return [
-      <div key='open' className='ui--Param-text name'>(</div>,
-      inputs,
-      <div key='close' className='ui--Param-text name'>):</div>
-    ];
   }
 
   private keyToName (key: Uint8Array | StorageFunction): string {

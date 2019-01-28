@@ -9,7 +9,6 @@
 }
 
 .ui.dropdown {
-  /* from .ui.fluid.dropdown */
   display: block;
   min-width: 0;
   width: 100%;
@@ -17,12 +16,29 @@
 
 .ui.dropdown,
 .ui.input {
-  /* bottom margin for all inputs */
-  margin-bottom: 0.5rem;
+  margin: 0.25rem 0;
 }
 
-.ui.dropdown > .text {
-  min-height: 1em;
+.ui.selection.dropdown,
+.ui.input > input {
+  color: inherit;
+}
+
+.ui.dropdown {
+  &.disabled {
+    background: #fefefe;
+    border-color: #eee;
+    border-style: dashed;
+    opacity: 1;
+
+    .dropdown.icon {
+      opacity: 0;
+    }
+  }
+
+  > .text {
+    min-height: 1em;
+  }
 }
 
 .ui.dropdown .menu > .item.header.disabled {
@@ -38,18 +54,40 @@
 .ui.input {
   /* from .ui.fluid.input */
   display: flex;
-}
 
-.ui.input > input {
-  /* from .ui.fluid.input > input */
-  width: 0;
+  &.disabled {
+    opacity: 1;
+
+    input {
+      background: #fefefe;
+      border-color: #eee;
+      /* border-color: transparent; */
+      border-style: dashed;
+    }
+
+    .ui.primary.buttons .ui.button {
+      background: #eee;
+      border-color: transparent;
+      border-left-color: transparent;
+      color: #4e4e4e;
+
+      .dropdown.icon {
+        opacity: 0;
+      }
+    }
+  }
+
+  > input {
+    /* from .ui.fluid.input > input */
+    width: 0;
+  }
 }
 
 .ui.inverted.dimmer {
   background-color: rgba(255, 255, 255, 0.75);
 }
 
-.ui.label {
+.ui.label:not(.ui--Bubble) {
   background: transparent;
   font-weight: normal;
   position: relative;
@@ -57,7 +95,9 @@
 }
 
 .ui.modal {
-  background: #fdfdfd;
+  background: #fafafa;
+  color: #4e4e4e;
+  font-family: sans-serif;
 
   > .actions,
   > .content,
@@ -121,13 +161,11 @@
 
 .ui.menu.tabular {
   background: #f2f2f2;
-  /* border-color: white; */
   /* break out of the wrapping main padding */
   margin: -1em -2em 0;
   padding: 1em 2em 0;
 
   .item.active {
     background: #fafafa;
-    /* border-color: white; */
   }
 }

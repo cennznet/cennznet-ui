@@ -5,7 +5,7 @@
 import { I18nProps } from '@polkadot/ui-app/types';
 
 import React from 'react';
-import { Button, Input, Labelled } from '@polkadot/ui-app/index';
+import { Button, Input } from '@polkadot/ui-app/index';
 import { isHex } from '@polkadot/util';
 
 import translate from './translate';
@@ -28,27 +28,26 @@ class Query extends React.PureComponent<Props, State> {
     const { hash, isValid } = this.state;
 
     return (
-      <header>
+      <summary>
         <div className='ui--row'>
           <div className='small' />
-          <div className='storage--Query-actionrow medium'>
+          <div className='storage--actionrow medium'>
             <Input
-              className='storage--Query-actionrow-hash'
+              className='storage--actionrow-value'
               isError={!isValid && hash.length !== 0}
               placeholder={t('block hash to query')}
               onChange={this.setHash}
+              withLabel={false}
             />
-            <Labelled className='storage--Query-actionrow-button'>
-              <Button
-                icon='play'
-                isDisabled={!isValid}
-                isPrimary
-                onClick={this.onQuery}
-              />
-            </Labelled>
+            <Button
+              icon='play'
+              isDisabled={!isValid}
+              isPrimary
+              onClick={this.onQuery}
+            />
           </div>
         </div>
-      </header>
+      </summary>
     );
   }
 

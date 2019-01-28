@@ -5,13 +5,13 @@
 @import './partials/_variables.css';
 
 .ui--output {
-  background: #f9f9f9;
+  background: #fefefe;
   border-radius: 4px;
-  border: 1px solid #f5f5f5;
+  border: 1px dashed #eee;
   box-sizing: border-box;
-  line-height: 1em;
-  margin-bottom: 0.5em;
-  padding: 0.75em 1em;
+  line-height: 1rem;
+  margin: 0.25rem;
+  padding: .75rem 1rem;
   position: relative;
   word-wrap: break-word;
 }
@@ -69,11 +69,6 @@ header .ui--Button-Group {
   text-align: right;
 }
 
-.ui--AddressRow {
-  display: flex;
-  width: 100%;
-}
-
 .ui--AddressRow-base {
   display: flex;
 }
@@ -100,23 +95,13 @@ header .ui--Button-Group {
 }
 
 .ui--AddressSummary-children {
-  padding-top: 0.5rem;
+  .ui--hover-content {
+    margin-top: 0.5rem !important;
+  }
 }
 
 .ui--AddressRow .ui--AddressSummary-children {
   display: block;
-}
-
-.ui--hoverable {
-  .ui--AddressSummary-children.ui--hover {
-    padding-top: 0;
-  }
-
-  &:hover {
-    .ui--AddressSummary-children.ui--hover {
-      padding-top: 0.5rem;
-    }
-  }
 }
 
 .ui--AddressSummary .rx--updated {
@@ -125,7 +110,7 @@ header .ui--Button-Group {
 
 .ui--AddressSummary.invalid {
   filter: grayscale(100);
-  opacity: 0.45;
+  opacity: 0.5;
 }
 
 .ui--AddressSummary-icon {
@@ -135,7 +120,8 @@ header .ui--Button-Group {
 .ui--Balance,
 .ui--AddressSummary-balance,
 .ui--AddressSummary-nonce {
-  opacity: 0.45;
+  font-weight: 100;
+  opacity: 0.75;
 }
 
 .ui--AddressSummary-balance {
@@ -153,7 +139,6 @@ header .ui--Button-Group {
 }
 
 .ui--AddressSummary-data * {
-  /* margin: 0 0.25rem !important; */
   vertical-align: middle;
 }
 
@@ -168,6 +153,47 @@ header .ui--Button-Group {
 .ui--AddressSummary-accountIndex {
   font-size: 1.25em;
   font-style: italic;
+}
+
+.ui--Bubble.ui.label {
+  font-weight: normal;
+  margin: 0.25rem;
+  padding: 0;
+
+  * {
+    vertical-align: middle;
+  }
+
+  .ui--Bubble-children,
+  .ui--Bubble-header {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .ui--Bubble-children {
+    padding: 0 0.75rem 0 0;
+  }
+
+  .ui--Bubble-header {
+    background: rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
+    border-radius: .28571429rem 0 0 .28571429rem;
+    height: 2.75rem;
+    margin-right: 0.75rem;
+    padding: 0 0.75rem;
+    text-align: center;
+    vertical-align: middle;
+
+    > div {
+      display: inline-block;
+      line-height: 2.75rem !important;
+      vertical-align: middle;
+    }
+
+    > .text {
+      padding: 0 0 0 0.25rem;
+    }
+  }
 }
 
 .ui--CardSummary .ui.label {
@@ -198,6 +224,10 @@ header .ui--Button-Group {
 .ui--CopyButton {
   cursor: copy !important;
   margin-left: 0.25rem !important;
+}
+
+.ui--DropdownLinked-Items {
+  padding-left: 0.5rem;
 }
 
 .ui--Input {
@@ -241,7 +271,33 @@ header .ui--Button-Group {
 }
 
 .ui--Labelled {
+  align-items: center;
+  display: flex;
+  flex: 1 1;
   text-align: left;
+
+  &.label-small {
+    display: block;
+
+    > label {
+      margin: 0;
+      min-width: 0;
+      padding-right: 0;
+    }
+  }
+
+  > .ui--Labelled-content {
+    box-sizing: border-box;
+    flex: 1 1;
+    min-width: 0;
+  }
+
+  > label {
+    flex: 0 0 15rem;
+    min-width: 15rem;
+    padding-right: 0.5rem;
+    text-align: right;
+  }
 }
 
 .ui--Static {

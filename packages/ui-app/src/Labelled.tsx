@@ -5,14 +5,14 @@
 import { BareProps } from './types';
 
 import React from 'react';
-import Label from 'semantic-ui-react/dist/commonjs/elements/Label/Label';
 
 import classes from './util/classes';
 
 type Props = BareProps & {
   isHidden?: boolean,
-  label?: any,
-  children: any, // node?
+  isSmall?: boolean,
+  label?: React.ReactNode,
+  children: React.ReactNode,
   withLabel?: boolean
 };
 
@@ -22,23 +22,25 @@ const defaultLabel: any = (// node?
 
 export default class Labelled extends React.PureComponent<Props> {
   render () {
-    const { className, children, isHidden = false, label = defaultLabel, style, withLabel = true } = this.props;
+    const { className, children, isSmall, isHidden, label = defaultLabel, style, withLabel = true } = this.props;
 
     if (isHidden) {
       return null;
+    } else if (!withLabel) {
+      return (
+        <div className={className}>{children}</div>
+      );
     }
 
     return (
       <div
-        className={classes('ui--Labelled', className)}
+        className={classes('ui--Labelled', isSmall ? 'label-small' : '', className)}
         style={style}
       >
-        {
-          withLabel
-            ? <Label>{label}</Label>
-            : null
-        }
-        {children}
+        <label>{label}</label>
+        <div className='ui--Labelled-content'>
+          {children}
+        </div>
       </div>
     );
   }

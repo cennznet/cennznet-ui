@@ -10,20 +10,17 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { HeaderExtended } from '@polkadot/types/Header';
 import { AddressMini } from '@polkadot/ui-app/index';
-import numberFormat from '@polkadot/ui-reactive/util/numberFormat';
-
-import Extrinsics from './Extrinsics';
+import { formatNumber } from '@polkadot/ui-app/util';
 
 type Props = BareProps & {
   isSummary?: boolean,
   value?: HeaderExtended,
-  withExtrinsics?: boolean,
   withLink?: boolean
 };
 
 export default class BlockHeader extends React.PureComponent<Props> {
   render () {
-    const { isSummary, value, withExtrinsics = false, withLink = false } = this.props;
+    const { isSummary, value, withLink = false } = this.props;
 
     if (!value) {
       return null;
@@ -32,11 +29,11 @@ export default class BlockHeader extends React.PureComponent<Props> {
     const { author, blockNumber, extrinsicsRoot, parentHash, stateRoot } = value;
     const parentHex = parentHash.toHex();
     const hashHex = value.hash.toHex();
-    const textNumber = numberFormat(blockNumber);
+    const textNumber = formatNumber(blockNumber);
 
     return (
       <article className={['explorer--BlockHeader', isSummary ? 'ui--hoverable summary' : ''].join(' ')}>
-        <div className='details'>
+        <div className='header-outer'>
           <div className='header'>
             <div className='number'>{
               withLink
@@ -50,9 +47,11 @@ export default class BlockHeader extends React.PureComponent<Props> {
                 : undefined
             }</div>
           </div>
-          <div className='ui--hover contains'>
+        </div>
+        <div className='ui--hover'>
+          <div className='ui--hover-content contains'>
             <div className='info'>
-              <div className='type'>parentHash</div>
+              <label>parentHash</label>
               <div className='hash'>{
                 value.blockNumber.gtn(1)
                   ? <Link to={`/explorer/hash/${parentHex}`}>{parentHex}</Link>
@@ -60,17 +59,13 @@ export default class BlockHeader extends React.PureComponent<Props> {
               }</div>
             </div>
             <div className='info'>
-              <div className='type'>extrinsicsRoot</div>
+              <label>extrinsicsRoot</label>
               <div className='hash'>{extrinsicsRoot.toHex()}</div>
             </div>
             <div className='info'>
-              <div className='type'>stateRoot</div>
+              <label>stateRoot</label>
               <div className='hash'>{stateRoot.toHex()}</div>
             </div>
-            {withExtrinsics
-              ? <Extrinsics hash={value.hash} />
-              : undefined
-            }
           </div>
         </div>
       </article>

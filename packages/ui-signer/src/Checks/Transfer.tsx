@@ -11,7 +11,7 @@ import React from 'react';
 import { Compact } from '@polkadot/types/codec';
 import { withCall, withMulti } from '@polkadot/ui-api/index';
 import { Icon } from '@polkadot/ui-app/index';
-import { balanceFormat } from '@polkadot/ui-reactive/util/index';
+import { formatBalance } from '@polkadot/ui-app/util';
 
 import translate from '../translate';
 import { ZERO_BALANCE } from './constants';
@@ -42,7 +42,7 @@ class Transfer extends React.PureComponent<Props, State> {
     };
   }
 
-  static getDerivedStateFromProps ({ amount, recipientId, balances_votingBalance = ZERO_BALANCE, fees, onChange }: Props): State {
+  static getDerivedStateFromProps ({ amount, balances_votingBalance = ZERO_BALANCE, fees, onChange }: Props): State {
     let extraFees = fees.transferFee;
 
     if (balances_votingBalance.votingBalance.isZero()) {
@@ -72,18 +72,24 @@ class Transfer extends React.PureComponent<Props, State> {
     const { fees, t } = this.props;
     const { isCreation, isNoEffect } = this.state;
 
-    return [
-      isNoEffect
-        ? <div key='noeffect'><Icon name='warning sign' />{t('The final recipient amount is less than the existential amount, hence the total will be deducted from the sender, however the recipient account will not reflect the amount sent')}</div>
-        : undefined,
-      isCreation
-        ? <div key='create'><Icon name='warning sign' />{t('A fee of {{creationFee}} will be deducted from the sender since the destination account does not exist', {
-          replace: {
-            creationFee: `${balanceFormat(fees.creationFee)}`
-          }
-        })}</div>
-        : undefined
-    ];
+    return (
+      <>
+        {
+          isNoEffect
+            ? <div><Icon name='warning sign' />{t('The final recipient balance is less than the existential amount and will not be reflected')}</div>
+            : undefined
+        }
+        {
+          isCreation
+            ? <div><Icon name='warning sign' />{t('A fee of {{creationFee}} will be deducted from the sender since the destination account does not exist', {
+              replace: {
+                creationFee: formatBalance(fees.creationFee)
+              }
+            })}</div>
+            : undefined
+        }
+      </>
+    );
   }
 }
 

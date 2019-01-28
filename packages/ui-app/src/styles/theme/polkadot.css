@@ -14,7 +14,6 @@
     background-color: $button-primary-color;
   }
 
-
   .ui.primary.button:hover,
   .ui.buttons .primary.button:hover {
     background-color: $button-primary-color-hover;
@@ -69,11 +68,6 @@
     background-color: $progress-bar-color;
   }
 
-  /*
-  .ui.input > input:focus {
-    border-color: $anchor-color;
-  }*/
-
   .ui--IdentityIcon .container.highlight:before {
     box-shadow: 0 0 5px 2px $wild-orchid;
   }
@@ -96,5 +90,16 @@
 
   .ui.red.progress .bar {
     background-color: $red;
+  }
+
+  article.ui--hoverable {
+    .ui--hover-content {
+      border-color: $wild-orchid;
+    }
+
+    &:hover,
+    &.active {
+      border-color: $wild-orchid;
+    }
   }
 }
