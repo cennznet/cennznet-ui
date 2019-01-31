@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { SubmittableSendResult } from '@polkadot/api/types';
+import { SubmittableResult } from '@polkadot/api/SubmittableExtrinsic';
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
 import { ApiProps } from '@polkadot/ui-api/types';
 import { I18nProps, BareProps } from '@polkadot/ui-app/types';
@@ -39,16 +39,10 @@ type State = {
 };
 
 class Signer extends React.PureComponent<Props, State> {
-  state: State;
-
-  constructor (props: Props) {
-    super(props);
-
-    this.state = {
-      password: '',
-      unlockError: null
-    };
-  }
+  state: State = {
+    password: '',
+    unlockError: null
+  };
 
   static getDerivedStateFromProps ({ queue }: Props, { currentItem, password, unlockError }: State): State {
     const nextItem = queue.find(({ status }) =>
@@ -302,7 +296,7 @@ class Signer extends React.PureComponent<Props, State> {
     console.log('makeExtrinsicCall: extrinsic ::', extrinsic.toHex());
 
     try {
-      const unsubscribe = await extrinsicCall.apply(extrinsic, [..._params, async (result: SubmittableSendResult) => {
+      const unsubscribe = await extrinsicCall.apply(extrinsic, [..._params, async (result: SubmittableResult) => {
         if (!result || !result.type || !result.status) {
           return;
         }
