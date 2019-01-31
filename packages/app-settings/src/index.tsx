@@ -8,8 +8,8 @@ import { SettingsStruct } from '@polkadot/ui-settings/types';
 import React from 'react';
 import store from 'store';
 import typeRegistry from '@polkadot/types/codec/typeRegistry';
-import { Button, Dropdown, InputFile } from '@polkadot/ui-app/index';
-import settings from '@polkadot/ui-settings';
+import { Button, Dropdown, Input, InputFile } from '@polkadot/ui-app/index';
+import uiSettings from '@polkadot/ui-settings';
 import { u8aToString } from '@polkadot/util';
 
 import './index.css';
@@ -22,7 +22,8 @@ type State = {
   settings: SettingsStruct & {
     types?: { [index: string]: any } | null,
     typesError?: boolean,
-    typesPlaceholder?: string
+    typesPlaceholder?: string,
+    customNode: boolean
   }
 };
 
@@ -32,21 +33,30 @@ class App extends React.PureComponent<Props, State> {
 
     const types = store.get('types') || {};
     const names = Object.keys(types);
-    const presets = settings.get();
+    const presets = uiSettings.get();
+
+    // check to see if user has saved a custom node by seeing if their URL is equal to any preset
+    let customNode = true;
+    for (let i = 0; i < uiSettings.availableNodes.length; i++) {
+      if (uiSettings.availableNodes[i].value === presets.apiUrl) {
+        customNode = false;
+      }
+    }
 
     this.state = {
       settings: {
         ...presets,
         typesPlaceholder: names.length
           ? names.join(', ')
-          : undefined
+          : undefined,
+        customNode: customNode
       }
     };
   }
 
   render () {
     const { t } = this.props;
-    const { settings: { apiUrl, i18nLang, typesPlaceholder, typesError, uiMode, uiTheme } } = this.state;
+    const { settings: { apiUrl, i18nLang, typesPlaceholder, typesError, uiMode, uiTheme, customNode } } = this.state;
 
     return (
       <main className='settings--App'>
@@ -54,12 +64,27 @@ class App extends React.PureComponent<Props, State> {
           <h1>{t('general')}</h1>
           <div className='ui--row'>
             <div className='full'>
-              <Dropdown
-                defaultValue={apiUrl}
-                label={t('remote node/endpoint to connect to')}
-                onChange={this.onChangeApiUrl}
-                options={settings.availableNodes}
-              />
+              <div className='sub-label'>
+                {
+                  customNode
+                    ? <><a onClick={this.toggleCustomNode}>{t('pre-set')}</a> | <b>{t('custom')}</b></>
+                    : <><b>{t('pre-set')}</b> | <a onClick={this.toggleCustomNode}>{t('custom')}</a></>
+                }
+              </div>
+              {
+                customNode
+                  ? <Input
+                    defaultValue={apiUrl}
+                    label={t('remote node/endpoint to connect to')}
+                    onChange={this.onChangeApiUrl}
+                  />
+                  : <Dropdown
+                    defaultValue={apiUrl}
+                    label={t('remote node/endpoint to connect to')}
+                    onChange={this.onChangeApiUrl}
+                    options={uiSettings.availableNodes}
+                  />
+              }
             </div>
           </div>
           <div className='ui--row'>
@@ -68,7 +93,7 @@ class App extends React.PureComponent<Props, State> {
                 defaultValue={uiTheme}
                 label={t('default interface theme')}
                 onChange={this.onChangeUiTheme}
-                options={settings.availableUIThemes}
+                options={uiSettings.availableUIThemes}
               />
             </div>
             <div className='medium'>
@@ -76,7 +101,7 @@ class App extends React.PureComponent<Props, State> {
                 defaultValue={uiMode}
                 label={t('interface operation mode')}
                 onChange={this.onChangeUiMode}
-                options={settings.availableUIModes}
+                options={uiSettings.availableUIModes}
               />
             </div>
           </div>
@@ -87,7 +112,7 @@ class App extends React.PureComponent<Props, State> {
                 isDisabled
                 label={t('default interface language')}
                 onChange={this.onChangeLang}
-                options={settings.availableLanguages}
+                options={uiSettings.availableLanguages}
               />
             </div>
           </div>
@@ -178,10 +203,46 @@ class App extends React.PureComponent<Props, State> {
     }));
   }
 
+  private toggleCustomNode = (): void => {
+    this.setState(({ settings }: State) => {
+      const customNode = !settings.customNode;
+      // reset URL to a preset when toggled to preset
+      const apiUrl = customNode
+        ? settings.apiUrl
+        : uiSettings.availableNodes[0].value;
+
+      return {
+        settings: {
+          ...settings,
+          apiUrl,
+          customNode
+        }
+      };
+    });
+  }
+
   private save = (): void => {
+    const { onStatusChange, t } = this.props;
     const { settings: { types, typesError } } = this.state;
 
-    settings.set(this.state.settings);
+    // validate custom node url
+    const apiUrl = this.state.settings.apiUrl;
+
+    if (this.state.settings.customNode) {
+      if (!(apiUrl.startsWith('ws://localhost') ||
+      apiUrl.startsWith('ws://127.0.0.1') ||
+      apiUrl.startsWith('wss://'))) {
+        onStatusChange({
+          action: '',
+          status: 'error',
+          message: t('Custom node URL is not valid')
+        });
+
+        return;
+      }
+    }
+
+    uiSettings.set(this.state.settings);
 
     if (types && !typesError) {
       store.set('types', types);
