@@ -4,16 +4,19 @@
 
 import { Routes } from '../types';
 
-import Settings from '@polkadot/app-settings/index';
+import Js from '@polkadot/app-js/index';
 
 export default ([
   {
-    Component: Settings,
-    display: {},
-    i18n: {
-      defaultValue: 'Settings'
+    Component: Js,
+    display: {
+      isHidden: true,
+      needsApi: []
     },
-    icon: 'settings',
-    name: 'settings'
+    i18n: {
+      defaultValue: 'Javascript'
+    },
+    icon: 'code',
+    name: 'js'
   }
 ] as Routes);

@@ -1,7 +1,7 @@
 {
-  "name": "@polkadot/app-nodeinfo",
+  "name": "@polkadot/app-js",
   "version": "0.23.2",
-  "description": "Node status and information",
+  "description": "A simple JavaScript console for playing with the API",
   "main": "index.js",
   "scripts": {},
   "author": "Jaco Greeff <jacogr@gmail.com>",
@@ -11,6 +11,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@babel/runtime": "^7.2.0",
-    "@polkadot/ui-app": "^0.23.2"
+    "@polkadot/ui-app": "^0.23.2",
+    "codeflask": "1.4.0"
   }
 }
