@@ -43,7 +43,7 @@ class Transfer extends React.PureComponent<Props, State> {
 
   render () {
     const { t } = this.props;
-    const { accountId, assetId, extrinsic, recipientId, hasAvailable } = this.state;
+    const { accountId, extrinsic, recipientId, hasAvailable } = this.state;
 
     return (
       <div className='transfer--Transfer'>
