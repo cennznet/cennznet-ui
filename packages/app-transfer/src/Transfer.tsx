@@ -9,7 +9,7 @@ import { ApiProps } from '@polkadot/ui-api/types';
 import BN from 'bn.js';
 import React from 'react';
 import { Extrinsic } from '@polkadot/types';
-import { AddressSummary, InputAddress, InputBalance } from '@polkadot/ui-app/index';
+import { AddressSummary, InputAddress, InputBalance, InputNumber } from '@polkadot/ui-app/index';
 import { withApi, withMulti } from '@polkadot/ui-api/index';
 import { QueueConsumer } from '@polkadot/ui-app/Status/Context';
 import keyring from '@polkadot/ui-keyring';
@@ -23,6 +23,7 @@ type Props = I18nProps & ApiProps & {};
 type State = {
   accountId: string | null,
   amount: BN,
+  assetId: BN,
   extrinsic: Extrinsic | null,
   hasAvailable: boolean,
   recipientId: string | null
@@ -34,6 +35,7 @@ class Transfer extends React.PureComponent<Props, State> {
   state: State = {
     accountId: null,
     amount: ZERO,
+    assetId: ZERO,
     extrinsic: null,
     hasAvailable: true,
     recipientId: null
@@ -41,7 +43,7 @@ class Transfer extends React.PureComponent<Props, State> {
 
   render () {
     const { t } = this.props;
-    const { accountId, extrinsic, recipientId, hasAvailable } = this.state;
+    const { accountId, assetId, extrinsic, recipientId, hasAvailable } = this.state;
 
     return (
       <div className='transfer--Transfer'>
@@ -57,6 +59,11 @@ class Transfer extends React.PureComponent<Props, State> {
               label={t('to the recipient address')}
               onChange={this.onChangeTo}
               type='all'
+            />
+            <InputNumber
+              defaultValue={ZERO}
+              label={t('asset ID (0 for CENNZ and 10 for SPEND)')}
+              onChange={this.onChangeAssetId}
             />
             <InputBalance
               autoFocus
@@ -110,14 +117,15 @@ class Transfer extends React.PureComponent<Props, State> {
   private nextState (newState: Partial<State>): void {
     this.setState((prevState: State): State => {
       const { api } = this.props;
-      const { accountId = prevState.accountId, amount = prevState.amount, recipientId = prevState.recipientId, hasAvailable = prevState.hasAvailable } = newState;
+      const { accountId = prevState.accountId, amount = prevState.amount, assetId = prevState.assetId, recipientId = prevState.recipientId, hasAvailable = prevState.hasAvailable } = newState;
       const extrinsic = accountId && recipientId
-        ? api.tx.balances.transfer(recipientId, amount)
+        ? api.tx.genericAsset.transfer(assetId, recipientId, amount)
         : null;
 
       return {
         accountId,
         amount,
+        assetId,
         extrinsic,
         hasAvailable,
         recipientId
@@ -139,6 +147,10 @@ class Transfer extends React.PureComponent<Props, State> {
 
   private onChangeFees = (hasAvailable: boolean) => {
     this.setState({ hasAvailable });
+  }
+
+  private onChangeAssetId = (assetId: BN = new BN(0)) => {
+    this.nextState({ assetId });
   }
 }
 

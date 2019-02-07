@@ -17,6 +17,7 @@ import translate from '../translate';
 import { ZERO_BALANCE } from './constants';
 
 type Props = I18nProps & {
+  assetId?: BN,
   amount: BN | Compact,
   fees: DerivedFees,
   balances_votingBalance?: DerivedBalances,
@@ -46,8 +47,8 @@ class Transfer extends React.PureComponent<Props, State> {
     }
 
     const extraAmount = amount instanceof Compact ? amount.toBn() : new BN(amount);
-    const isCreation = balances_votingBalance.votingBalance.isZero() && fees.creationFee.gtn(0);
-    const isNoEffect = extraAmount.add(balances_votingBalance.votingBalance).lte(fees.existentialDeposit);
+    const isCreation = false;
+    const isNoEffect = false;
     const extraWarn = isCreation || isNoEffect;
     const update = {
       extraAmount,
