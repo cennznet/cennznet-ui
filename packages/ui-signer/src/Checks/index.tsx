@@ -152,7 +152,7 @@ class FeeDisplay extends React.PureComponent<Props, State> {
         {
           balance && assetId && <div><Icon name='arrow right' />{`Asset ID: ${assetId.toString()} - Balance: ${formatBalance(balance)}`}</div>
         }
-        <div><Icon name='arrow right' />{`SPEND - Balance: ${formatBalance(spendBalance)}`}</div>
+        <div><Icon name='arrow right' />{`CENTRAPAY - Balance: ${formatBalance(spendBalance)}`}</div>
         {
           hasAvailable
             ? undefined
@@ -175,7 +175,7 @@ class FeeDisplay extends React.PureComponent<Props, State> {
             : undefined
         }
         <div><Icon name='arrow right' />{t('Fees includes the transaction fee and the per-byte fee')}</div>
-        <div><Icon name='arrow right' />{t('Fees totalling {{fees}} unit of SPEND will be applied to the submission', {
+        <div><Icon name='arrow right' />{t('Fees totalling {{fees}} unit of CENTRAPAY will be applied to the submission', {
           replace: {
             fees: formatBalance(allFees)
           }

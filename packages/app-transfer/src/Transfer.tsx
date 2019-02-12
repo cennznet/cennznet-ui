@@ -62,7 +62,7 @@ class Transfer extends React.PureComponent<Props, State> {
             />
             <InputNumber
               defaultValue={ZERO}
-              label={t('asset ID (0 for CENNZ and 10 for SPEND)')}
+              label={t('asset ID (0 for CENNZ and 10 for CENTRAPAY)')}
               onChange={this.onChangeAssetId}
             />
             <InputBalance
@@ -71,10 +71,16 @@ class Transfer extends React.PureComponent<Props, State> {
               label={t('transfer a value of')}
               onChange={this.onChangeAmount}
             />
+            Sender:
             <Checks
               accountId={accountId}
               extrinsic={extrinsic}
               onChange={this.onChangeFees}
+            />
+            Recipient:
+            <Checks
+              accountId={recipientId}
+              extrinsic={extrinsic}
             />
             <QueueConsumer>
               {({ queueExtrinsic }: QueueProps) => (
