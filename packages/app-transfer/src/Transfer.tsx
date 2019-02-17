@@ -82,6 +82,7 @@ class Transfer extends React.PureComponent<Props, State> {
             <Checks
               accountId={recipientId}
               extrinsic={extrinsic}
+              isSendable
             />
             <QueueConsumer>
               {({ queueExtrinsic }: QueueProps) => (
