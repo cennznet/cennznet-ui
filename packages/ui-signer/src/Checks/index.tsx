@@ -42,6 +42,7 @@ type Props = I18nProps & {
   accountKeyToken?: string | null,
   accountKeySpending?: string | null,
   extrinsic?: Extrinsic | null,
+  isSendable: boolean,
   onChange?: (hasAvailble: boolean) => void,
   system_accountNonce?: BN,
   assetId?: BN | number
@@ -128,7 +129,7 @@ class FeeDisplay extends React.PureComponent<Props, State> {
   }
 
   render () {
-    const { accountId, className, t, assetId } = this.props;
+    const { accountId, className, isSendable, t, assetId } = this.props;
     const { allFees, allWarn, hasAvailable, isRemovable, isReserved, overLimit, balance, spendBalance } = this.state;
 
     if (!accountId) {
@@ -150,9 +151,10 @@ class FeeDisplay extends React.PureComponent<Props, State> {
         key='txinfo'
       >
         {
-          balance && assetId && <div><Icon name='arrow right' />{`Asset ID: ${assetId.toString()} - Balance: ${formatBalance(balance)}`}</div>
+          isSendable
+            ? undefined
+            : <div><Icon name='ban' />{t('The selected account does not exist on your keyring')}</div>
         }
-        <div><Icon name='arrow right' />{`CENTRAPAY - Balance: ${formatBalance(spendBalance)}`}</div>
         {
           hasAvailable
             ? undefined
@@ -163,6 +165,10 @@ class FeeDisplay extends React.PureComponent<Props, State> {
             ? <div><Icon name='ban' />{t(`This transaction will be rejected by the node as it is greater than the maximum size of ${MAX_SIZE_MB}MB`)}></div>
             : undefined
         }
+        {
+          balance && assetId && <div><Icon name='arrow right' />{`Asset ID: ${assetId.toString()} - Balance: ${formatBalance(balance)}`}</div>
+        }
+        <div><Icon name='arrow right' />{`CENTRAPAY - Balance: ${formatBalance(spendBalance)}`}</div>
         {this.renderTransfer()}
         {this.renderProposal()}
         {

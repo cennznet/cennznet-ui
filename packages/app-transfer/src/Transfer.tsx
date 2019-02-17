@@ -75,6 +75,7 @@ class Transfer extends React.PureComponent<Props, State> {
             <Checks
               accountId={accountId}
               extrinsic={extrinsic}
+              isSendable
               onChange={this.onChangeFees}
             />
             Recipient:
