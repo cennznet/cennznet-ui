@@ -13,7 +13,8 @@ typeRegistry.register({
   AssetId: 'u32',
   AssetOptions: { total_supply: 'Balance' },
   Topic: 'u256',
-  Value: 'u256'
+  Value: 'u256',
+  Amount: 'u256'
 });
 
 class Settings implements SettingsStruct {
