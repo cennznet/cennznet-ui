@@ -235,12 +235,12 @@ class FeeDisplay extends React.PureComponent<Props, State> {
   }
 }
 
-const generateKey = (addr: string | null | undefined, token: BN | number) => {
+const generateKey = (addr: string | null | undefined, token: any) => {
   if (!addr || !token) {
     return '0x';
   }
   const prefix = stringToU8a('ga:free:');
-  const assetIdEncoded = new u32(token).toU8a();
+  const assetIdEncoded = new u32(token.toBn ? token.toBn() : token).toU8a();
   const keyEncoded = new Uint8Array(prefix.length + assetIdEncoded.length);
   keyEncoded.set(prefix);
   keyEncoded.set(assetIdEncoded, prefix.length);
