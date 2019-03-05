@@ -12,7 +12,6 @@ export default ([
     display: {
       needsAccounts: true,
       needsApi: [
-        'tx.balances.transfer'
       ]
     },
     i18n: {
