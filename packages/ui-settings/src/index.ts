@@ -14,7 +14,7 @@ typeRegistry.register({
   AssetOptions: { total_supply: 'Balance' },
   Topic: 'u256',
   Value: 'u256',
-  Amount: 'u256',
+  Amount: 'u128',
   PermissionOptions: {
     update_permission: 'Option<AccountId>',
     mint: 'Option<AccountId>',
