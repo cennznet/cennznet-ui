@@ -7,17 +7,19 @@ import { I18nProps } from '@polkadot/ui-app/types';
 import './SideBar.css';
 
 import React from 'react';
+import { withRouter } from 'react-router';
+
 import store from 'store';
+import { withMulti } from '@polkadot/ui-api/index';
 import { Button, Icon, Menu } from '@polkadot/ui-app/index';
 
 import routing from '../routing';
 import translate from '../translate';
 import Item from './Item';
+import NodeInfo from './NodeInfo';
 import getLogo from './logos';
 
-type Props = I18nProps & {
-  children?: React.ReactNode
-};
+type Props = I18nProps;
 
 type State = {
   isCollapsed: boolean
@@ -37,7 +39,6 @@ class SideBar extends React.PureComponent<Props, State> {
   }
 
   render () {
-    const { children } = this.props;
     const { isCollapsed } = this.state;
 
     return (
@@ -55,10 +56,11 @@ class SideBar extends React.PureComponent<Props, State> {
           {
             isCollapsed
               ? null
-              : children
+              : <NodeInfo />
           }
           {this.renderCollapse()}
         </Menu>
+        {this.renderToggleBar()}
       </div>
     );
   }
@@ -100,15 +102,17 @@ class SideBar extends React.PureComponent<Props, State> {
   }
 
   private renderRoutes () {
+    const { isCollapsed } = this.state;
     const { t } = this.props;
 
     return routing.routes.map((route, index) => (
       route
         ? (
           <Item
+            isCollapsed={isCollapsed}
             key={route.name}
-            t={t}
             route={route}
+            t={t}
           />
         )
         : (
@@ -133,6 +137,16 @@ class SideBar extends React.PureComponent<Props, State> {
     );
   }
 
+  private renderToggleBar () {
+    return (
+      <div
+        className='apps--SideBar-toggle'
+        onClick={this.collapse}
+      >
+      </div>
+    );
+  }
+
   private renderWiki () {
     return null;
 
@@ -150,4 +164,8 @@ class SideBar extends React.PureComponent<Props, State> {
   }
 }
 
-export default translate(SideBar);
+export default withMulti(
+  SideBar,
+  translate,
+  withRouter
+);
