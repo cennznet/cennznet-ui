@@ -8,7 +8,7 @@ import { ApiProps } from '@polkadot/ui-api/types';
 
 import BN from 'bn.js';
 import React from 'react';
-import { IExtrinsic } from '@polkadot/types';
+import { IExtrinsic } from '@polkadot/types/types';
 import { AddressSummary, InputAddress, InputBalance, InputNumber } from '@polkadot/ui-app/index';
 import { withApi, withMulti } from '@polkadot/ui-api/index';
 import { QueueConsumer } from '@polkadot/ui-app/Status/Context';

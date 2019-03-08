@@ -9,7 +9,7 @@ import typeRegistry from '@polkadot/types/codec/typeRegistry';
 import { CHAINS, ENDPOINTS, LANGUAGES, UIMODES, UITHEMES } from './defaults';
 import { ChainsInfo, Options, SettingsStruct } from './types';
 
-typeRegistry.register({
+typeRegistry().register({
   AssetId: 'u32',
   AssetOptions: { total_supply: 'Balance' },
   Topic: 'u256',

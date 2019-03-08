@@ -3,13 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { I18nProps } from '@polkadot/ui-app/types';
-import { DerivedFees, DerivedBalances } from '@polkadot/api-derive/types';
+import { DerivedFees } from '@polkadot/api-derive/types';
 import { IExtrinsic } from '@polkadot/types/types';
 import { ExtraFees } from './types';
 
 import BN from 'bn.js';
 import React from 'react';
-import { Method } from '@polkadot/types';
+import { Method, u32, Balance } from '@polkadot/types';
 import { withCalls } from '@polkadot/ui-api/index';
 import { Icon } from '@polkadot/ui-app/index';
 import { formatBalance } from '@polkadot/ui-util';
