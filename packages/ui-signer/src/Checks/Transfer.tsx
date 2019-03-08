@@ -9,18 +9,16 @@ import { ExtraFees } from './types';
 import BN from 'bn.js';
 import React from 'react';
 import { Compact } from '@polkadot/types';
-import { withCall, withMulti } from '@polkadot/ui-api/index';
+import { withMulti } from '@polkadot/ui-api/index';
 import { Icon } from '@polkadot/ui-app/index';
 import { formatBalance } from '@polkadot/ui-util';
 
 import translate from '../translate';
-import { ZERO_BALANCE } from './constants';
 
 type Props = I18nProps & {
   assetId?: BN,
   amount: BN | Compact,
   fees: DerivedFees,
-  balances_votingBalance?: DerivedBalances,
   recipientId: string,
   onChange: (fees: ExtraFees) => void
 };
@@ -39,12 +37,8 @@ class Transfer extends React.PureComponent<Props, State> {
     isNoEffect: false
   };
 
-  static getDerivedStateFromProps ({ amount, balances_votingBalance = ZERO_BALANCE, fees, onChange }: Props): State {
+  static getDerivedStateFromProps ({ amount, fees, onChange }: Props): State {
     let extraFees = fees.transferFee;
-
-    if (balances_votingBalance.votingBalance.isZero()) {
-      extraFees = extraFees.add(fees.creationFee);
-    }
 
     const extraAmount = amount instanceof Compact ? amount.toBn() : new BN(amount);
     const isCreation = false;
@@ -56,7 +50,7 @@ class Transfer extends React.PureComponent<Props, State> {
       extraWarn
     };
 
-    onChange(update);
+    // onChange(update);
 
     return {
       ...update,
@@ -92,6 +86,5 @@ class Transfer extends React.PureComponent<Props, State> {
 
 export default withMulti(
   Transfer,
-  translate,
-  withCall('derive.balances.votingBalance', { paramName: 'recipientId' })
+  translate
 );

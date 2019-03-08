@@ -36,7 +36,8 @@ type State = ExtraFees & {
 };
 
 type Props = I18nProps & {
-  balances_fees?: DerivedFees,
+  transactionByteFee?: BN,
+  transactionBaseFee?: BN,
   token_balance?: any,
   spending_balance?: any,
   accountId?: string | null,
@@ -69,13 +70,13 @@ class FeeDisplay extends React.PureComponent<Props, State> {
     spendBalance: new BN(0)
   };
 
-  static getDerivedStateFromProps ({ accountId, token_balance, spending_balance, extrinsic, balances_fees = ZERO_FEES, system_accountNonce = new BN(0) }: Props, prevState: State): State | null {
+  static getDerivedStateFromProps ({ accountId, token_balance, spending_balance, extrinsic, transactionByteFee = new BN(0), transactionBaseFee = new BN(0), system_accountNonce = new BN(0) }: Props, prevState: State): State | null {
     if (!accountId || !extrinsic) {
       return null;
     }
 
-    let tokenBalance = token_balance ? new Balance(token_balance).toBn() : new BN(0);
-    let spendingBalance = spending_balance ? new Balance(spending_balance).toBn() : new BN(0);
+    let tokenBalance = token_balance ? new Balance(token_balance.unwrapOr(0)).toBn() : new BN(0);
+    let spendingBalance = spending_balance ? new Balance(spending_balance.unwrapOr(0)).toBn() : new BN(0);
 
     const fn = Method.findFunction(extrinsic.callIndex);
     const extMethod = fn.method;
@@ -96,8 +97,8 @@ class FeeDisplay extends React.PureComponent<Props, State> {
       ? prevState.extraWarn
       : false;
     const allFees = extraFees
-      .add(balances_fees.transactionBaseFee)
-      .add(balances_fees.transactionByteFee.muln(txLength));
+      .add(transactionBaseFee)
+      .add(transactionByteFee.muln(txLength));
 
     const hasAvailable = spendingBalance.gte(allFees) && tokenBalance.gte(extraAmount);
     const isRemovable = false; // TODO
@@ -192,10 +193,10 @@ class FeeDisplay extends React.PureComponent<Props, State> {
   }
 
   private renderProposal () {
-    const { extrinsic, balances_fees } = this.props;
+    const { extrinsic, transactionBaseFee, transactionByteFee } = this.props;
     const { extMethod, extSection } = this.state;
 
-    if (!balances_fees || !extrinsic || extSection !== 'democracy' || extMethod !== 'propose') {
+    if (!transactionBaseFee || !transactionByteFee || !extrinsic || extSection !== 'democracy' || extMethod !== 'propose') {
       return null;
     }
 
@@ -204,17 +205,17 @@ class FeeDisplay extends React.PureComponent<Props, State> {
     return (
       <Proposal
         deposit={deposit}
-        fees={balances_fees}
+        fees={{ ...ZERO_FEES, transactionBaseFee, transactionByteFee }}
         onChange={this.onExtraUpdate}
       />
     );
   }
 
   private renderTransfer () {
-    const { extrinsic, balances_fees } = this.props;
+    const { extrinsic, transactionBaseFee, transactionByteFee } = this.props;
     const { extMethod, extSection } = this.state;
 
-    if (!balances_fees || !extrinsic || extSection !== 'genericAsset' || extMethod !== 'transfer') {
+    if (!transactionBaseFee || !transactionByteFee || !extrinsic || extSection !== 'genericAsset' || extMethod !== 'transfer') {
       return null;
     }
 
@@ -224,7 +225,7 @@ class FeeDisplay extends React.PureComponent<Props, State> {
       <Transfer
         assetId={assetId}
         amount={amount}
-        fees={balances_fees}
+        fees={{ ...ZERO_FEES, transactionBaseFee, transactionByteFee }}
         recipientId={recipientId}
         onChange={this.onExtraUpdate}
       />
@@ -282,7 +283,8 @@ const withKeys = (Component: React.ComponentType<Props>) => (props: Props) => <C
 export default translate(
   withKeys(
     withCalls<Props>(
-      'derive.balances.fees',
+      ['query.fees.transactionBaseFee', { propName: 'transactionBaseFee' }],
+      ['query.fees.transactionByteFee', { propName: 'transactionByteFee' }],
       ['rpc.state.getStorage', { paramName: 'accountKeyToken', propName: 'token_balance' }],
       ['rpc.state.getStorage', { paramName: 'accountKeySpending', propName: 'spending_balance' }],
       ['query.system.accountNonce', { paramName: 'accountId' }]
