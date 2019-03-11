@@ -11,15 +11,15 @@ import { ChainsInfo, Options, SettingsStruct } from './types';
 
 typeRegistry().register({
   AssetId: 'u32',
-  AssetOptions: { total_supply: 'Balance' },
   Topic: 'u256',
   Value: 'u256',
   Amount: 'u128',
   PermissionOptions: {
-    update_permission: 'Option<AccountId>',
+    update: 'Option<AccountId>',
     mint: 'Option<AccountId>',
     burn: 'Option<AccountId>'
-  }
+  },
+  AssetOptions: { initial_issuance: 'Compact<Balance>', permission: 'PermissionOptions' }
 });
 
 class Settings implements SettingsStruct {
