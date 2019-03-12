@@ -19,7 +19,16 @@ typeRegistry().register({
     mint: 'Option<AccountId>',
     burn: 'Option<AccountId>'
   },
-  AssetOptions: { initial_issuance: 'Compact<Balance>', permission: 'PermissionOptions' }
+  AssetOptions: { initial_issuance: 'Compact<Balance>', permission: 'PermissionOptions' },
+  IndividualExposure: {
+    who: 'AccountId',
+    value: 'Compact<Balance>'
+  },
+  Exposure: {
+    total: 'Compact<Balance>',
+    own: 'Compact<Balance>',
+    others: 'Vec<IndividualExposure>'
+  }
 });
 
 class Settings implements SettingsStruct {
