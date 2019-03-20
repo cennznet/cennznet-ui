@@ -28,7 +28,8 @@ typeRegistry().register({
     total: 'Compact<Balance>',
     own: 'Compact<Balance>',
     others: 'Vec<IndividualExposure>'
-  }
+  },
+  PermissionLatest: 'PermissionOptions'
 });
 
 class Settings implements SettingsStruct {
