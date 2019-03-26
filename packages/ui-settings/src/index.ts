@@ -11,8 +11,8 @@ import { ChainsInfo, Options, SettingsStruct } from './types';
 
 typeRegistry().register({
   AssetId: 'u32',
-  Topic: 'u256',
-  Value: 'u256',
+  AttestationTopic: 'u256',
+  AttestationValue: 'u256',
   Amount: 'u128',
   PermissionOptions: {
     update: 'Option<AccountId>',
