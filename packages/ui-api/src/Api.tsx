@@ -16,6 +16,9 @@ import ApiSigner from '@polkadot/ui-signer/ApiSigner';
 import { formatBalance, isTestChain } from '@polkadot/ui-util';
 import { ChainProperties } from '@polkadot/types';
 
+import * as Types from '@cennznet/types';
+import * as CustomTypes from './runtime';
+
 import ApiContext from './ApiContext';
 
 type Props = {
@@ -38,9 +41,10 @@ export default class ApiWrapper extends React.PureComponent<Props, State> {
     const { queueExtrinsic, queueSetTxStatus, url } = props;
     const provider = new WsProvider(url);
     const signer = new ApiSigner(queueExtrinsic, queueSetTxStatus);
+    const types = {...Types, ...CustomTypes};
 
     const setApi = (provider: ProviderInterface): void => {
-      const api = new ApiPromise({ provider, signer });
+      const api = new ApiPromise({ provider, signer, types });
 
       this.setState({ api }, () => {
         this.updateSubscriptions();
@@ -52,7 +56,7 @@ export default class ApiWrapper extends React.PureComponent<Props, State> {
     this.state = {
       isApiConnected: false,
       isApiReady: false,
-      api: new ApiPromise({ provider, signer }),
+      api: new ApiPromise({ provider, signer, types }),
       setApiUrl
     } as State;
   }
@@ -63,7 +67,6 @@ export default class ApiWrapper extends React.PureComponent<Props, State> {
 
   private updateSubscriptions () {
     const { api } = this.state;
-
     [
       this.subscribeIsConnected,
       this.subscribeIsReady,
