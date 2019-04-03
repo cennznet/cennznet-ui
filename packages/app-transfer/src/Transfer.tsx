@@ -31,11 +31,14 @@ type State = {
 
 const ZERO = new BN(0);
 
+// Declared and addded `ASSETID` for the initial release.
+const ASSETID = new BN(16000);
+
 class Transfer extends React.PureComponent<Props, State> {
   state: State = {
     accountId: null,
     amount: ZERO,
-    assetId: ZERO,
+    assetId: ASSETID,
     extrinsic: null,
     hasAvailable: true,
     recipientId: null
@@ -62,7 +65,7 @@ class Transfer extends React.PureComponent<Props, State> {
             />
             <InputNumber
               defaultValue={ZERO}
-              label={t('asset ID (0 for CENNZ and 10 for CENTRAPAY)')}
+              label={t('asset ID (16000 for CENNZ and 16001 for CENTRAPAY)')}
               onChange={this.onChangeAssetId}
             />
             <InputBalance
