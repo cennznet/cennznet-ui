@@ -9,7 +9,7 @@ import { ExtraFees } from './types';
 import BN from 'bn.js';
 import React from 'react';
 import { Compact } from '@polkadot/types';
-import { withCall, withMulti } from '@polkadot/ui-api';
+import { withMulti } from '@polkadot/ui-api';
 import { Icon } from '@polkadot/ui-app';
 import { formatBalance } from '@polkadot/util';
 
@@ -37,7 +37,7 @@ export class Transfer extends React.PureComponent<Props, State> {
     isNoEffect: false
   };
 
-  static getDerivedStateFromProps ({ amount, balances_votingBalance = ZERO_BALANCE, fees, onChange }: Props): State {
+  static getDerivedStateFromProps ({ amount, fees, onChange }: Props): State {
     let extraFees = new BN(fees.transferFee);
 
     const extraAmount = amount instanceof Compact ? amount.toBn() : new BN(amount);

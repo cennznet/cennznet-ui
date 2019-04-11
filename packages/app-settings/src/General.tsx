@@ -3,12 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { AppProps, I18nProps } from '@polkadot/ui-app/types';
-import { SettingsStruct } from '@polkadot/ui-settings/types';
+import { SettingsStruct } from '../../ui-settings/src/types';
 
 import React from 'react';
 import { Button, Dropdown, Input } from '@polkadot/ui-app';
 import { ActionStatus } from '@polkadot/ui-app/Status/types';
-import uiSettings from '@polkadot/ui-settings';
+import uiSettings from '../../ui-settings/src';
 
 import './index.css';
 
