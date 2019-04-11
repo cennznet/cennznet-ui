@@ -7,7 +7,7 @@ import { TypeDef } from '@polkadot/types';
 import { Props as BareProps, RawParam } from '../types';
 
 import React from 'react';
-import { Button } from '@polkadot/ui-app/index';
+import { Button } from '@polkadot/ui-app';
 import translate from '@polkadot/ui-app/translate';
 import { isUndefined } from '@polkadot/util';
 
@@ -121,7 +121,7 @@ class Vector extends React.PureComponent<Props, State> {
           const { onChange } = this.props;
 
           onChange && onChange({
-            isValid: values.reduce((result, { isValid }) => result && isValid, true),
+            isValid: values.reduce((result: boolean, { isValid }) => result && isValid, true),
             value: values.map(({ value }) => value)
           });
         }

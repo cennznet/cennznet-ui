@@ -6,7 +6,7 @@ import { BareProps, CallProps } from '@polkadot/ui-api/types';
 
 import React from 'react';
 import { Moment } from '@polkadot/types';
-import { withCall } from '@polkadot/ui-api/index';
+import { withCall } from '@polkadot/ui-api';
 
 import Elapsed from './Elapsed';
 
@@ -16,7 +16,7 @@ type Props = BareProps & CallProps & {
   timestamp_now?: Moment
 };
 
-class TimeNow extends React.PureComponent<Props> {
+export class TimeNow extends React.PureComponent<Props> {
   render () {
     const { children, className, label = '', style, timestamp_now } = this.props;
 

@@ -4,7 +4,7 @@
 
 import { Routes } from '../types';
 
-import Staking from '@polkadot/app-staking/index';
+import Staking from '@polkadot/app-staking';
 
 export default ([
   {
@@ -12,8 +12,8 @@ export default ([
     display: {
       needsApi: [
         [
-          'tx.staking.bond', // current bonding API
-          'tx.staking.stake' // previous staking API
+          'tx.staking.bond' // current bonding API
+          // 'tx.staking.stake' // previous staking API
         ]
       ]
     },

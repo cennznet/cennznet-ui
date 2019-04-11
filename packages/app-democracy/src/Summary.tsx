@@ -6,9 +6,9 @@ import { I18nProps } from '@polkadot/ui-app/types';
 
 import BN from 'bn.js';
 import React from 'react';
-import { CardSummary } from '@polkadot/ui-app/index';
-import { formatNumber } from '@polkadot/ui-util';
-import { withCalls } from '@polkadot/ui-api/index';
+import { SummaryBox, CardSummary } from '@polkadot/ui-app';
+import { withCalls } from '@polkadot/ui-api';
+import { formatNumber } from '@polkadot/util';
 
 import translate from './translate';
 
@@ -26,7 +26,7 @@ class Summary extends React.PureComponent<Props> {
     const { chain_bestNumber = new BN(0), democracy_launchPeriod = new BN(1), democracy_nextTally = new BN(0), democracy_publicPropCount, democracy_referendumCount = new BN(0), t } = this.props;
 
     return (
-      <summary>
+      <SummaryBox>
         <section>
           <CardSummary label={t('proposals')}>
             {formatNumber(democracy_publicPropCount)}
@@ -47,7 +47,7 @@ class Summary extends React.PureComponent<Props> {
             }}
           />
         </section>
-      </summary>
+      </SummaryBox>
     );
   }
 }

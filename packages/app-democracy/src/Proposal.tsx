@@ -7,9 +7,9 @@ import { I18nProps } from '@polkadot/ui-app/types';
 import BN from 'bn.js';
 import React from 'react';
 import { AccountId, Balance, Option, Proposal, Tuple, Vector } from '@polkadot/types';
-import { AddressMini, Labelled, Static } from '@polkadot/ui-app/index';
-import { withCall, withMulti } from '@polkadot/ui-api/index';
-import { formatBalance } from '@polkadot/ui-util';
+import { AddressMini, Labelled, Static } from '@polkadot/ui-app';
+import { withCall, withMulti } from '@polkadot/ui-api';
+import { formatBalance } from '@polkadot/util';
 
 import Item from './Item';
 import translate from './translate';

@@ -3,13 +3,16 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ApiProps } from '@polkadot/ui-api/types';
-import { QueueTx$ExtrinsicAdd } from '@polkadot/ui-app/Status/types';
+import { QueueTx$ExtrinsicAdd, TxCallback } from './Status/types';
 
 import React from 'react';
-import { Button } from '@polkadot/ui-app/index';
-import { QueueConsumer } from '@polkadot/ui-app/Status/Context';
-import { withApi } from '@polkadot/ui-api/index';
-import { assert } from '@polkadot/util';
+import { withApi } from '@polkadot/ui-api';
+import { assert, isFunction, isUndefined } from '@polkadot/util';
+
+import { QueueConsumer } from './Status/Context';
+import Button from './Button';
+
+type ConstructFn = () => Array<any>;
 
 type InjectedProps = {
   queueExtrinsic: QueueTx$ExtrinsicAdd;
@@ -17,20 +20,27 @@ type InjectedProps = {
 
 type Props = ApiProps & {
   accountId?: string,
+  isPrimary?: boolean,
   isDisabled?: boolean,
+  isNegative?: boolean,
   label: React.ReactNode,
-  params: Array<any>,
+  onClick?: () => any,
+  onFailed?: TxCallback,
+  onSuccess?: TxCallback,
+  onUpdate?: TxCallback,
+  params?: Array<any> | ConstructFn,
   tx: string
 };
 
 class TxButtonInner extends React.PureComponent<Props & InjectedProps> {
   render () {
-    const { accountId, isDisabled, label } = this.props;
+    const { accountId, isDisabled, isNegative, isPrimary, label } = this.props;
 
     return (
       <Button
         isDisabled={isDisabled || !accountId}
-        isPrimary
+        isNegative={isNegative}
+        isPrimary={isUndefined(isPrimary) ? !isNegative : isPrimary}
         label={label}
         onClick={this.send}
       />
@@ -38,15 +48,27 @@ class TxButtonInner extends React.PureComponent<Props & InjectedProps> {
   }
 
   private send = (): void => {
-    const { accountId, api, params, queueExtrinsic, tx } = this.props;
+    const { accountId, api, onClick, onFailed, onSuccess, onUpdate, params = [], queueExtrinsic, tx } = this.props;
+
+    assert(tx, 'Expected tx param passed to TxButton');
+
     const [section, method] = tx.split('.');
 
     assert(api.tx[section] && api.tx[section][method], `Unable to find api.tx.${section}.${method}`);
 
+    const extrinsic: any = api.tx[section][method](
+      ...(isFunction(params) ? params() : params)
+    );
+
     queueExtrinsic({
       accountId,
-      extrinsic: api.tx[section][method](...params) as any // ???
+      extrinsic,
+      txFailedCb: onFailed,
+      txSuccessCb: onSuccess,
+      txUpdateCb: onUpdate
     });
+
+    onClick && onClick();
   }
 }
 

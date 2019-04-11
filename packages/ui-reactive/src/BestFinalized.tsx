@@ -6,18 +6,18 @@ import { BareProps, CallProps } from '@polkadot/ui-api/types';
 
 import React from 'react';
 import { BlockNumber } from '@polkadot/types';
-import { withCall } from '@polkadot/ui-api/index';
-import { formatNumber } from '@polkadot/ui-util';
+import { withCall } from '@polkadot/ui-api';
+import { formatNumber } from '@polkadot/util';
 
 type Props = BareProps & CallProps & {
   children?: React.ReactNode,
   label?: string,
-  chain_bestNumberFinalised?: BlockNumber
+  chain_bestNumberFinalized?: BlockNumber
 };
 
-class BestFinalised extends React.PureComponent<Props> {
+export class BestFinalized extends React.PureComponent<Props> {
   render () {
-    const { children, className, label = '', style, chain_bestNumberFinalised } = this.props;
+    const { children, className, label = '', style, chain_bestNumberFinalized } = this.props;
 
     return (
       <div
@@ -25,8 +25,8 @@ class BestFinalised extends React.PureComponent<Props> {
         style={style}
       >
         {label}{
-          chain_bestNumberFinalised
-            ? formatNumber(chain_bestNumberFinalised)
+          chain_bestNumberFinalized
+            ? formatNumber(chain_bestNumberFinalized)
             : '-'
           }{children}
       </div>
@@ -34,4 +34,4 @@ class BestFinalised extends React.PureComponent<Props> {
   }
 }
 
-export default withCall('derive.chain.bestNumberFinalised')(BestFinalised);
+export default withCall('derive.chain.bestNumberFinalized')(BestFinalized);

@@ -6,8 +6,8 @@ import { BareProps, CallProps } from '@polkadot/ui-api/types';
 
 import React from 'react';
 import { BlockNumber } from '@polkadot/types';
-import { withCall } from '@polkadot/ui-api/index';
-import { formatNumber } from '@polkadot/ui-util';
+import { withCall } from '@polkadot/ui-api';
+import { formatNumber } from '@polkadot/util';
 
 type Props = BareProps & CallProps & {
   children?: React.ReactNode,
@@ -15,7 +15,7 @@ type Props = BareProps & CallProps & {
   chain_bestNumber?: BlockNumber
 };
 
-class BestNumber extends React.PureComponent<Props> {
+export class BestNumber extends React.PureComponent<Props> {
   render () {
     const { children, className, label = '', style, chain_bestNumber } = this.props;
 
@@ -28,7 +28,7 @@ class BestNumber extends React.PureComponent<Props> {
           chain_bestNumber
             ? formatNumber(chain_bestNumber)
             : '-'
-          }{children}
+        }{children}
       </div>
     );
   }
