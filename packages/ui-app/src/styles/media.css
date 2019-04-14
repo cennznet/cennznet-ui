@@ -70,10 +70,18 @@ th.ui--media-small {
     height: auto;
     visibility: visible;
     width: auto;
+
   }
 
   td.ui--media-small,
   th.ui--media-small {
     display: table-cell;
+  }
+}
+
+/* tabs */
+@media (max-width: 991px) {
+  .ui.menu.tabular {
+    padding-left: 5.2rem !important;
   }
 }

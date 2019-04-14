@@ -6,7 +6,7 @@ import { BareProps, CallProps } from '@polkadot/ui-api/types';
 
 import React from 'react';
 import { AccountId, AccountIndex } from '@polkadot/types';
-import { withCall } from '@polkadot/ui-api/index';
+import { withCall } from '@polkadot/ui-api';
 
 type Props = BareProps & CallProps & {
   children?: React.ReactNode,
@@ -14,7 +14,7 @@ type Props = BareProps & CallProps & {
   accounts_idAndIndex?: [AccountId?, AccountIndex?]
 };
 
-class AccountIndexDisplay extends React.PureComponent<Props> {
+export class AccountIndexDisplay extends React.PureComponent<Props> {
   render () {
     const { children, className, label = '', style, accounts_idAndIndex = [] } = this.props;
     const [, accountIndex] = accounts_idAndIndex;

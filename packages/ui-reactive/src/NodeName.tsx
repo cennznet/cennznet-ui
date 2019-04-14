@@ -6,7 +6,7 @@ import { BareProps, CallProps } from '@polkadot/ui-api/types';
 
 import React from 'react';
 import { Text } from '@polkadot/types';
-import { withCall } from '@polkadot/ui-api/index';
+import { withCall } from '@polkadot/ui-api';
 
 type Props = BareProps & CallProps & {
   children?: React.ReactNode,
@@ -14,7 +14,7 @@ type Props = BareProps & CallProps & {
   system_name?: Text
 };
 
-class NodeName extends React.PureComponent<Props> {
+export class NodeName extends React.PureComponent<Props> {
   render () {
     const { children, className, label = '', style, system_name = 'unknown' } = this.props;
 

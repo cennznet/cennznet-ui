@@ -49,13 +49,24 @@ header .ui--Button-Group {
   padding: 0.25rem 0 0 0;
 }
 
+.ui--AddressMini.summary {
+  position: relative;
+  top: -0.2rem;
+}
+
 .ui--AddressMini-info div {
   display: inline-block;
   vertical-align: middle;
 }
 
 .ui--AddressMini-address {
-  font-family: monospace;
+  &.withAddr {
+    font-family: monospace;
+  }
+
+  &.withName {
+    text-transform: uppercase;
+  }
 }
 
 .ui--AddressMini .ui--IdentityIcon {
@@ -63,7 +74,8 @@ header .ui--Button-Group {
   margin-right: 0.5rem;
 }
 
-.ui--AddressMini .ui--Balance {
+.ui--AddressMini .ui--Balance,
+.ui--AddressMini .ui--Bonded {
   font-size: 0.75rem;
   margin-top: -0.5rem;
   text-align: right;
@@ -113,12 +125,20 @@ header .ui--Button-Group {
 
 .ui--Balance,
 .ui--AddressSummary-balance,
+.ui--AddressSummary-bonded,
 .ui--AddressSummary-nonce {
   font-weight: 100;
   opacity: 0.75;
 }
 
-.ui--AddressSummary-balance {
+.ui--Bonded {
+  opacity: 1;
+  color: green;
+}
+
+.ui--AddressSummary-data+.ui--AddressSummary-balance,
+.ui--AddressSummary-data+.ui--AddressSummary-bonded,
+.ui--AddressSummary-data+.ui--AddressSummary-nonce {
   padding-top: 0.5em;
 }
 
@@ -130,6 +150,10 @@ header .ui--Button-Group {
 .ui--AddressSummary-data {
   padding: 0;
   white-space: nowrap;
+
+  .ui--AddressSummary-name {
+    text-transform: uppercase;
+  }
 }
 
 .ui--AddressSummary-data * {
@@ -190,29 +214,12 @@ header .ui--Button-Group {
   }
 }
 
-.ui--CardSummary .ui.label {
-  padding-left: 0;
-  padding-right: 0;
-  padding-top: 0;
-}
-
 .ui--Chart {
   position: relative;
   display: inline-block;
   padding: 1em 1em 0;
   height: 15vw;
   width: 15vw;
-}
-
-.ui--CardSummary-large {
-  font-size: 2.25rem;
-  font-weight: 100;
-  line-height: 2.25rem;
-  text-align: right;
-}
-
-.ui--CardSummary-progress {
-  margin: 0.25rem 0 -0.5rem !important;
 }
 
 .ui--CopyButton {
@@ -248,10 +255,10 @@ header .ui--Button-Group {
   border: 1px dashed rgba(34, 36, 38, 0.15);
   border-radius: $small-corner;
   display: flex;
-  font-size: 1.2em;
-  height: 5em;
+  font-size: 1rem;
+  height: 3.5rem;
   justify-content: center;
-  margin-bottom: 0.5rem;
+  margin: 0.25rem 0;
   width: 100% !important;
 
   &.error {
@@ -270,35 +277,57 @@ header .ui--Button-Group {
   }
 }
 
-.ui--Labelled {
-  align-items: center;
+.ui--RecentlyOffline {
+  position: absolute;
+  top: 0.75rem;
+  font-size: 12px;
+  cursor: help;
   display: flex;
-  flex: 1 1;
-  text-align: left;
+  justify-content: center;
+  left: 0.75rem;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  background: red;
+  color: #eee;
+  border-radius: 16px;
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  transition: all ease .2s;
 
-  &.label-small {
-    display: block;
+  & > * {
+    line-height: 22px;
+    overflow: hidden;
+    transition: all ease 0.25;
+  }
 
-    > label {
-      margin: 0;
-      min-width: 0;
-      padding-right: 0;
+  .badge {
+    font-weight: bold;
+    width: auto;
+  }
+
+  .detail {
+    width: 0;
+  }
+
+  &.expand {
+    width: 300px;
+
+    .badge {
+      width: 0;
+    }
+
+    .detail {
+      width: auto;
     }
   }
 
-  > .ui--Labelled-content {
-    box-sizing: border-box;
-    flex: 1 1;
-    min-width: 0;
-  }
-
-  > label {
-    flex: 0 0 15rem;
-    min-width: 15rem;
-    padding-right: 0.5rem;
-    text-align: right;
+  &.inline {
+    position: static;
+    margin: .3rem 0 .3rem .5rem;
   }
 }
+
 
 .ui--Static {
   overflow: hidden;
@@ -310,6 +339,7 @@ header .ui--Button-Group {
   position: fixed;
   right: 0.25rem;
   top: 0.25rem;
+  width: 20rem;
   z-index: 1001;
 
   .ui--IdentityIcon {
@@ -320,36 +350,35 @@ header .ui--Button-Group {
     display: block;
     text-align: right;
 
-    > .wrapper {
-      display: inline-block;
+    > .wrapper > .container {
+      align-items: center;
+      background: #00688b;
+      border-radius: $small-corner;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.25rem;
+      padding: 0 0.5rem;
+      text-align: center;
+      opacity: 0.95;
+      vertical-align: middle;
 
-      > .container {
-        align-items: center;
-        background: #00688b;
-        border-radius: $small-corner;
-        color: white;
-        display: flex;
-        margin-bottom: 0.25rem;
-        padding: 0 0.5rem;
-        text-align: center;
-        opacity: 0.95;
-        vertical-align: middle;
+      .desc {
+        flex: 1;
+        padding: 0.5rem 1rem;
 
-        .desc {
-          padding: 0.5rem 1rem;
-
-          .status {
-            font-weight: 700;
-          }
+        .status {
+          font-weight: 700;
         }
+      }
 
-        .short {
-          font-size: 2.5rem;
-          padding: 0.5rem;
+      .short {
+        font-size: 2.5rem;
+        padding: 0.5rem;
 
-          i.icon {
-            line-height: 1;
-          }
+        i.icon {
+          line-height: 1;
         }
       }
     }
@@ -363,16 +392,21 @@ header .ui--Button-Group {
     }
 
     &.completed > .wrapper > .container,
-    &.finalised > .wrapper > .container,
+    &.finalized > .wrapper > .container,
     &.sent > .wrapper > .container,
     &.success > .wrapper > .container {
       background: green;
     }
 
-    &.dropped > .wrapper > .container ,
-    &.error > .wrapper > .container ,
+    &.dropped > .wrapper > .container,
+    &.error > .wrapper > .container,
+    &.invalid > .wrapper > .container,
     &.usurped > .wrapper > .container {
       background: red;
     }
   }
+}
+
+.ui.tiny.progress {
+  font-size: .5rem;
 }

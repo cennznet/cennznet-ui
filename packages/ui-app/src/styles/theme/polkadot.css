@@ -19,6 +19,11 @@
     background-color: $button-primary-color-hover;
   }
 
+  .ui.basic.negative.button {
+    box-shadow: 0 0 0 1px rgba(215, 94, 161, 1) inset !important;
+    color: rgba(215, 94, 161, 1) !important;
+  }
+
   .ui.button,
   .ui.buttons .button,
   .ui.button:active,
@@ -90,5 +95,25 @@
 
   .ui.red.progress .bar {
     background-color: $red;
+  }
+
+  a.apps--SideBar-Item-NavLink:hover {
+    color: $nav-link;
+    transition: 0.15s;
+
+    &:hover {
+      background: rgba(0,0,0,0.05);
+    }
+  }
+
+  a.apps--SideBar-Item-NavLink-active {
+    color: $nav-link;
+    &:hover {
+      color: $nav-link;
+    }
+  }
+
+  .ui.menu.tabular .item.active {
+    border-bottom: 2px solid rgba(215, 94, 161, 1);
   }
 }

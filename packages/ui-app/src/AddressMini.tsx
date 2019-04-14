@@ -7,10 +7,12 @@ import { BareProps } from './types';
 import BN from 'bn.js';
 import React from 'react';
 import { AccountId, AccountIndex, Address, Balance } from '@polkadot/types';
-import { withCall, withMulti } from '@polkadot/ui-api/index';
+import { OfflineStatus } from '@polkadot/app-staking/types';
+import { RecentlyOffline } from '@polkadot/ui-app';
 
-import { classes, toShortAddress } from './util';
+import { classes, getAddrName, toShortAddress } from './util';
 import BalanceDisplay from './Balance';
+import BondedDisplay from './Bonded';
 import IdentityIcon from './IdentityIcon';
 
 type Props = BareProps & {
@@ -18,24 +20,22 @@ type Props = BareProps & {
   children?: React.ReactNode,
   isPadded?: boolean,
   isShort?: boolean,
-  session_validators?: Array<AccountId>,
   value?: AccountId | AccountIndex | Address | string,
+  offlineStatus?: Array<OfflineStatus>,
   withAddress?: boolean,
-  withBalance?: boolean
+  withBalance?: boolean,
+  withBonded?: boolean
 };
 
-class AddressMini extends React.PureComponent<Props> {
+export default class AddressMini extends React.PureComponent<Props> {
   render () {
-    const { children, className, isPadded = true, session_validators, style, value } = this.props;
+    const { children, className, isPadded = true, style, value } = this.props;
 
     if (!value) {
       return null;
     }
 
     const address = value.toString();
-    const isValidator = (session_validators || []).find((validator) =>
-      validator.toString() === address
-    );
 
     return (
       <div
@@ -44,27 +44,38 @@ class AddressMini extends React.PureComponent<Props> {
       >
         <div className='ui--AddressMini-info'>
           <IdentityIcon
-            isHighlight={!!isValidator}
             size={24}
             value={address}
           />
-          {this.renderAddress(address)}
+          {this.renderAddressOrName(address)}
           {children}
+          {this.renderOfflineStatus()}
         </div>
         {this.renderBalance()}
+        {this.renderBonded()}
       </div>
     );
   }
 
-  private renderAddress (address: string) {
+  private renderAddressOrName (address: string) {
     const { isShort = true, withAddress = true } = this.props;
 
     if (!withAddress) {
       return null;
     }
 
+    const name = getAddrName(address);
+
+    console.error('address', address, name);
+
     return (
-      <div className='ui--AddressMini-address'>{isShort ? toShortAddress(address) : address}</div>
+      <div className={`ui--AddressMini-address ${name ? 'withName' : 'withAddr'}`}>{
+         name || (
+          isShort
+            ? toShortAddress(address)
+            : address
+        )
+      }</div>
     );
   }
 
@@ -83,9 +94,37 @@ class AddressMini extends React.PureComponent<Props> {
       />
     );
   }
-}
 
-export default withMulti(
-  AddressMini,
-  withCall('query.session.validators')
-);
+  private renderBonded () {
+    const { value, withBonded = false } = this.props;
+
+    if (!withBonded || !value) {
+      return null;
+    }
+
+    return (
+      <BondedDisplay
+        className='ui--AddressSummary-balance'
+        label=''
+        value={value}
+      />
+    );
+  }
+
+  private renderOfflineStatus () {
+    const { value, offlineStatus } = this.props;
+
+    if (!value || !offlineStatus) {
+      return null;
+    }
+
+    return (
+      <RecentlyOffline
+        accountId={value.toString()}
+        offline={offlineStatus}
+        tooltip
+        inline
+      />
+    );
+  }
+}

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React from 'react';
-import { withCalls } from '@polkadot/ui-api/index';
+import { withCalls } from '@polkadot/ui-api';
 
 import { classes } from './util';
 import { AddressSummary, Props } from './AddressSummary';
@@ -23,6 +23,7 @@ class AddressRow extends AddressSummary {
           <div className='ui--AddressRow-details'>
             {this.renderAddress()}
             {this.renderBalance()}
+            {this.renderBonded()}
             {this.renderNonce()}
           </div>
         </div>

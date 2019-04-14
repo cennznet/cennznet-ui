@@ -11,26 +11,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { WebpackPluginServe } = require('webpack-plugin-serve');
 
-const packages = [
-  'app-accounts',
-  'app-addresses',
-  'app-democracy',
-  'app-explorer',
-  'app-extrinsics',
-  'app-js',
-  'app-settings',
-  'app-staking',
-  'app-storage',
-  'app-123code',
-  'app-toolbox',
-  'app-transfer',
-  'ui-api',
-  'ui-app',
-  'ui-params',
-  'ui-reactive',
-  'ui-signer',
-  'ui-settings'
-];
+const findPackages = require('../../scripts/findPackages');
 
 // const DEFAULT_THEME = process.env.TRAVIS_BRANCH === 'next'
 //   ? 'substrate'
@@ -119,6 +100,13 @@ function createWebpack ({ alias = {}, context, name = 'index' }) {
           ]
         },
         {
+          test: /\.md$/,
+          use: [
+            require.resolve('html-loader'),
+            require.resolve('markdown-loader')
+          ]
+        },
+        {
           test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
           use: [
             {
@@ -166,11 +154,11 @@ function createWebpack ({ alias = {}, context, name = 'index' }) {
             name: 'react',
             test: /node_modules\/(chart|i18next|react|semantic-ui)/
           },
-          vendorSodium: {
+          polkadotJs: {
             chunks: 'initial',
             enforce: true,
-            name: 'sodium',
-            test: /node_modules\/(libsodium)/
+            name: 'polkadotjs',
+            test: /node_modules\/(@polkadot\/wasm-(crypto|dalek-ed25519|schnorrkel))/
           }
         }
       }
@@ -209,8 +197,8 @@ function createWebpack ({ alias = {}, context, name = 'index' }) {
 
 module.exports = createWebpack({
   context: __dirname,
-  alias: packages.reduce((alias, pkg) => {
-    alias[`@polkadot/${pkg}`] = path.resolve(__dirname, `../${pkg}/src`);
+  alias: findPackages().reduce((alias, { dir, name }) => {
+    alias[name] = path.resolve(__dirname, `../${dir}/src`);
 
     return alias;
   }, {})
