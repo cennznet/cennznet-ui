@@ -201,5 +201,8 @@ module.exports = createWebpack({
     alias[name] = path.resolve(__dirname, `../${dir}/src`);
 
     return alias;
-  }, {})
+  }, {
+    '@polkadot/api': '@plugnet/api',
+    '@polkadot/types': '@plugnet/types',
+  })
 });

@@ -3,7 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import centralityLogo from '../static/centrality.svg';
+import substrateSmall from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
 
 export default function getLogo (isSmall: boolean) {
-  return centralityLogo;
+  return isSmall ? substrateSmall : centralityLogo;
 }
