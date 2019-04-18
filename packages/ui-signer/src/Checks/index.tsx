@@ -243,12 +243,12 @@ const generateKey = (addr: string | null | undefined, token: any) => {
   if (!addr || !token) {
     return '0x';
   }
-  const prefix = stringToU8a('ga:free:');
+  const prefix = stringToU8a('GenericAsset FreeBalance');
   const assetIdEncoded = new u32(token.toBn ? token.toBn() : token).toU8a();
   const keyEncoded = new Uint8Array(prefix.length + assetIdEncoded.length);
   keyEncoded.set(prefix);
   keyEncoded.set(assetIdEncoded, prefix.length);
-  const addrEncoded = u8aToHex(decodeAddress(addr)).substr(2);
+  const addrEncoded = xxhashAsHex(decodeAddress(addr), 128).substr(2);
 
   return xxhashAsHex(keyEncoded, 128) + addrEncoded;
 };
