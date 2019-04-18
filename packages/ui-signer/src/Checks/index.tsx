@@ -275,7 +275,7 @@ const mapProps = (props: Props): Props => {
   return {
     ...props,
     accountKeyToken: generateKey(props.accountId, assetId),
-    accountKeySpending: generateKey(props.accountId, 16001),
+    accountKeySpending: generateKey(props.accountId, 16001), // TODO: read from chain
     assetId
   };
 };

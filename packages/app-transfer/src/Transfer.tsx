@@ -31,7 +31,7 @@ type State = {
 
 const ZERO = new BN(0);
 
-// Declared and addded `ASSETID` for the initial release.
+// TODO: read from chain
 const ASSETID = new BN(16000);
 
 class Transfer extends React.PureComponent<Props, State> {
@@ -65,7 +65,10 @@ class Transfer extends React.PureComponent<Props, State> {
             />
             <InputNumber
               defaultValue={ZERO}
-              label={t('asset ID (16000 for CENNZ and 16001 for CENTRAPAY)')}
+              label={
+                /* TODO: read from chain*/
+                t('asset ID (16000 for CENNZ and 16001 for CENTRAPAY)')
+              }
               onChange={this.onChangeAssetId}
             />
             <InputBalance
