@@ -8,13 +8,13 @@ import { ExtraFees } from './types';
 
 import BN from 'bn.js';
 import React from 'react';
-import { Method, u32, Balance } from '@polkadot/types';
+import { Method, u32, Balance, Compact } from '@polkadot/types';
 import { withCalls } from '@polkadot/ui-api';
 import { Icon } from '@polkadot/ui-app';
 import { formatBalance } from '@polkadot/ui-util';
 import { compactToU8a, stringToU8a } from '@polkadot/util';
 import { decodeAddress } from '@polkadot/keyring';
-import { xxhashAsHex } from '@polkadot/util-crypto';
+import { xxhashAsHex, blake2AsHex } from '@polkadot/util-crypto';
 
 import translate from '../translate';
 import Proposal from './Proposal';
@@ -249,8 +249,7 @@ const generateKey = (addr: string | null | undefined, token: any) => {
   keyEncoded.set(prefix);
   keyEncoded.set(assetIdEncoded, prefix.length);
   const addrEncoded = xxhashAsHex(decodeAddress(addr), 128).substr(2);
-
-  return xxhashAsHex(keyEncoded, 128) + addrEncoded;
+  return blake2AsHex(Compact.addLengthPrefix(keyEncoded), 256) + addrEncoded;
 };
 
 const getAssetId = (props: Props): BN | number => {
