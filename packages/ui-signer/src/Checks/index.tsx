@@ -11,8 +11,7 @@ import React from 'react';
 import { Method, u32, Balance, Compact } from '@polkadot/types';
 import { withCalls } from '@polkadot/ui-api';
 import { Icon } from '@polkadot/ui-app';
-import { formatBalance } from '@polkadot/ui-util';
-import { compactToU8a, stringToU8a } from '@polkadot/util';
+import { compactToU8a, stringToU8a, formatBalance } from '@polkadot/util';
 import { decodeAddress } from '@polkadot/keyring';
 import { xxhashAsHex, blake2AsHex } from '@polkadot/util-crypto';
 
