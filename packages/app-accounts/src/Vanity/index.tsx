@@ -11,7 +11,7 @@ import './index.css';
 
 import React from 'react';
 import { Button, Dropdown, Input } from '@polkadot/ui-app';
-import uiSettings from '@polkadot/ui-settings';
+import uiSettings from '../../../ui-settings/src';
 
 import generator from '../vanitygen';
 import matchRegex from '../vanitygen/regex';
