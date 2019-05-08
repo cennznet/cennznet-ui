@@ -56,6 +56,7 @@ header .ui--Button-Group {
   .ui--AddressMini-info,
   .ui--IdentityIcon {
     display: inline-block;
+    position:relative;
     vertical-align: middle;
   }
 
@@ -216,14 +217,6 @@ header .ui--Button-Group {
   }
 }
 
-.ui--Chart {
-  position: relative;
-  display: inline-block;
-  padding: 1em 1em 0;
-  height: 15vw;
-  width: 15vw;
-}
-
 .ui--CopyButton {
   cursor: copy !important;
   margin-left: 0.25rem !important;
@@ -325,8 +318,11 @@ header .ui--Button-Group {
   }
 
   &.inline {
-    position: static;
-    margin: .3rem 0 .3rem .5rem;
+    position: absolute;
+    left: auto;
+    right: -2.75rem;
+    top: -1rem;
+    z-index: 1;
   }
 }
 

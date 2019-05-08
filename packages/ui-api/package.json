@@ -1,6 +1,6 @@
 {
   "name": "@polkadot/ui-api",
-  "version": "0.33.0-beta.12",
+  "version": "0.33.0-beta.29",
   "description": "A collection of RxJs React components the Polkadot JS API",
   "main": "index.js",
   "keywords": [
@@ -34,7 +34,7 @@
     "@cennznet/types": "^0.12.0",
     "@cennznet/util": "^0.12.0",
     "@plugnet/api": "^0.77.101",
-    "@polkadot/api": "^0.77.0-beta.4",
-    "rxjs-compat": "^6.3.2"
+    "@polkadot/api": "^0.78.0-beta.11",
+    "rxjs-compat": "^6.4.0"
   }
 }

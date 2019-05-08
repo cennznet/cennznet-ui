@@ -2,10 +2,14 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { Index } from '@polkadot/types';
+import { IExtrinsic } from '@polkadot/types/types';
 import { ApiProps } from '@polkadot/ui-api/types';
-import { QueueTx$ExtrinsicAdd, TxCallback } from './Status/types';
+import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
+import { QueueTx, QueueTx$ExtrinsicAdd, TxCallback } from './Status/types';
 
 import React from 'react';
+import { SubmittableResult } from '@polkadot/api';
 import { withApi } from '@polkadot/ui-api';
 import { assert, isFunction, isUndefined } from '@polkadot/util';
 
@@ -16,10 +20,12 @@ type ConstructFn = () => Array<any>;
 
 type InjectedProps = {
   queueExtrinsic: QueueTx$ExtrinsicAdd;
+  txqueue: Array<QueueTx>;
 };
 
 type Props = ApiProps & {
   accountId?: string,
+  accountNonce?: Index,
   isPrimary?: boolean,
   isDisabled?: boolean,
   isNegative?: boolean,
@@ -29,16 +35,30 @@ type Props = ApiProps & {
   onSuccess?: TxCallback,
   onUpdate?: TxCallback,
   params?: Array<any> | ConstructFn,
-  tx: string
+  tx?: string,
+  extrinsic?: IExtrinsic | SubmittableExtrinsic
 };
 
-class TxButtonInner extends React.PureComponent<Props & InjectedProps> {
+type InnerProps = Props & InjectedProps;
+
+type State = {
+  extrinsic: SubmittableExtrinsic,
+  isSending: boolean
+};
+
+class TxButtonInner extends React.PureComponent<InnerProps> {
+  state = {
+    isSending: false
+  } as State;
+
   render () {
     const { accountId, isDisabled, isNegative, isPrimary, label } = this.props;
+    const { isSending } = this.state;
 
     return (
       <Button
-        isDisabled={isDisabled || !accountId}
+        isDisabled={isSending || isDisabled || !accountId}
+        isLoading={isSending}
         isNegative={isNegative}
         isPrimary={isUndefined(isPrimary) ? !isNegative : isPrimary}
         label={label}
@@ -48,27 +68,52 @@ class TxButtonInner extends React.PureComponent<Props & InjectedProps> {
   }
 
   private send = (): void => {
-    const { accountId, api, onClick, onFailed, onSuccess, onUpdate, params = [], queueExtrinsic, tx } = this.props;
+    const { accountId, api, onClick, onUpdate, params = [], queueExtrinsic, tx = '', extrinsic: propsExtrinsic } = this.props;
+    let extrinsic: any;
 
-    assert(tx, 'Expected tx param passed to TxButton');
+    if (propsExtrinsic) {
+      extrinsic = propsExtrinsic;
+    } else {
+      const [section, method] = tx.split('.');
 
-    const [section, method] = tx.split('.');
+      assert(api.tx[section] && api.tx[section][method], `Unable to find api.tx.${section}.${method}`);
 
-    assert(api.tx[section] && api.tx[section][method], `Unable to find api.tx.${section}.${method}`);
+      extrinsic = api.tx[section][method](...(
+        isFunction(params)
+          ? params()
+          : params
+      ));
+    }
 
-    const extrinsic: any = api.tx[section][method](
-      ...(isFunction(params) ? params() : params)
-    );
+    assert(extrinsic, 'Expected generated extrinsic passed to TxButton');
+
+    this.setState({ isSending: true });
 
     queueExtrinsic({
       accountId,
       extrinsic,
-      txFailedCb: onFailed,
-      txSuccessCb: onSuccess,
+      txFailedCb: this.onFailed,
+      txSuccessCb: this.onSuccess,
       txUpdateCb: onUpdate
     });
 
     onClick && onClick();
+  }
+
+  private onFailed = (result: SubmittableResult): void => {
+    const { onFailed } = this.props;
+
+    this.setState({ isSending: false });
+
+    onFailed && onFailed(result);
+  }
+
+  private onSuccess = (result: SubmittableResult): void => {
+    const { onSuccess } = this.props;
+
+    this.setState({ isSending: false });
+
+    onSuccess && onSuccess(result);
   }
 }
 
@@ -76,10 +121,11 @@ class TxButton extends React.PureComponent<Props> {
   render () {
     return (
       <QueueConsumer>
-        {({ queueExtrinsic }) => (
+        {({ queueExtrinsic, txqueue }) => (
           <TxButtonInner
             {...this.props}
             queueExtrinsic={queueExtrinsic}
+            txqueue={txqueue}
           />
         )}
       </QueueConsumer>
