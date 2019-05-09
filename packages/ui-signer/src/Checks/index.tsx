@@ -248,7 +248,7 @@ const generateKey = (addr: string | null | undefined, token: any) => {
   keyEncoded.set(prefix);
   keyEncoded.set(assetIdEncoded, prefix.length);
   const addrEncoded = xxhashAsHex(decodeAddress(addr), 128).substr(2);
-  return blake2AsHex(Compact.addLengthPrefix(keyEncoded), 256) + addrEncoded;
+  return blake2AsHex(keyEncoded, 256) + addrEncoded;
 };
 
 const getAssetId = (props: Props): BN | number => {
