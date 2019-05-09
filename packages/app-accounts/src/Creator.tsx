@@ -101,7 +101,7 @@ class Creator extends React.PureComponent<Props, State> {
       { value: 'raw', text: t('Raw seed') }
     ];
 
-    if (isDevelopment) {
+    if (isDevelopment || true) {
       seedOptions.push({ value: 'dev', text: t('Development') });
     }
 
