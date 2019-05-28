@@ -155,7 +155,7 @@ class SideBar extends React.PureComponent<Props> {
       <Menu.Item className='apps--SideBar-Item'>
         <a
           className='apps--SideBar-Item-NavLink'
-          href='https://github.com/polkadot-js/apps'
+          href='https://github.com/cennznet/cennznet-ui'
           target='_blank'
         >
           <Icon name='github' /><span className='text'>GitHub</span>
@@ -195,7 +195,7 @@ class SideBar extends React.PureComponent<Props> {
       <Menu.Item className='apps--SideBar-Item'>
         <a
           className='apps--SideBar-Item-NavLink'
-          href='https://wiki.polkadot.network'
+          href='https://cennznetdocs.com'
           target='_blank'
         >
           <Icon name='book' /><span className='text'>Wiki</span>
