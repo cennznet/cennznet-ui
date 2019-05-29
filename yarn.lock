@@ -845,7 +845,7 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@cennznet/types@^0.12.3":
+"@cennznet/types@^0.13.6":
   version "0.13.6"
   resolved "https://registry.yarnpkg.com/@cennznet/types/-/types-0.13.6.tgz#77ce67d432ecf30f59e75c26bd6a458affdee2b3"
   integrity sha512-ELMabxQ2PbM5xHpscmfJq4uX0ld+oT3Xixl/SD5GhX4wfrYskjsGwfp7TpmbmMRiBgCfdNSCBTZlvKYXDzXbzQ==
@@ -853,7 +853,7 @@
     "@plugnet/types" "^0.78.100"
     "@plugnet/util" "^0.90.100"
 
-"@cennznet/util@^0.12.3":
+"@cennznet/util@^0.13.6":
   version "0.13.6"
   resolved "https://registry.yarnpkg.com/@cennznet/util/-/util-0.13.6.tgz#b5695adf72b1b991f18cbda651f73630c54b4907"
   integrity sha512-uxNoSs7RhuW/w+YVkU2hBxiFq84jTIJfsaIl4zFV/BBXFDKae8TwgVRCKmyX3PjTD7OPJgUVrbXQBTBIuaCprA==
