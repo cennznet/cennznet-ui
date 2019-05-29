@@ -14,8 +14,9 @@ before_install:
 script:
   - yarn polkadot-dev-travis-build
 deploy:
+  provider: pages
   skip_cleanup: true
-  provider: script
-  script: yarn polkadot-dev-travis-deploy
+  github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  keep_history: true
   on:
     branch: master
