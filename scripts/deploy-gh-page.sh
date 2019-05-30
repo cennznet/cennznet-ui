@@ -44,9 +44,7 @@ function deploy_all () {
 
     GH_PAGES_DST="."
 
-    if [ "$TRAVIS_BRANCH" == "next" ]; then
-      GH_PAGES_DST="next"
-    fi
+    cp CNAME $GH_PAGES_SRC
 
     yarn run gh-pages --dist $GH_PAGES_SRC --dest $GH_PAGES_DST
 
