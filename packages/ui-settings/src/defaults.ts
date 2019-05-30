@@ -13,9 +13,12 @@ const CRYPTOS: Options = [
 
 const ENDPOINTS: Options = [
   {
-    text: 'Rimu Unfra',
-    value: 'wss://rimu.unfrastructure.io/public/ws',
-    host: 'rimu.unfrastructure.io'
+    text: 'Rimu testnet',
+    value: 'wss://rimu.unfrastructure.io/public/ws'
+  },
+  {
+    text: 'Kauri internal testnet',
+    value: 'wss://cennznet-node-0.centrality.me:9944/'
   },
   { text: 'Local Node (127.0.0.1:9944)', value: 'ws://127.0.0.1:9944/', host: 'localhost' }
 ];
