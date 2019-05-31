@@ -16,6 +16,7 @@ import BalanceDisplay from './Balance';
 import BondedDisplay from './Bonded';
 import IdentityIcon from './IdentityIcon';
 import translate from './translate';
+import { AssetId } from '@cennznet/types';
 
 export type Props = I18nProps & {
   accounts_idAndIndex?: [AccountId?, AccountIndex?],
@@ -26,6 +27,7 @@ export type Props = I18nProps & {
   name?: string,
   value: AccountId | AccountIndex | Address | string | null,
   withBalance?: boolean,
+  assetId?: AssetId | string,
   withBonded?: boolean,
   withIndex?: boolean,
   identIconSize?: number,
@@ -137,7 +139,7 @@ class AddressSummary extends React.PureComponent<Props> {
   }
 
   protected renderBalance () {
-    const { accounts_idAndIndex = [], balance, t, value, withBalance = true } = this.props;
+    const { accounts_idAndIndex = [], balance, t, value, withBalance = true, assetId = new AssetId(16001) } = this.props;
     const [_accountId] = accounts_idAndIndex;
     const accountId = _accountId || value;
 
@@ -151,6 +153,7 @@ class AddressSummary extends React.PureComponent<Props> {
         className='ui--AddressSummary-balance'
         label={t('balance ')}
         params={accountId}
+        assetId={assetId}
       />
     );
   }
