@@ -44,8 +44,6 @@ function deploy_all () {
 
     GH_PAGES_DST="."
 
-    cp CNAME $GH_PAGES_SRC
-
     yarn run gh-pages --dist $GH_PAGES_SRC --dest $GH_PAGES_DST
 
     echo ""
