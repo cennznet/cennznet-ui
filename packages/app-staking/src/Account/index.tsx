@@ -79,6 +79,7 @@ class Account extends React.PureComponent<Props, State> {
         <AddressSummary
           name={name}
           value={accountId}
+          assetId={'CENNZ-T'}
           identIconSize={96}
           withBonded
           withIndex={false}
