@@ -12,12 +12,8 @@ import { Api, WsProvider } from '@cennznet/api';
 import defaults from '@polkadot/rpc-provider/defaults';
 import { InputNumber } from '@polkadot/ui-app/InputNumber';
 import keyring from '@polkadot/ui-keyring';
-import ApiSigner from '@polkadot/ui-signer/ApiSigner';
 import { ChainProperties } from '@polkadot/types';
 import { formatBalance, isTestChain } from '@polkadot/util';
-
-import * as Types from '@cennznet/types';
-import * as CustomTypes from './runtime';
 
 import ApiContext from './ApiContext';
 
@@ -42,10 +38,8 @@ export default class ApiWrapper extends React.PureComponent<Props, State> {
   constructor (props: Props) {
     super(props);
 
-    const { queueExtrinsic, queueSetTxStatus, url } = props;
+    const { url } = props;
     const provider = new WsProvider(url);
-    const signer = new ApiSigner(queueExtrinsic, queueSetTxStatus);
-    const types = { ...Types, ...CustomTypes };
 
     const setApi = (provider: ProviderInterface): void => {
       api = new Api(provider) as any as ApiPromise;
