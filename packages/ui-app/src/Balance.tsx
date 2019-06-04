@@ -11,9 +11,11 @@ import { formatBalance } from '@polkadot/util';
 import { Balance } from '@polkadot/ui-reactive';
 
 import { classes } from './util';
+import { AssetId } from '@cennznet/types';
 
 export type Props = BareProps & {
   balance?: BN | Array<BN>,
+  assetId?: AssetId | string,
   label?: string,
   params?: AccountId | AccountIndex | Address | string | Uint8Array | null,
   withLabel?: boolean
@@ -21,7 +23,7 @@ export type Props = BareProps & {
 
 export default class BalanceDisplay extends React.PureComponent<Props> {
   render () {
-    const { balance, className, label, params, style } = this.props;
+    const { balance, className, label, params, style, assetId } = this.props;
 
     if (!params) {
       return null;
@@ -34,6 +36,7 @@ export default class BalanceDisplay extends React.PureComponent<Props> {
           className={classes('ui--Balance', className)}
           label={label}
           params={params}
+          assetId={assetId}
           style={style}
         />
       );

@@ -845,6 +845,30 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
+"@cennznet/api@^0.13.6":
+  version "0.13.6"
+  resolved "https://registry.yarnpkg.com/@cennznet/api/-/api-0.13.6.tgz#bede5b5ea788d782d1ff5cd0f054a2a9afe670da"
+  integrity sha512-ZHTda9ehlcqBtGdQA/SEQjOnnaPibjrBNAEoeDtxSoYd9n/x8UzO/i1vzSUnyhzuaZCIZQJaojV97IONadpG3g==
+  dependencies:
+    "@cennznet/types" "^0.13.6"
+    "@plugnet/api" "^0.78.100"
+    "@plugnet/extrinsics" "^0.78.100"
+    "@plugnet/rpc-core" "^0.78.100"
+    "@plugnet/rpc-provider" "^0.78.100"
+    "@plugnet/storage" "^0.78.100"
+    "@plugnet/types" "^0.78.100"
+    eventemitter3 "^3.1.0"
+
+"@cennznet/crml-cennzx-spot@0.5.5":
+  version "0.5.5"
+  resolved "https://registry.yarnpkg.com/@cennznet/crml-cennzx-spot/-/crml-cennzx-spot-0.5.5.tgz#f568edfc02d5f06d82dcb15ab2f7e3b134689d2e"
+  integrity sha512-b+AQdUzcJAB/blFR2RqlZCdVUcE3DJTcWJ/qsTMekfQ9Elb4sXC0D7W3cELKVsRk5akQFMKF7KAhef80tWkTAw==
+
+"@cennznet/crml-generic-asset@^0.8.1":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@cennznet/crml-generic-asset/-/crml-generic-asset-0.8.1.tgz#e9db5d499eb8f2b51d1b8295320b21c627b4149d"
+  integrity sha512-OZc48HmdJQyBD5xjUEdsTy3K5PrHWrc+X6d8IMYPUUtWJqs7YLxwgiYxKeMlM3Uh3GFm08PJNfyM2Z6vFO0udA==
+
 "@cennznet/types@^0.13.6":
   version "0.13.6"
   resolved "https://registry.yarnpkg.com/@cennznet/types/-/types-0.13.6.tgz#77ce67d432ecf30f59e75c26bd6a458affdee2b3"
