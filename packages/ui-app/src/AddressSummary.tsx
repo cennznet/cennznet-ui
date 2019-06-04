@@ -143,14 +143,7 @@ class AddressSummary extends React.PureComponent<Props> {
     const [_accountId] = accounts_idAndIndex;
     const accountId = _accountId || value;
 
-    let label;
-    if (assetId === 'CENTRAPAY-T') {
-      label = 'CENTRAPAY ';
-    } else if (assetId === 'CENNZ-T') {
-      label = 'CENNZ ';
-    } else {
-      label = t('balance ');
-    }
+    const label = typeof assetId === 'string' ? assetId + ' ' : t('balance ');
 
     if (!withBalance || !accountId) {
       return null;
