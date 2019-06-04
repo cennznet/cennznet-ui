@@ -139,9 +139,18 @@ class AddressSummary extends React.PureComponent<Props> {
   }
 
   protected renderBalance () {
-    const { accounts_idAndIndex = [], balance, t, value, withBalance = true, assetId = new AssetId(16001) } = this.props;
+    const { accounts_idAndIndex = [], balance, t, value, withBalance = true, assetId = 'CENTRAPAY-T' } = this.props;
     const [_accountId] = accounts_idAndIndex;
     const accountId = _accountId || value;
+
+    let label;
+    if (assetId === 'CENTRAPAY-T') {
+      label = 'CENTRAPAY ';
+    } else if (assetId === 'CENNZ-T') {
+      label = 'CENNZ ';
+    } else {
+      label = t('balance ');
+    }
 
     if (!withBalance || !accountId) {
       return null;
@@ -151,7 +160,7 @@ class AddressSummary extends React.PureComponent<Props> {
       <BalanceDisplay
         balance={balance}
         className='ui--AddressSummary-balance'
-        label={t('balance ')}
+        label={label}
         params={accountId}
         assetId={assetId}
       />
