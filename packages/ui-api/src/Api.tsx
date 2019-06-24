@@ -17,9 +17,17 @@ import { ChainProperties } from '@polkadot/types';
 import { formatBalance, isTestChain } from '@polkadot/util';
 
 import * as Types from '@cennznet/types';
-import * as CustomTypes from './runtime';
 
 import ApiContext from './ApiContext';
+
+const CustomTypes = {
+  "Item": "u32",
+  "ItemId": "u64",
+  "AssetId": "u32",
+  "AssetIdOf": "u32",
+  "Price": "(AssetId, Balance)",
+  "PriceOf": "(AssetId, Balance)"
+};
 
 let api: ApiPromise;
 
