@@ -8,17 +8,19 @@ import React from 'react';
 import { AccountId, AccountIndex, Address, Balance } from '@polkadot/types';
 import { withCalls } from '@polkadot/ui-api';
 import { formatBalance } from '@polkadot/util';
+import { AssetId } from '@cennznet/types';
 
 type Props = BareProps & CallProps & {
   children?: React.ReactNode,
   label?: string,
   params?: AccountId | AccountIndex | Address | string | Uint8Array | null,
-  balances_freeBalance?: Balance
+  assetId?: AssetId | string,
+  genericAsset_freeBalance?: Balance
 };
 
 export class BalanceDisplay extends React.PureComponent<Props> {
   render () {
-    const { children, className, label = '', style, balances_freeBalance } = this.props;
+    const { children, className, label = '', style, genericAsset_freeBalance } = this.props;
 
     return (
       <div
@@ -26,8 +28,8 @@ export class BalanceDisplay extends React.PureComponent<Props> {
         style={style}
       >
         {label}{
-          balances_freeBalance
-            ? formatBalance(balances_freeBalance)
+          genericAsset_freeBalance
+            ? formatBalance(genericAsset_freeBalance)
             : '0'
           }{children}
       </div>
@@ -36,5 +38,5 @@ export class BalanceDisplay extends React.PureComponent<Props> {
 }
 
 export default withCalls<Props>(
-  ['query.balances.freeBalance', { paramName: 'params' }]
+  ['derive.genericAsset.freeBalance', { paramName: ['assetId', 'params'] }]
 )(BalanceDisplay);

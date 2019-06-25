@@ -92,9 +92,14 @@ export default function withCall<P extends ApiProps> (endpoint: string, { at, at
       }
 
       private getParams (props: any): [boolean, Array<any>] {
-        const paramValue = paramName
-          ? props[paramName]
-          : undefined;
+        let paramValue;
+        if (Array.isArray(paramName)) {
+          paramValue = paramName.map(name => props[name]);
+        } else {
+          paramValue = paramName
+            ? props[paramName]
+            : undefined;
+        }
 
         if (atProp) {
           at = props[atProp];
