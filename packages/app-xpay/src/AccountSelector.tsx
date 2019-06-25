@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { Bubble, InputAddress } from '@polkadot/ui-app';
-import { Balance, Nonce } from '@polkadot/ui-reactive';
+import { Nonce } from '@polkadot/ui-reactive';
 
 type Props = {
   onChange: (accountId?: string) => void

@@ -31,12 +31,13 @@
   "homepage": "https://github.com/polkadot-js/ui/tree/master/packages/ui-reactive#readme",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@cennznet/api": "^0.13.6",
-    "@cennznet/crml-cennzx-spot": "0.5.5",
-    "@cennznet/crml-generic-asset": "^0.8.1",
-    "@cennznet/types": "^0.13.6",
-    "@cennznet/util": "^0.13.6",
-    "@plugnet/api": "^0.78.100",
+    "@cennznet/api": "^0.14.1",
+    "@cennznet/crml-cennzx-spot": "0.5.6",
+    "@cennznet/crml-generic-asset": "^0.9.0",
+    "@cennznet/types": "^0.14.1",
+    "@cennznet/util": "^0.14.1",
+    "@plugnet/api": "^0.81.100",
+    "@plugnet/keyring": "^0.93.101",
     "@polkadot/api": "^0.78.0-beta.11",
     "rxjs-compat": "^6.4.0"
   }

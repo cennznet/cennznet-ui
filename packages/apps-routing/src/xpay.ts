@@ -8,7 +8,7 @@ import XPay from '@polkadot/app-xpay';
 
 export default ([
   {
-    Component: XPay,
+    Component: XPay as any,
     display: {
       needsAccounts: true,
       needsApi: [

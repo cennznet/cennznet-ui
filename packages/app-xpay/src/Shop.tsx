@@ -9,7 +9,6 @@ import { withCalls } from '@polkadot/ui-api/with';
 import { InputBalance, Dropdown } from '@polkadot/ui-app';
 
 import ItemCard from './ItemCard';
-import { AccountId } from '@polkadot/types';
 
 const Wrapper = styled.section`
   display: flex;

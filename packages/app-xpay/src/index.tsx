@@ -13,8 +13,8 @@ import React from 'react';
 import { Route, Switch } from 'react-router';
 
 import AccountSelector from './AccountSelector';
-import Shop from './shop';
-import Merchant from './merchant';
+import Shop from './Shop';
+import Merchant from './Merchant';
 
 // define out internal types
 type Props = AppProps & I18nProps;

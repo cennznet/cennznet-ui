@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import BN from 'BN.js';
+import BN from 'bn.js';
 import { Option, AccountId, Tuple, UInt } from '@polkadot/types';
 import { AddressMini, TxButton } from '@polkadot/ui-app';
 import { withCalls } from '@polkadot/ui-api/with';
