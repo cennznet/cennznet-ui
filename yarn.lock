@@ -845,6 +845,11 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
+"@cennznet/crml-generic-asset@^0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@cennznet/crml-generic-asset/-/crml-generic-asset-0.9.0.tgz#88cde96edba40ec6b10213b09b4482eac3bf8ed2"
+  integrity sha512-y0TvY5o+t/h52bVgR3zT5JOX5oa0+tC5pGOXkTA5Bo1BnSaeAmlItb0jMJbZg8zrb4iS+HPD6yIUyuudgdTDdw==
+
 "@cennznet/types@^0.13.6":
   version "0.13.6"
   resolved "https://registry.yarnpkg.com/@cennznet/types/-/types-0.13.6.tgz#77ce67d432ecf30f59e75c26bd6a458affdee2b3"

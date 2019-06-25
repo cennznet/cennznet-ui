@@ -74,9 +74,12 @@ class InputNumber extends React.PureComponent<Props, State> {
 
   static getDerivedStateFromProps ({ value, isDisabled, isSi, defaultValue = '0' }: Props): Partial<State> | null {
     if (!isDisabled || !isSi) {
-      return {
-        value: value && value.toString()
-      };
+      if (value) {
+        return {
+          value: value && value.toString()
+        };
+      }
+      return null;
     }
 
     return {

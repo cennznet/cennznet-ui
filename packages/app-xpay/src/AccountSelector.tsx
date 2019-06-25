@@ -29,9 +29,6 @@ export default class AccountSelector extends React.PureComponent<Props, State> {
           type='account'
         />
         <div className='medium'>
-          <Bubble color='yellow' icon='adjust' label='balance'>
-            <Balance params={accountId} />
-          </Bubble>
           <Bubble color='yellow' icon='target' label='transactions'>
             <Nonce params={accountId} />
           </Bubble>

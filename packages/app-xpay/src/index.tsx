@@ -52,7 +52,7 @@ class App extends React.PureComponent<Props, State> {
         </header>
         <Switch>
           <Route path={`${basePath}/merchant`} render={() => <Merchant accountId={accountId} />} />
-          <Route component={Shop} />
+          <Route render={() => <Shop accountId={accountId} />}  />
         </Switch>
       </main>
     );

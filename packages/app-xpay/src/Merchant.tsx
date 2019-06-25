@@ -7,6 +7,8 @@ import styled from 'styled-components';
 import BN from 'bn.js';
 import { Button, TxButton, InputNumber, InputBalance, Dropdown } from '@polkadot/ui-app';
 
+import items from './items';
+
 const ActionWrapper = styled.div`
   margin-top: 10px;
   padding-bottom: 10px;
@@ -27,29 +29,6 @@ type State = {
   price: BN,
   itemId: BN,
 };
-
-const items = [
-  {
-    text: '100: Coke',
-    value: 100
-  },
-  {
-    text: '101: Lemonade',
-    value: 101
-  },
-  {
-    text: '102: Coffee',
-    value: 102
-  },
-  {
-    text: '200: Chips',
-    value: 200
-  },
-  {
-    text: '201: Cookie',
-    value: 201
-  }
-];
 
 const assets = [
   {
@@ -103,7 +82,7 @@ class Merchant extends React.PureComponent<Props, State> {
           <div className='ui--row'>
             <Dropdown
               value={item}
-              label='item'
+              label='Item'
               options={items}
               onChange={this.onItemChange}
             />
