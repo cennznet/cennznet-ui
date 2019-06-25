@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import BN from 'BN.js';
-import { Option, AccountId, Tuple, UInt} from '@polkadot/types';
+import { Option, AccountId, Tuple, UInt } from '@polkadot/types';
 import { AddressMini, TxButton } from '@polkadot/ui-app';
 import { withCalls } from '@polkadot/ui-api/with';
 import { formatBalance } from '@polkadot/util';
@@ -37,10 +37,10 @@ type Props = {
   price?: Option<Tuple>,
   payingAsset: number,
   payingPrice: BN
-}
+};
 
 const ItemCard = ({ accountId, itemId, item, owner, quantity, price, payingAsset, payingPrice }: Props) => {
-  if (itemId == null || !item || item.isNone) {
+  if (itemId === undefined || !item || item.isNone) {
     return (
       <Wrapper>
         <ItemImage>Loading...</ItemImage>
@@ -75,12 +75,12 @@ const ItemCard = ({ accountId, itemId, item, owner, quantity, price, payingAsset
         tx='xpay.purchaseItem'
       />
     </Wrapper>
-  )
-}
+  );
+};
 
 export default withCalls<Props>(
   ['query.xPay.items', { paramName: 'itemId', propName: 'item' }],
   ['query.xPay.itemOwners', { paramName: 'itemId', propName: 'owner' }],
   ['query.xPay.itemQuantities', { paramName: 'itemId', propName: 'quantity' }],
-  ['query.xPay.itemPrices', { paramName: 'itemId', propName: 'price' }],
+  ['query.xPay.itemPrices', { paramName: 'itemId', propName: 'price' }]
 )(ItemCard);

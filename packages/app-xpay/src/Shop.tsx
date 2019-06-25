@@ -25,23 +25,23 @@ const assets = [
     text: 'CENTRAPAY-T',
     value: 16001
   }
-]
+];
 
 type Props = {
   accountId?: string,
   itemsCount?: BN
-}
+};
 
 type State = {
   asset: number,
   price: BN
-}
+};
 
 class Shop extends React.PureComponent<Props, State> {
   state: State = {
     asset: 16000,
     price: new BN(1000000)
-  }
+  };
 
   onAssetChange = (asset: number) => {
     this.setState({ asset });
@@ -51,7 +51,7 @@ class Shop extends React.PureComponent<Props, State> {
     this.setState({ price: price || new BN(1000000) });
   }
 
-  render() {
+  render () {
     const { accountId, itemsCount = new BN(0) } = this.props;
     const { asset, price } = this.state;
     const items = [];

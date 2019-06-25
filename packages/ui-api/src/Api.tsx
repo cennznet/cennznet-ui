@@ -18,12 +18,12 @@ import { formatBalance, isTestChain } from '@polkadot/util';
 import ApiContext from './ApiContext';
 
 const CustomTypes = {
-  "Item": "u32",
-  "ItemId": "u64",
-  "AssetId": "u32",
-  "AssetIdOf": "u32",
-  "Price": "(AssetId, Balance)",
-  "PriceOf": "(AssetId, Balance)"
+  'Item': 'u32',
+  'ItemId': 'u64',
+  'AssetId': 'u32',
+  'AssetIdOf': 'u32',
+  'Price': '(AssetId, Balance)',
+  'PriceOf': '(AssetId, Balance)'
 };
 
 let api: ApiPromise;

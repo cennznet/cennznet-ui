@@ -19,7 +19,7 @@ const ActionWrapper = styled.div`
 `;
 
 type Props = {
-  accountId?: string,
+  accountId?: string
 };
 
 type State = {
@@ -27,7 +27,7 @@ type State = {
   quantity: BN,
   asset: number,
   price: BN,
-  itemId: BN,
+  itemId: BN
 };
 
 const assets = [
@@ -38,7 +38,7 @@ const assets = [
   {
     text: '16001: CENTRAPAY-T',
     value: 16001
-  },
+  }
 ];
 
 class Merchant extends React.PureComponent<Props, State> {
