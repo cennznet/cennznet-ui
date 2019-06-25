@@ -7,39 +7,53 @@
 // `t` is inject into props (see the HOC export) and `t('any text')
 // does the translation
 import { AppProps, I18nProps } from '@polkadot/ui-app/types';
+import Tabs, { TabItem } from '@polkadot/ui-app/Tabs';
 
-// external imports (including those found in the packages/*
-// of this repo)
 import React from 'react';
+import { Route, Switch } from 'react-router';
 
-// our app-specific styles
-import './index.css';
-
-// local imports and components
 import AccountSelector from './AccountSelector';
-import SummaryBar from './SummaryBar';
-import Transfer from './Transfer';
-import translate from './translate';
+import Shop from './shop';
+import Merchant from './merchant';
 
 // define out internal types
 type Props = AppProps & I18nProps;
 type State = {
-  accountId?: string
+  accountId?: string,
+  tabs: Array<TabItem>
 };
 
 class App extends React.PureComponent<Props, State> {
-  state: State = {};
+  state: State = {
+    tabs: [
+      {
+        name: 'shop',
+        text: 'Shop'
+      },
+      {
+        name: 'merchant',
+        text: 'Merchant'
+      },
+    ]
+  };
 
   render () {
-    const { accountId } = this.state;
+    const { basePath } = this.props;
+    const { accountId, tabs } = this.state;
 
     return (
-      // in all apps, the main wrapper is setup to allow the padding
-      // and margins inside the application. (Just from a consistent pov)
       <main>
-        <SummaryBar />
         <AccountSelector onChange={this.onAccountChange} />
-        <Transfer accountId={accountId} />
+        <header>
+          <Tabs
+            basePath={basePath}
+            items={tabs}
+          />
+        </header>
+        <Switch>
+          <Route path={`${basePath}/merchant`} render={() => <Merchant accountId={accountId} />} />
+          <Route component={Shop} />
+        </Switch>
       </main>
     );
   }
@@ -49,4 +63,4 @@ class App extends React.PureComponent<Props, State> {
   }
 }
 
-export default translate(App);
+export default App;

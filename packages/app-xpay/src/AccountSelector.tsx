@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { Bubble, InputAddress } from '@polkadot/ui-app';
-import { AccountIndex, Balance, Nonce } from '@polkadot/ui-reactive';
+import { Balance, Nonce } from '@polkadot/ui-reactive';
 
 type Props = {
   onChange: (accountId?: string) => void
@@ -24,14 +24,11 @@ export default class AccountSelector extends React.PureComponent<Props, State> {
       <section className='template--AccountSelector ui--row'>
         <InputAddress
           className='medium'
-          label='my default account'
+          label='Account'
           onChange={this.onChange}
           type='account'
         />
         <div className='medium'>
-          <Bubble color='teal' icon='address card' label='index'>
-            <AccountIndex params={accountId} />
-          </Bubble>
           <Bubble color='yellow' icon='adjust' label='balance'>
             <Balance params={accountId} />
           </Bubble>
