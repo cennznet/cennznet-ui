@@ -72,8 +72,13 @@ class InputNumber extends React.PureComponent<Props, State> {
     InputNumber.units = units;
   }
 
-  static getDerivedStateFromProps ({ isDisabled, isSi, defaultValue = '0' }: Props): Partial<State> | null {
+  static getDerivedStateFromProps ({ value, isDisabled, isSi, defaultValue = '0' }: Props): Partial<State> | null {
     if (!isDisabled || !isSi) {
+      if (value) {
+        return {
+          value: value && value.toString()
+        };
+      }
       return null;
     }
 
@@ -145,8 +150,8 @@ class InputNumber extends React.PureComponent<Props, State> {
     const { isDecimal, isSi } = this.props;
     return new RegExp(
       (isSi || isDecimal) ?
-        `^(0|[1-9]\\d*)(\\${KEYS.DECIMAL}\\d*)?$` :
-        `^(0|[1-9]\\d*)$`
+        `^\\d+(\\${KEYS.DECIMAL}\\d*)?$` :
+        `^\\d+$`
     );
   }
 

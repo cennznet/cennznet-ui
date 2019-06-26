@@ -845,42 +845,43 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@cennznet/api@^0.13.6":
-  version "0.13.6"
-  resolved "https://registry.yarnpkg.com/@cennznet/api/-/api-0.13.6.tgz#bede5b5ea788d782d1ff5cd0f054a2a9afe670da"
-  integrity sha512-ZHTda9ehlcqBtGdQA/SEQjOnnaPibjrBNAEoeDtxSoYd9n/x8UzO/i1vzSUnyhzuaZCIZQJaojV97IONadpG3g==
+"@cennznet/api@^0.13.6", "@cennznet/api@^0.14.1":
+  version "0.13.7"
+  resolved "https://registry.yarnpkg.com/@cennznet/api/-/api-0.13.7.tgz#d249255431e23af42fb4118e8d0d68ddd877aabc"
+  integrity sha512-uIi2AmyVSmnRg6G+q8HpUzjdz/D1SCI4jfEaEvNvAgxiK/LdsTIVArF4swfd9C/ZxlvHcQUmplM09wwAfaiWtw==
   dependencies:
-    "@cennznet/types" "^0.13.6"
-    "@plugnet/api" "^0.78.100"
-    "@plugnet/extrinsics" "^0.78.100"
-    "@plugnet/rpc-core" "^0.78.100"
-    "@plugnet/rpc-provider" "^0.78.100"
-    "@plugnet/storage" "^0.78.100"
-    "@plugnet/types" "^0.78.100"
+    "@cennznet/types" "^0.13.7"
+    "@plugnet/api" "^0.78.103"
+    "@plugnet/extrinsics" "^0.78.103"
+    "@plugnet/rpc-core" "^0.78.103"
+    "@plugnet/rpc-provider" "^0.78.103"
+    "@plugnet/storage" "^0.78.103"
+    "@plugnet/types" "^0.78.103"
     eventemitter3 "^3.1.0"
 
-"@cennznet/crml-cennzx-spot@0.5.5":
-  version "0.5.5"
-  resolved "https://registry.yarnpkg.com/@cennznet/crml-cennzx-spot/-/crml-cennzx-spot-0.5.5.tgz#f568edfc02d5f06d82dcb15ab2f7e3b134689d2e"
-  integrity sha512-b+AQdUzcJAB/blFR2RqlZCdVUcE3DJTcWJ/qsTMekfQ9Elb4sXC0D7W3cELKVsRk5akQFMKF7KAhef80tWkTAw==
+"@cennznet/crml-cennzx-spot@0.5.6", "@cennznet/crml-cennzx-spot@^0.5.6":
+  version "0.5.6"
+  resolved "https://registry.yarnpkg.com/@cennznet/crml-cennzx-spot/-/crml-cennzx-spot-0.5.6.tgz#60c57a23e0104800434766a385584eedc9123889"
+  integrity sha512-wQsJ/PDBupnL3Y1v7y8Yyd3iBgzFfYvCBFnzBhxea8UstYpY83ExttOX1YrDGpsocQE2cyfYBg6yCjYg3v+lRA==
 
-"@cennznet/crml-generic-asset@^0.8.1":
+"@cennznet/crml-generic-asset@^0.8.1", "@cennznet/crml-generic-asset@^0.9.0":
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/@cennznet/crml-generic-asset/-/crml-generic-asset-0.8.1.tgz#e9db5d499eb8f2b51d1b8295320b21c627b4149d"
   integrity sha512-OZc48HmdJQyBD5xjUEdsTy3K5PrHWrc+X6d8IMYPUUtWJqs7YLxwgiYxKeMlM3Uh3GFm08PJNfyM2Z6vFO0udA==
 
-"@cennznet/types@^0.13.6":
-  version "0.13.6"
-  resolved "https://registry.yarnpkg.com/@cennznet/types/-/types-0.13.6.tgz#77ce67d432ecf30f59e75c26bd6a458affdee2b3"
-  integrity sha512-ELMabxQ2PbM5xHpscmfJq4uX0ld+oT3Xixl/SD5GhX4wfrYskjsGwfp7TpmbmMRiBgCfdNSCBTZlvKYXDzXbzQ==
+"@cennznet/types@^0.13.6", "@cennznet/types@^0.13.7", "@cennznet/types@^0.14.1":
+  version "0.13.7"
+  resolved "https://registry.yarnpkg.com/@cennznet/types/-/types-0.13.7.tgz#25b4807962a7481492e4c4212c8762960fb94760"
+  integrity sha512-OA+XSE+aOB3Yic+J+CE7sidtmkYCpRpHXy81j3ybboVxBuXkdh68NGRNKi4lyGHC0BoXaKS2g0OQHcs6bJgBFA==
   dependencies:
-    "@plugnet/types" "^0.78.100"
+    "@cennznet/util" "^0.13.7"
+    "@plugnet/types" "^0.78.103"
     "@plugnet/util" "^0.90.100"
 
-"@cennznet/util@^0.13.6":
-  version "0.13.6"
-  resolved "https://registry.yarnpkg.com/@cennznet/util/-/util-0.13.6.tgz#b5695adf72b1b991f18cbda651f73630c54b4907"
-  integrity sha512-uxNoSs7RhuW/w+YVkU2hBxiFq84jTIJfsaIl4zFV/BBXFDKae8TwgVRCKmyX3PjTD7OPJgUVrbXQBTBIuaCprA==
+"@cennznet/util@^0.13.6", "@cennznet/util@^0.13.7", "@cennznet/util@^0.14.1":
+  version "0.13.7"
+  resolved "https://registry.yarnpkg.com/@cennznet/util/-/util-0.13.7.tgz#66de9fe23da6f6b13f90d08b14881f34bd956dc6"
+  integrity sha512-fPbBKBXuGUhGsEqwbEk7oe+LohxVkdB74uYMoeOz92J2Bn98X81EFLZAwNo8dMCuP8GqwvkPqQ1p77WsL1DuJQ==
   dependencies:
     "@plugnet/keyring" "^0.90.100"
     "@plugnet/util" "^0.90.100"
@@ -1802,48 +1803,48 @@
     universal-user-agent "^2.0.0"
     url-template "^2.0.8"
 
-"@plugnet/api-derive@^0.78.100":
-  version "0.78.100"
-  resolved "https://registry.yarnpkg.com/@plugnet/api-derive/-/api-derive-0.78.100.tgz#bafaeaf28956c776558f827117e64e71f13b3991"
-  integrity sha512-1GNl52ei7r0ZFYn16iD7ZylE2dC+ACVcChyUiscDP1QucxXhDaQ27JJMcMi6m2pWQ8yWHxUwrXgIlLk2vbTUAw==
+"@plugnet/api-derive@^0.78.103":
+  version "0.78.103"
+  resolved "https://registry.yarnpkg.com/@plugnet/api-derive/-/api-derive-0.78.103.tgz#40de3e6c0e00a8cb25f0d2363854f3a87ecb3e2f"
+  integrity sha512-HVblwIm3joalOKXHfep/4WiNKWRin7lW3yQ/MueZQjxl2BKx+l7xnc+okwESbDwy+gTRQ8ecAeD1+d5MGXe2sA==
   dependencies:
     "@babel/runtime" "^7.4.4"
-    "@plugnet/api" "^0.78.100"
-    "@plugnet/types" "^0.78.100"
+    "@plugnet/api" "^0.78.103"
+    "@plugnet/types" "^0.78.103"
     "@types/memoizee" "^0.4.2"
     memoizee "^0.4.14"
 
-"@plugnet/api@^0.78.100":
-  version "0.78.100"
-  resolved "https://registry.yarnpkg.com/@plugnet/api/-/api-0.78.100.tgz#8957c48e1ba0cde16dfe4232019234ddc67cbe76"
-  integrity sha512-rSZH+urKwntOejM5guXCa0CgIofO0thXwe3ZAgs7PYdnnXIdA57JcUxLE84sFzhfVX3J54afJh186juNT6Vsvw==
+"@plugnet/api@^0.78.100", "@plugnet/api@^0.78.103", "@plugnet/api@^0.81.100":
+  version "0.78.103"
+  resolved "https://registry.yarnpkg.com/@plugnet/api/-/api-0.78.103.tgz#fdfdcc6d9ec6b6ade412cd60588ba64affc0b822"
+  integrity sha512-WIhKhMu/mnSm4LpdblZGnDhs16gU7EUtHCt7J3/JoItTzdbE29EUmjM6q+6U2w/pN4Xcb+YsMTDCmyfsb8MjmA==
   dependencies:
     "@babel/runtime" "^7.4.4"
-    "@plugnet/api-derive" "^0.78.100"
-    "@plugnet/extrinsics" "^0.78.100"
-    "@plugnet/rpc-provider" "^0.78.100"
-    "@plugnet/rpc-rx" "^0.78.100"
-    "@plugnet/storage" "^0.78.100"
-    "@plugnet/types" "^0.78.100"
+    "@plugnet/api-derive" "^0.78.103"
+    "@plugnet/extrinsics" "^0.78.103"
+    "@plugnet/rpc-provider" "^0.78.103"
+    "@plugnet/rpc-rx" "^0.78.103"
+    "@plugnet/storage" "^0.78.103"
+    "@plugnet/types" "^0.78.103"
     "@plugnet/util-crypto" "^0.90.100"
 
-"@plugnet/extrinsics@^0.78.100":
-  version "0.78.100"
-  resolved "https://registry.yarnpkg.com/@plugnet/extrinsics/-/extrinsics-0.78.100.tgz#cce987f096805aaf8d3a2d2e9c650af6235fa198"
-  integrity sha512-uDU2YzpswhvSVp8DQ4/7pyWDhHrY2YrrgEN4C1yB7cXbDCIp9sTFnaRDJu6J/ecKiMv5pjG2azedNfyW7/s8Ig==
+"@plugnet/extrinsics@^0.78.103":
+  version "0.78.103"
+  resolved "https://registry.yarnpkg.com/@plugnet/extrinsics/-/extrinsics-0.78.103.tgz#5d2e0346dcd287a1a24694fbbfa4a62096fe938c"
+  integrity sha512-HA8BDjy6RzzneXzXs6LZ3obd3a53YHKnmmEldSvEQ2I8OYHZNoa794mUrIgYsn5cjxdaFFAd4mx++SZCFHP/ew==
   dependencies:
     "@babel/runtime" "^7.4.4"
-    "@plugnet/types" "^0.78.100"
+    "@plugnet/types" "^0.78.103"
     "@plugnet/util" "^0.90.100"
 
-"@plugnet/jsonrpc@^0.78.100":
-  version "0.78.100"
-  resolved "https://registry.yarnpkg.com/@plugnet/jsonrpc/-/jsonrpc-0.78.100.tgz#963ebdbd1d80860c3992685bf7a2bc8dc5e91b22"
-  integrity sha512-9+13NHYMxmN+tAogvOIzT873GMN/dPzkRDMr3b6WhMZ0phfmMx/VDRTSFqMnWoEjM+gvN5YJqffu/0n6rz3Mjg==
+"@plugnet/jsonrpc@^0.78.103":
+  version "0.78.103"
+  resolved "https://registry.yarnpkg.com/@plugnet/jsonrpc/-/jsonrpc-0.78.103.tgz#9f6d45167233c28988dd26a55dc4de37bb20a2de"
+  integrity sha512-SrLMNqLxwj53397R7XLncnuVSZmrLeFnMNYblQKRCY99wgURak2GyDsw8m4nUfkp7fT7hIuvmrgOgyv5feKCMA==
   dependencies:
     "@babel/runtime" "^7.4.4"
 
-"@plugnet/keyring@^0.90.100":
+"@plugnet/keyring@^0.90.100", "@plugnet/keyring@^0.93.101":
   version "0.90.100"
   resolved "https://registry.yarnpkg.com/@plugnet/keyring/-/keyring-0.90.100.tgz#20e0357669585182a0368f845dfb0c75d7ae2aec"
   integrity sha512-BlnUOkv8FrQ4La3J90RVKb7tjyWHOeajxYQE27/qUBCqwbKvuz2hcGWFmdmHU0naUjimSsnE706LgKbwyS1ItQ==
@@ -1854,25 +1855,25 @@
     "@types/bs58" "^4.0.0"
     bs58 "^4.0.1"
 
-"@plugnet/rpc-core@^0.78.100":
-  version "0.78.100"
-  resolved "https://registry.yarnpkg.com/@plugnet/rpc-core/-/rpc-core-0.78.100.tgz#146df9a59e67d365047e5cf9d3a616feefa6806d"
-  integrity sha512-ljfoaRwtV6I2CviVNXP2K27okk4vwZR8pC7c+bRvLrsDz2P4X92r1XGZByiM0+Xcrd+KVhgQXBPVuN3N9+eYVw==
+"@plugnet/rpc-core@^0.78.103":
+  version "0.78.103"
+  resolved "https://registry.yarnpkg.com/@plugnet/rpc-core/-/rpc-core-0.78.103.tgz#310501c3c82b7bb276ca9824e1d71190ced21b11"
+  integrity sha512-vdD1knHsNYtDawh6HIqdzYI4W/Ej7lnM9/P0y0xJXMQREQzk3SSkYw9ISKFsS6liDWQqUKfIWUGvXsQTbGeJQw==
   dependencies:
     "@babel/runtime" "^7.4.4"
-    "@plugnet/jsonrpc" "^0.78.100"
-    "@plugnet/rpc-provider" "^0.78.100"
-    "@plugnet/types" "^0.78.100"
+    "@plugnet/jsonrpc" "^0.78.103"
+    "@plugnet/rpc-provider" "^0.78.103"
+    "@plugnet/types" "^0.78.103"
     "@plugnet/util" "^0.90.100"
 
-"@plugnet/rpc-provider@^0.78.100":
-  version "0.78.100"
-  resolved "https://registry.yarnpkg.com/@plugnet/rpc-provider/-/rpc-provider-0.78.100.tgz#741a0243a6919837f6b8eb8f20bb93f2a04c8b34"
-  integrity sha512-0cphCsGmpbtRmX6fL1KyymHQLf+z54oNLdlmovSHwvxPSJP7o9mdFfJSqa4R2I35vCzncEY5k0j4siO0+ULt9Q==
+"@plugnet/rpc-provider@^0.78.103":
+  version "0.78.103"
+  resolved "https://registry.yarnpkg.com/@plugnet/rpc-provider/-/rpc-provider-0.78.103.tgz#b6ab25156934341a2c48ff3cde7381309be3acf8"
+  integrity sha512-2i+w252ywW9cQ7au9C3PaX8ywca+LTsvgYQQvIDKVUEwR+++psZZV/3Kx2tAVtONroZAl40AkQS+oDe2fJhuhA==
   dependencies:
     "@babel/runtime" "^7.4.4"
     "@plugnet/keyring" "^0.90.100"
-    "@plugnet/storage" "^0.78.100"
+    "@plugnet/storage" "^0.78.103"
     "@plugnet/util" "^0.90.100"
     "@plugnet/util-crypto" "^0.90.100"
     "@types/nock" "^9.3.1"
@@ -1880,34 +1881,34 @@
     isomorphic-fetch "^2.2.1"
     websocket "^1.0.28"
 
-"@plugnet/rpc-rx@^0.78.100":
-  version "0.78.100"
-  resolved "https://registry.yarnpkg.com/@plugnet/rpc-rx/-/rpc-rx-0.78.100.tgz#ee94ce7c4f5b6f8cb1e4f1b4c562152100454025"
-  integrity sha512-a9UajoQ0X+BUimELKoXSvl93u5A/9S1yri8b0ra6t8fsSroyUbK/P/74sObW4vyxo38nsn6qLZ8d8l9fnJc7RQ==
+"@plugnet/rpc-rx@^0.78.103":
+  version "0.78.103"
+  resolved "https://registry.yarnpkg.com/@plugnet/rpc-rx/-/rpc-rx-0.78.103.tgz#f8c39287be88c3bbfd28f3b243a2a5ff0fc9c5a0"
+  integrity sha512-0o4my5Lnb1q3rjySyUXjdnd3t/TjCfdP574cfAVqX7CBVKr3tTk3VlWrbYNmxLJQqIZrZRTBmY6GGBV42GpUZw==
   dependencies:
     "@babel/runtime" "^7.4.4"
-    "@plugnet/rpc-core" "^0.78.100"
-    "@plugnet/rpc-provider" "^0.78.100"
+    "@plugnet/rpc-core" "^0.78.103"
+    "@plugnet/rpc-provider" "^0.78.103"
     "@types/memoizee" "^0.4.2"
     "@types/rx" "^4.1.1"
     memoizee "^0.4.14"
     rxjs "6.4.0"
 
-"@plugnet/storage@^0.78.100":
-  version "0.78.100"
-  resolved "https://registry.yarnpkg.com/@plugnet/storage/-/storage-0.78.100.tgz#f873efb88adbec6e1b410d2140c94fde7eb653d2"
-  integrity sha512-TzhOzVD/FxF+dy8Cne1DNs2KVASB5CpCkCcylRThWrqpnvVXLEZYCKM6jU6/CWnbQaRRHB8CA98sPb3cZHKp9Q==
+"@plugnet/storage@^0.78.103":
+  version "0.78.103"
+  resolved "https://registry.yarnpkg.com/@plugnet/storage/-/storage-0.78.103.tgz#a1b2acf47eb73e4ce0c940360e39e03427ecddd1"
+  integrity sha512-0i9mB4gcF8AzZZX5hUHVS8BlkLmC111ciazbledMbGwBQ2TAOQHFt2/7EccQMly3qwtfUd9GQZtmhYs9XVPJLw==
   dependencies:
     "@babel/runtime" "^7.4.4"
     "@plugnet/keyring" "^0.90.100"
-    "@plugnet/types" "^0.78.100"
+    "@plugnet/types" "^0.78.103"
     "@plugnet/util" "^0.90.100"
     "@plugnet/util-crypto" "^0.90.100"
 
-"@plugnet/types@^0.78.100":
-  version "0.78.100"
-  resolved "https://registry.yarnpkg.com/@plugnet/types/-/types-0.78.100.tgz#1cea092b7ee3f63efc4203919825645e9d5baeb6"
-  integrity sha512-ykK2WKKVhQ62iQg7e6roqpZn6pRKqNEHag76TbJzffFJqcjFjMseFqx87tDRvTzlX63XTnzKOi1uBhFP7qbcRw==
+"@plugnet/types@^0.78.100", "@plugnet/types@^0.78.103":
+  version "0.78.103"
+  resolved "https://registry.yarnpkg.com/@plugnet/types/-/types-0.78.103.tgz#5efb2597f4a370410ad39059bf90245b3ce23b46"
+  integrity sha512-kj2TcswHx6Cg0BbXTppTbpwCdBbKWct5gMQJgWUfJp0KmtN50rFVm9dF9u5mybRRPZGbmzNygM+hHQBbCGjrXw==
   dependencies:
     "@babel/runtime" "^7.4.4"
     "@plugnet/keyring" "^0.90.100"

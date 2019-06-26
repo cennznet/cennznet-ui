@@ -17,6 +17,15 @@ import { formatBalance, isTestChain } from '@polkadot/util';
 
 import ApiContext from './ApiContext';
 
+const CustomTypes = {
+  'Item': 'u32',
+  'ItemId': 'u64',
+  'AssetId': 'u32',
+  'AssetIdOf': 'u32',
+  'Price': '(AssetId, Balance)',
+  'PriceOf': '(AssetId, Balance)'
+};
+
 let api: ApiPromise;
 
 type Props = {
@@ -42,7 +51,7 @@ export default class ApiWrapper extends React.PureComponent<Props, State> {
     const provider = new WsProvider(url);
 
     const setApi = (provider: ProviderInterface): void => {
-      api = new Api(provider) as any as ApiPromise;
+      api = new Api({ provider, types: CustomTypes }) as any as ApiPromise;
 
       this.setState({ api }, () => {
         this.subscribeEvents();
@@ -51,7 +60,7 @@ export default class ApiWrapper extends React.PureComponent<Props, State> {
     const setApiUrl = (url: string = defaults.WS_URL): void =>
       setApi(new WsProvider(url));
 
-    api = new Api(provider) as any as ApiPromise;
+    api = new Api({ provider, types: CustomTypes }) as any as ApiPromise;
 
     this.state = {
       isApiConnected: false,
