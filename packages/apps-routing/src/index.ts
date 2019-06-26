@@ -8,6 +8,7 @@ import appSettings from '../../ui-settings/src';
 
 import template from './123code';
 import xpay from './xpay';
+import undaddy from './undaddy';
 import accounts from './accounts';
 import addressbook from './addressbook';
 import contracts from './contracts';
@@ -35,6 +36,7 @@ const routes: Routes = appSettings.uiMode === 'light'
     null,
     settings,
     template,
+    undaddy,
     xpay
   )
   : ([] as Routes).concat(
@@ -56,6 +58,7 @@ const routes: Routes = appSettings.uiMode === 'light'
     toolbox,
     js,
     template,
+    undaddy,
     xpay
   );
 

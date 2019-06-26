@@ -4,7 +4,7 @@
   "description": "An ENS service to unf*ck the world of DNS",
   "main": "index.js",
   "scripts": {},
-  "author": "Dappy Team",
+  "author": "Team JohnnyDappy",
   "maintainers": ["Pramodya De Alwis <pramodya1@hotmail.com>"],
   "license": "Apache-2.0",
   "dependencies": {
