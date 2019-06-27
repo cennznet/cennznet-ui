@@ -6,6 +6,8 @@ import React from 'react';
 import styled from 'styled-components';
 import BN from 'bn.js';
 import { Button, TxButton, InputNumber, InputBalance, Dropdown } from '@polkadot/ui-app';
+import { withCalls } from '@polkadot/ui-api/with';
+import { Vector, Text } from '@polkadot/types';
 
 import items from './items';
 
@@ -19,7 +21,8 @@ const ActionWrapper = styled.div`
 `;
 
 type Props = {
-  accountId?: string
+  accountId?: string,
+  ownerDomains?: Vector<Text>,
 };
 
 type State = {
@@ -27,7 +30,8 @@ type State = {
   quantity: BN,
   asset: number,
   price: BN,
-  itemId: BN
+  itemId: BN,
+  domain?: string
 };
 
 const assets = [
@@ -47,7 +51,7 @@ class Merchant extends React.PureComponent<Props, State> {
     quantity: new BN(1),
     asset: assets[0].value,
     price: new BN(100),
-    itemId: new BN(0)
+    itemId: new BN(0),
   };
 
   onItemChange = (item: number) => {
@@ -70,15 +74,27 @@ class Merchant extends React.PureComponent<Props, State> {
     this.setState({ itemId: itemId || new BN(0) });
   }
 
+  onDomainChange = (domain?: string) => {
+    this.setState({ domain });
+  }
+
   render () {
-    const { accountId } = this.props;
-    const { item, quantity, asset, price, itemId } = this.state;
+    const { accountId, ownerDomains } = this.props;
+    const { item, quantity, asset, price, itemId, domain } = this.state;
     return (
       <section>
         <ActionWrapper>
           <summary>
             <h2>Create Item</h2>
           </summary>
+          <div className='ui--row'>
+            <Dropdown
+              value={domain}
+              label='Domain'
+              options={ownerDomains && ownerDomains.toArray()}
+              onChange={this.onDomainChange}
+            />
+          </div>
           <div className='ui--row'>
             <Dropdown
               value={item}
@@ -215,4 +231,6 @@ class Merchant extends React.PureComponent<Props, State> {
   }
 }
 
-export default Merchant;
+export default withCalls<Props>(
+  ['query.domainService.owners', { paramName: 'accountId', propName: 'ownerDomains' }],
+)(Merchant);

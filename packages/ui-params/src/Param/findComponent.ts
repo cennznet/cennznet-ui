@@ -17,6 +17,7 @@ import Proposal from './Proposal';
 import KeyValue from './KeyValue';
 import KeyValueArray from './KeyValueArray';
 import Text from './Text';
+import TextData from './TextData';
 import Tuple from './Tuple';
 import Unknown from './Unknown';
 import Vector from './Vector';
@@ -41,6 +42,7 @@ const components: ComponentMap = ([
   { c: Moment, t: ['Moment', 'MomentOf'] },
   { c: Proposal, t: ['Proposal'] },
   { c: Text, t: ['String', 'Text'] },
+  { c: TextData, t: ['DomainName'] },
   { c: Tuple, t: ['Tuple'] },
   { c: Vector, t: ['Vector'] },
   { c: Vote, t: ['Vote'] },
