@@ -23,7 +23,23 @@ const CustomTypes = {
   'AssetId': 'u32',
   'AssetIdOf': 'u32',
   'Price': '(AssetId, Balance)',
-  'PriceOf': '(AssetId, Balance)'
+  'PriceOf': '(AssetId, Balance)',
+  'DomainAddr': 'Vec<u8>',
+  'DomainName': 'Text',
+  'Bid': {
+    bidder: 'AccountId',
+    name: 'DomainName',
+    amount: 'Balance'
+  },
+  'BidInfo': {
+    bid: 'Bid',
+    end: 'BlockNumber'
+  },
+  'DomainDetail': {
+    owner: 'AccountId',
+    expire: 'BlockNumber',
+    addr: 'Option<DomainAddr>'
+  }
 };
 
 let api: ApiPromise;
