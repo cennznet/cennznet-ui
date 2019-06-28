@@ -5,7 +5,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import BN from 'bn.js';
+import { withCalls } from '@polkadot/ui-api/with';
 import { Button, TxButton, InputNumber, InputBalance, Dropdown } from '@polkadot/ui-app';
+import { Option, UInt } from '@polkadot/types';
+import { itemsById } from './items';
 
 import items from './items';
 
@@ -19,7 +22,8 @@ const ActionWrapper = styled.div`
 `;
 
 type Props = {
-  accountId?: string
+  accountId?: string,
+  itemsCount?: BN
 };
 
 type State = {
@@ -27,7 +31,7 @@ type State = {
   quantity: BN,
   asset: number,
   price: BN,
-  itemId: BN
+  itemId?: number
 };
 
 const assets = [
@@ -41,13 +45,36 @@ const assets = [
   }
 ];
 
+type ItemIDLabelProp = {
+  itemId: number,
+  item?: Option<UInt>,
+};
+
+const ItemIDLabelComp = ({ itemId, item }: ItemIDLabelProp) => {
+  if (item === undefined || itemId === undefined) {
+    return <span></span>
+  }
+  const itemValue = item.unwrap().toNumber();
+  const itemObj = itemsById[itemValue] || {};
+  const itemName = itemObj.name || `Item ${itemValue}`;
+  return (
+    <>
+      {`#${itemId} (${itemValue}: ${itemName})`}
+    </>
+  )
+}
+
+const ItemIDLabel = withCalls<ItemIDLabelProp>(
+  ['query.xPay.items', { paramName: 'itemId', propName: 'item' }],
+)(ItemIDLabelComp);
+
 class Merchant extends React.PureComponent<Props, State> {
   state: State = {
     item: items[0].value,
     quantity: new BN(1),
     asset: assets[0].value,
     price: new BN(100),
-    itemId: new BN(0)
+    itemId: 0
   };
 
   onItemChange = (item: number) => {
@@ -66,13 +93,21 @@ class Merchant extends React.PureComponent<Props, State> {
     this.setState({ price: price || new BN(100) });
   }
 
-  onItemIdChange = (itemId?: BN) => {
-    this.setState({ itemId: itemId || new BN(0) });
+  onItemIdChange = (itemId?: number) => {
+    this.setState({ itemId });
   }
 
   render () {
-    const { accountId } = this.props;
+    const { accountId, itemsCount } = this.props;
     const { item, quantity, asset, price, itemId } = this.state;
+    const itemIds = [];
+    const itemsCountNum = itemsCount ? itemsCount.toNumber() : 0;
+    for (let i = 0; i < itemsCountNum; ++i) {
+      itemIds.push({
+        text: <ItemIDLabel key={i} itemId={i}/>,
+        value: i
+      })
+    }
     return (
       <section>
         <ActionWrapper>
@@ -121,9 +156,10 @@ class Merchant extends React.PureComponent<Props, State> {
             <h2>Add Item</h2>
           </summary>
           <div className='ui--row'>
-            <InputNumber
+            <Dropdown
               value={itemId}
               label='Item ID'
+              options={itemIds}
               onChange={this.onItemIdChange}
             />
             <InputNumber
@@ -148,9 +184,10 @@ class Merchant extends React.PureComponent<Props, State> {
             <h2>Remove Item</h2>
           </summary>
           <div className='ui--row'>
-            <InputNumber
+            <Dropdown
               value={itemId}
               label='Item ID'
+              options={itemIds}
               onChange={this.onItemIdChange}
             />
             <InputNumber
@@ -175,9 +212,10 @@ class Merchant extends React.PureComponent<Props, State> {
             <h2>Update Item</h2>
           </summary>
           <div className='ui--row'>
-            <InputNumber
+            <Dropdown
               value={itemId}
               label='Item ID'
+              options={itemIds}
               onChange={this.onItemIdChange}
             />
             <InputNumber
@@ -215,4 +253,6 @@ class Merchant extends React.PureComponent<Props, State> {
   }
 }
 
-export default Merchant;
+export default withCalls<Props>(
+  ['query.xPay.nextItemId', { propName: 'itemsCount' }]
+)(Merchant);
