@@ -8,9 +8,7 @@ import BN from 'bn.js';
 import { withCalls } from '@polkadot/ui-api/with';
 import { Button, TxButton, InputNumber, InputBalance, Dropdown } from '@polkadot/ui-app';
 import { Option, UInt } from '@polkadot/types';
-import { itemsById } from './items';
-
-import items from './items';
+import items, { itemsById } from './items';
 
 const ActionWrapper = styled.div`
   margin-top: 10px;
@@ -47,12 +45,12 @@ const assets = [
 
 type ItemIDLabelProp = {
   itemId: number,
-  item?: Option<UInt>,
+  item?: Option<UInt>
 };
 
 const ItemIDLabelComp = ({ itemId, item }: ItemIDLabelProp) => {
-  if (item === undefined || itemId === undefined) {
-    return <span></span>
+  if (item === undefined) {
+    return <span></span>;
   }
   const itemValue = item.unwrap().toNumber();
   const itemObj = itemsById[itemValue] || {};
@@ -61,11 +59,11 @@ const ItemIDLabelComp = ({ itemId, item }: ItemIDLabelProp) => {
     <>
       {`#${itemId} (${itemValue}: ${itemName})`}
     </>
-  )
-}
+  );
+};
 
 const ItemIDLabel = withCalls<ItemIDLabelProp>(
-  ['query.xPay.items', { paramName: 'itemId', propName: 'item' }],
+  ['query.xPay.items', { paramName: 'itemId', propName: 'item' }]
 )(ItemIDLabelComp);
 
 class Merchant extends React.PureComponent<Props, State> {
@@ -106,7 +104,7 @@ class Merchant extends React.PureComponent<Props, State> {
       itemIds.push({
         text: <ItemIDLabel key={i} itemId={i}/>,
         value: i
-      })
+      });
     }
     return (
       <section>
