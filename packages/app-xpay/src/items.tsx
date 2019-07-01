@@ -1,28 +1,46 @@
+import bottle from './static/bottle.png';
+import cup from './static/cup.png';
+import mug from './static/mug.png';
+import honey from './static/honey.png';
+import hoodie from './static/hoodie.png';
+import phone from './static/phone.png';
+
 const items = [
   {
-    text: '100: Coke',
+    text: '100: Bottle Water',
     value: 100,
-    name: 'Coke'
+    name: 'Bottle Water',
+    image: bottle
   },
   {
-    text: '101: Lemonade',
+    text: '101: Coffee',
     value: 101,
-    name: 'Lemonade'
+    name: 'Coffee',
+    image: cup
   },
   {
-    text: '102: Coffee',
-    value: 102,
-    name: 'Coffee'
-  },
-  {
-    text: '200: Chips',
+    text: '200: Mug',
     value: 200,
-    name: 'Chips'
+    name: 'Mug',
+    image: mug
   },
   {
-    text: '201: Cookies',
+    text: '201: Honey',
     value: 201,
-    name: 'Cookies'
+    name: 'Honey',
+    image: honey
+  },
+  {
+    text: '300: Hoodie',
+    value: 300,
+    name: 'Hoodie',
+    image: hoodie
+  },
+  {
+    text: '301: Phone',
+    value: 301,
+    name: 'Phone',
+    image: phone
   }
 ];
 
