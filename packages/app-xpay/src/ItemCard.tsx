@@ -10,22 +10,25 @@ import { itemsById } from './items';
 
 const Wrapper = styled.div`
   border: 2px solid #eee;
-  padding: 10px;
   border-radius: 8px;
   margin: 10px;
-  width: 333px;
+  width: 280px;
+  overflow: hidden;
 `;
 
-const Line = styled.div`
-  height: 2px;
-  background: #eee;
-  margin: 10px -10px;
-`;
-
-const ItemImage = styled.div`
-  height: 100px;
+const ItemImageWrapper = styled.div`
+  height: 180px;
   line-height: 100px;
   text-align: center;
+
+  img {
+    height: 100%;
+    width: 100%;
+  }
+`;
+
+const ItemDescWrapper = styled.div`
+  padding: 10px;
 `;
 
 type Props = {
@@ -43,37 +46,40 @@ const ItemCard = ({ accountId, itemId, item, owner, quantity, price, payingAsset
   if (itemId === undefined || !item || item.isNone) {
     return (
       <Wrapper>
-        <ItemImage>Loading...</ItemImage>
+        <ItemImageWrapper>Loading...</ItemImageWrapper>
       </Wrapper>
     );
   }
   const itemValue = item.unwrap();
   const itemObj = itemsById[itemValue.toNumber()] || {};
-  const itemName = itemObj.name || `Item ${itemValue}`;
+  const itemImage = itemObj.image;
   const [asset, amount] = price ? price.unwrap() : [16000, 0];
   const assetObj = assetRegistry.findAssetById(+asset) || {} as any;
   const assetName = assetObj.symbol || `Asset ${asset}`;
   const quantityValue = quantity ? quantity.toNumber() : 0;
   return (
     <Wrapper>
-      <ItemImage>{itemName}</ItemImage>
-      <Line />
-      <label>ID: {itemId}</label>
-      <label>
-        Merchant:
-        <AddressMini
-          value={owner && owner.unwrap()}
+      <ItemImageWrapper>
+        <img src={itemImage} />
+      </ItemImageWrapper>
+      <ItemDescWrapper>
+        <label>ID: {itemId}</label>
+        <label>
+          Merchant:
+          <AddressMini
+            value={owner && owner.unwrap()}
+          />
+        </label>
+        <label>Stock: {quantityValue}</label>
+        <label>Price: {assetName} {formatBalance(amount.toString())}</label>
+        <TxButton
+          isDisabled={quantityValue === 0}
+          accountId={accountId}
+          label='Buy'
+          params={[1, itemId, payingAsset, payingPrice]}
+          tx='xpay.purchaseItem'
         />
-      </label>
-      <label>Stock: {quantityValue}</label>
-      <label>Price: {assetName} {formatBalance(amount.toString())}</label>
-      <TxButton
-        isDisabled={quantityValue === 0}
-        accountId={accountId}
-        label='Buy'
-        params={[1, itemId, payingAsset, payingPrice]}
-        tx='xpay.purchaseItem'
-      />
+      </ItemDescWrapper>
     </Wrapper>
   );
 };
