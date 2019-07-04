@@ -166,9 +166,9 @@ export class FeeDisplay extends React.PureComponent<Props, State> {
             : undefined
         }
         {
-          balance && assetId && <div><Icon name='arrow right' />{`Asset ID: ${assetId.toString()} - Balance: ${formatBalance(balance)}`}</div>
+          balance && assetId && <div title={balance.toString()}><Icon name='arrow right' />{`Asset ID: ${assetId.toString()} - Balance: ${formatBalance(balance)}`}</div>
         }
-        <div><Icon name='arrow right' />{`CENTRAPAY - Balance: ${formatBalance(spendBalance)}`}</div>
+        <div title={spendBalance.toString()}><Icon name='arrow right' />{`CENTRAPAY - Balance: ${formatBalance(spendBalance)}`}</div>
         {this.renderTransfer()}
         {this.renderProposal()}
         {
