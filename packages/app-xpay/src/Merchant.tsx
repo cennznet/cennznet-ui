@@ -29,6 +29,7 @@ type State = {
   quantity: BN,
   asset: number,
   price: BN,
+  updatePrice: BN,
   itemId?: number
 };
 
@@ -71,7 +72,8 @@ class Merchant extends React.PureComponent<Props, State> {
     item: items[0].value,
     quantity: new BN(1),
     asset: assets[0].value,
-    price: new BN(100),
+    price: new BN(0),
+    updatePrice: new BN(0),
     itemId: 0
   };
 
@@ -88,7 +90,11 @@ class Merchant extends React.PureComponent<Props, State> {
   }
 
   onPriceChange = (price?: BN) => {
-    this.setState({ price: price || new BN(100) });
+    this.setState({ price: price || new BN(0) });
+  }
+
+  onUpdatePriceChange = (price?: BN) => {
+    this.setState({ updatePrice: price || new BN(0) });
   }
 
   onItemIdChange = (itemId?: number) => {
@@ -97,7 +103,7 @@ class Merchant extends React.PureComponent<Props, State> {
 
   render () {
     const { accountId, itemsCount } = this.props;
-    const { item, quantity, asset, price, itemId } = this.state;
+    const { item, quantity, asset, price, updatePrice, itemId } = this.state;
     const itemIds = [];
     const itemsCountNum = itemsCount ? itemsCount.toNumber() : 0;
     for (let i = 0; i < itemsCountNum; ++i) {
@@ -133,7 +139,6 @@ class Merchant extends React.PureComponent<Props, State> {
               onChange={this.onAssetChange}
             />
             <InputBalance
-              value={price}
               label='Price'
               onChange={this.onPriceChange}
             />
@@ -230,9 +235,8 @@ class Merchant extends React.PureComponent<Props, State> {
               onChange={this.onAssetChange}
             />
             <InputBalance
-              value={price}
               label='Price'
-              onChange={this.onPriceChange}
+              onChange={this.onUpdatePriceChange}
             />
           </div>
           <div className='large'>
@@ -240,7 +244,7 @@ class Merchant extends React.PureComponent<Props, State> {
               <TxButton
                 accountId={accountId}
                 label='Update Item'
-                params={[itemId, quantity, asset, price]}
+                params={[itemId, quantity, asset, updatePrice]}
                 tx='xpay.updateItem'
               />
             </Button.Group>

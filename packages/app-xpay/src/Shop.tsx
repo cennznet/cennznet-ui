@@ -39,7 +39,7 @@ type State = {
 class Shop extends React.PureComponent<Props, State> {
   state: State = {
     asset: 16000,
-    price: new BN(1000000)
+    price: new BN(1000000000)
   };
 
   onAssetChange = (asset: number) => {
