@@ -3,89 +3,91 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ProviderInterface } from '@polkadot/rpc-provider/types';
-import { QueueTx$ExtrinsicAdd, QueueTx$MessageSetStatus } from '@polkadot/ui-app/Status/types';
+import { QueueTxExtrinsicAdd, QueueTxMessageSetStatus } from '@polkadot/ui-app/Status/types';
 import { ApiProps } from './types';
 
 import React from 'react';
 import ApiPromise from '@polkadot/api/promise';
-import { Api, WsProvider } from '@cennznet/api';
+import { isWeb3Injected, web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import defaults from '@polkadot/rpc-provider/defaults';
+import { WsProvider } from '@polkadot/rpc-provider';
 import { InputNumber } from '@polkadot/ui-app/InputNumber';
 import keyring from '@polkadot/ui-keyring';
-import { ChainProperties } from '@polkadot/types';
+import ApiSigner from '@polkadot/ui-signer/ApiSigner';
+import { ChainProperties, Text } from '@polkadot/types';
 import { formatBalance, isTestChain } from '@polkadot/util';
 
 import ApiContext from './ApiContext';
 
-const CustomTypes = {
-  'Item': 'u32',
-  'ItemId': 'u64',
-  'AssetId': 'u32',
-  'AssetIdOf': 'u32',
-  'Price': '(AssetId, Balance)',
-  'PriceOf': '(AssetId, Balance)'
-};
-
 let api: ApiPromise;
 
-type Props = {
-  children: React.ReactNode,
-  queueExtrinsic: QueueTx$ExtrinsicAdd,
-  queueSetTxStatus: QueueTx$MessageSetStatus,
-  url?: string
-};
+interface Props {
+  children: React.ReactNode;
+  queueExtrinsic: QueueTxExtrinsicAdd;
+  queueSetTxStatus: QueueTxMessageSetStatus;
+  url?: string;
+}
 
-type State = ApiProps & {
-  chain?: string
-};
+interface State extends ApiProps {
+  chain?: string | null;
+}
 
 export { api };
 
-export default class ApiWrapper extends React.PureComponent<Props, State> {
-  state: State = {} as State;
+const injectedPromise = web3Enable('polkadot-js/apps');
 
-  constructor (props: Props) {
+export default class Api extends React.PureComponent<Props, State> {
+  public state: State = {} as unknown as State;
+
+  public constructor (props: Props) {
     super(props);
 
-    const { url } = props;
+    const { queueExtrinsic, queueSetTxStatus, url } = props;
     const provider = new WsProvider(url);
+    const signer = new ApiSigner(queueExtrinsic, queueSetTxStatus);
 
     const setApi = (provider: ProviderInterface): void => {
-      api = new Api({ provider, types: CustomTypes }) as any as ApiPromise;
+      api = new ApiPromise({ provider, signer });
 
-      this.setState({ api }, () => {
+      this.setState({ api }, (): void => {
         this.subscribeEvents();
       });
     };
     const setApiUrl = (url: string = defaults.WS_URL): void =>
       setApi(new WsProvider(url));
 
-    api = new Api({ provider, types: CustomTypes }) as any as ApiPromise;
+    api = new ApiPromise({ provider, signer });
 
     this.state = {
+      api,
       isApiConnected: false,
       isApiReady: false,
-      api,
+      isSubstrateV2: true,
+      isWaitingInjected: isWeb3Injected,
       setApiUrl
-    } as State;
+    } as unknown as State;
   }
 
-  componentDidMount () {
+  public componentDidMount (): void {
     this.subscribeEvents();
+
+    injectedPromise
+      .then((): void => this.setState({ isWaitingInjected: false }))
+      .catch(console.error);
   }
 
-  private subscribeEvents () {
+  private subscribeEvents (): void {
     const { api } = this.state;
 
-    api.on('connected', () => {
+    api.on('connected', (): void => {
       this.setState({ isApiConnected: true });
     });
 
-    api.on('disconnected', () => {
+    api.on('disconnected', (): void => {
       this.setState({ isApiConnected: false });
     });
 
-    api.on('ready', async () => {
+    api.on('ready', async (): Promise<void> => {
       try {
         await this.loadOnReady(api);
       } catch (error) {
@@ -94,17 +96,24 @@ export default class ApiWrapper extends React.PureComponent<Props, State> {
     });
   }
 
-  private async loadOnReady (api: ApiPromise) {
+  private async loadOnReady (api: ApiPromise): Promise<void> {
     const [properties = new ChainProperties(), value] = await Promise.all([
-      api.rpc.system.properties() as Promise<ChainProperties | undefined>,
-      api.rpc.system.chain() as Promise<any>
+      api.rpc.system.properties<ChainProperties>(),
+      api.rpc.system.chain<Text>()
     ]);
-    const section = Object.keys(api.tx)[0];
-    const method = Object.keys(api.tx[section])[0];
     const chain = value
       ? value.toString()
       : null;
     const isDevelopment = isTestChain(chain);
+    const injectedAccounts = await web3Accounts().then((accounts) =>
+      accounts.map(({ address, meta }) => ({
+        address,
+        meta: {
+          ...meta,
+          name: `${meta.name} (${meta.source === 'polkadot-js' ? 'extension' : meta.source})`
+        }
+      }))
+    );
 
     console.log('api: found chain', chain, JSON.stringify(properties));
 
@@ -118,29 +127,45 @@ export default class ApiWrapper extends React.PureComponent<Props, State> {
     // finally load the keyring
     keyring.loadAll({
       addressPrefix: properties.get('networkId'),
+      genesisHash: api.genesisHash,
       isDevelopment,
       type: 'ed25519'
-    });
+    }, injectedAccounts);
+
+    const section = Object.keys(api.tx)[0];
+    const method = Object.keys(api.tx[section])[0];
+    const apiDefaultTx = api.tx[section][method];
+    const apiDefaultTxSudo =
+      (api.tx.system && api.tx.system.setCode) || // 2.x
+      (api.tx.consensus && api.tx.consensus.setCode) || // 1.x
+      apiDefaultTx; // other
+    const isSubstrateV2 = !!Object.keys(api.consts).length;
 
     this.setState({
-      isApiReady: true,
-      apiDefaultTx: api.tx[section][method],
+      apiDefaultTx,
+      apiDefaultTxSudo,
       chain,
-      isDevelopment
+      isApiReady: true,
+      isDevelopment,
+      isSubstrateV2
     });
   }
 
-  render () {
-    const { api, apiDefaultTx, chain, isApiConnected, isApiReady, isDevelopment, setApiUrl } = this.state;
+  public render (): React.ReactNode {
+    const { api, apiDefaultTx, apiDefaultTxSudo, chain, isApiConnected, isApiReady, isDevelopment, isSubstrateV2, isWaitingInjected, setApiUrl } = this.state;
 
     return (
       <ApiContext.Provider
         value={{
           api,
           apiDefaultTx,
+          apiDefaultTxSudo,
+          currentChain: chain || '<unknown>',
           isApiConnected,
           isApiReady: isApiReady && !!chain,
           isDevelopment,
+          isSubstrateV2,
+          isWaitingInjected,
           setApiUrl
         }}
       >

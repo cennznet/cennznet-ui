@@ -7,41 +7,32 @@ import { BareProps } from './types';
 import React from 'react';
 import styled from 'styled-components';
 
-import Icon from './Icon';
-import media from './media';
+import LabelHelp from './LabelHelp';
 import { classes } from './util';
-import Tooltip from './Tooltip';
 
-type Props = BareProps & {
-  help?: React.ReactNode,
-  isHidden?: boolean,
-  isSmall?: boolean,
-  label?: React.ReactNode,
-  children: React.ReactNode,
-  withLabel?: boolean
-};
+interface Props extends BareProps {
+  help?: React.ReactNode;
+  isHidden?: boolean;
+  isSmall?: boolean;
+  label?: React.ReactNode;
+  labelExtra?: React.ReactNode;
+  children: React.ReactNode;
+  withLabel?: boolean;
+  withEllipsis?: boolean;
+}
 
-type State = {
-  tooltipOpen: boolean
-};
-
-const defaultLabel: any = (// node?
+const defaultLabel: React.ReactNode = (
   <div>&nbsp;</div>
 );
 
 const Wrapper = styled.div`
   display: block;
+  position: relative;
 
-  > label {
-    margin: 0.25rem 0 0 0;
-    padding-right: 0.5rem;
-    position: relative;
-
-    i.icon.help {
-      margin: 0 0 0 0.25rem;
-      line-height: 1rem;
-      cursor: help;
-    }
+  .withEllipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &.label-small {
@@ -54,67 +45,81 @@ const Wrapper = styled.div`
     }
   }
 
-  > .ui--Labelled-content {
-    box-sizing: border-box;
-    flex: 1 1;
-    min-width: 0;
-  }
+  &:not(.label-small) {
+    padding-left: 2rem;
 
-  ${media.DESKTOP`
-    align-items: flex-start;
-    display: flex;
-    flex: 1 1;
-    margin: 0;
-    text-align: left;
+    > label,
+    .labelExtra {
+      position: absolute;
+      text-align: left;
+      text-transform: lowercase;
+      top: 0.5rem;
+      z-index: 1;
+    }
 
     > label {
-      align-items: center;
-      display: flex;
-      flex: 0 0 15rem;
-      justify-content: flex-end;
-      min-height: 2.715rem; /* more-or-less 2 lines with adjustments, 38px as per input box */
-      min-width: 15rem;
+      left: 3.55rem;
+      text-align: left;
+    }
+
+    .labelExtra {
+      color: rgba(78, 78, 78, .85);
+      font-weight: 100;
+      right: 1.75rem;
       text-align: right;
     }
-  `}
+
+    > .ui--Labelled-content {
+      box-sizing: border-box;
+      flex: 1 1;
+      min-width: 0;
+
+      .ui.selection.dropdown {
+        &:not(.floating) {
+          padding-left: 1.45rem;
+          padding-top: 1.75rem;
+        }
+
+        &.floating {
+          > .dropdown.icon {
+            top: 1.25rem;
+          }
+
+          .text {
+            padding: 0.45rem 0
+          }
+        }
+
+        &.search:not(.multiple) > input.search {
+          padding-left: 1.45rem;
+          padding-top: 1.75rem;
+        }
+
+        > .delete.icon,
+        > .dropdown.icon,
+        > .search.icon {
+          top: 1.75rem;
+        }
+      }
+
+      .ui.input > input,
+      .ui--output {
+        padding-left: 1.45rem;
+        padding-top: 1.75rem;
+      }
+
+      .ui--InputFile,
+      .ui--Messages {
+        padding-left: 1.45rem;
+        padding-top: 2rem;
+      }
+    }
+  }
 `;
 
-export default class Labelled extends React.PureComponent<Props, State> {
-  constructor (props: Props) {
-    super(props);
-    this.state = {
-      tooltipOpen: false
-    };
-  }
-
-  toggleTooltip () {
-    const { tooltipOpen } = this.state;
-    this.setState({ tooltipOpen: !tooltipOpen });
-  }
-
-  renderLabel () {
-    const { help, label = defaultLabel } = this.props;
-    const { tooltipOpen } = this.state;
-
-    return help
-      ? <label className='with-help' >
-          {label}
-          <Icon
-            name='help circle'
-            data-tip
-            data-for='controlled-trigger'
-            onMouseOver={() => this.toggleTooltip()}
-            onMouseOut={() => this.toggleTooltip()}
-          />
-          {tooltipOpen && (
-            <Tooltip trigger={'controlled-trigger'}>
-              {help}
-            </Tooltip>)}
-        </label>
-      : <label>{label}</label>;
-  }
-  render () {
-    const { className, children, isSmall, isHidden, style, withLabel = true } = this.props;
+export default class Labelled extends React.PureComponent<Props> {
+  public render (): React.ReactNode {
+    const { className, children, help, isSmall, isHidden, label = defaultLabel, labelExtra, style, withEllipsis, withLabel = true } = this.props;
 
     if (isHidden) {
       return null;
@@ -129,7 +134,14 @@ export default class Labelled extends React.PureComponent<Props, State> {
         className={classes('ui--Labelled', isSmall ? 'label-small' : '', className)}
         style={style}
       >
-        {this.renderLabel()}
+        <label>
+          {
+            withEllipsis
+              ? <div className='withEllipsis'>{label}</div>
+              : label
+          }{help && <LabelHelp help={help} />}
+        </label>
+        {labelExtra && <div className='labelExtra'>{labelExtra}</div>}
         <div className='ui--Labelled-content'>
           {children}
         </div>

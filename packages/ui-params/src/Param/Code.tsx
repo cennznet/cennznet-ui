@@ -10,7 +10,7 @@ import Bytes from './Bytes';
 import BytesFile from './File';
 
 export default class Code extends React.PureComponent<Props> {
-  render () {
+  public render (): React.ReactNode {
     const { className, defaultValue, isDisabled, isError, label, style, withLabel } = this.props;
 
     if (isDisabled) {
@@ -30,8 +30,8 @@ export default class Code extends React.PureComponent<Props> {
     );
   }
 
-  private renderDisabled () {
-    const { className, defaultValue, isError, label, style, type, withLabel } = this.props;
+  private renderDisabled (): React.ReactNode {
+    const { className, defaultValue, isError, label, onEnter, style, type, withLabel } = this.props;
 
     return (
       <Bytes
@@ -39,6 +39,7 @@ export default class Code extends React.PureComponent<Props> {
         defaultValue={defaultValue}
         isError={isError}
         label={label}
+        onEnter={onEnter}
         style={style}
         type={type}
         withLabel={withLabel}

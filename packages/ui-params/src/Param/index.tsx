@@ -13,35 +13,35 @@ import { isUndefined } from '@polkadot/util';
 import findComponent from './findComponent';
 
 type Props = I18nProps & BaseProps & {
-  isDisabled?: boolean,
-  overrides?: ComponentMap
+  isDisabled?: boolean;
+  overrides?: ComponentMap;
 };
 
-type State = {
-  Component: React.ComponentType<ComponentProps> | null
-};
+interface State {
+  Component: React.ComponentType<ComponentProps> | null;
+}
 
 class ParamComponent extends React.PureComponent<Props, State> {
-  state: State = {
+  public state: State = {
     Component: null
   };
 
-  static getDerivedStateFromProps ({ overrides, type }: Props): State {
+  public static getDerivedStateFromProps ({ overrides, type }: Props): State {
     return {
       Component: !type
         ? null
         : findComponent(type, overrides)
-    } as State;
+    };
   }
 
-  render () {
+  public render (): React.ReactNode {
     const { Component } = this.state;
 
     if (Component === null) {
       return null;
     }
 
-    const { className, defaultValue, isDisabled, name, onChange, style, type } = this.props;
+    const { className, defaultValue, isDisabled, name, onChange, onEnter, style, type } = this.props;
 
     return (
       <Component
@@ -56,6 +56,7 @@ class ParamComponent extends React.PureComponent<Props, State> {
         }
         name={name}
         onChange={onChange}
+        onEnter={onEnter}
         style={style}
         type={type}
       />

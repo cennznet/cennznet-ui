@@ -2,51 +2,50 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { StorageFunction } from '@polkadot/types/primitive/StorageKey';
+import { StorageEntryPromise } from '@polkadot/api/types';
 import { I18nProps } from '@polkadot/ui-app/types';
 import { QueryTypes, StorageModuleQuery } from './types';
 
 import React from 'react';
+import styled from 'styled-components';
 import { Compact } from '@polkadot/types';
 import { Button, Labelled } from '@polkadot/ui-app';
-import valueToText from '@polkadot/ui-params/valueToText';
 import { withCallDiv } from '@polkadot/ui-api';
+import valueToText from '@polkadot/ui-params/valueToText';
 import { isU8a, u8aToHex, u8aToString } from '@polkadot/util';
 
 import translate from './translate';
 import { RenderFn, DefaultProps, ComponentRenderer } from '@polkadot/ui-api/with/types';
 
-type Props = I18nProps & {
-  onRemove: (id: number) => void,
-  value: QueryTypes
-};
+interface Props extends I18nProps {
+  onRemove: (id: number) => void;
+  value: QueryTypes;
+}
 
-type ComponentProps = {};
+interface State {
+  inputs: React.ReactNode[];
+  Component: React.ComponentType<{}>;
+  spread: Record<number, boolean>;
+}
 
-type State = {
-  inputs: Array<React.ReactNode>,
-  Component: React.ComponentType<ComponentProps>,
-  spread: { [index: number]: boolean }
-};
+interface CacheInstance {
+  Component: React.ComponentType<any>;
+  render: RenderFn;
+  refresh: (swallowErrors: boolean, contentShorten: boolean) => React.ComponentType<any>;
+}
 
-type CacheInstance = {
-  Component: React.ComponentType<any>,
-  render: RenderFn,
-  refresh: (swallowErrors: boolean, contentShorten: boolean) => React.ComponentType<any>
-};
-
-const cache: Array<CacheInstance> = [];
+const cache: CacheInstance[] = [];
 
 class Query extends React.PureComponent<Props, State> {
-  state: State = { spread: {} } as State;
+  public state: State = { spread: {} } as State;
 
-  static getCachedComponent (query: QueryTypes): CacheInstance {
+  public static getCachedComponent (query: QueryTypes): CacheInstance {
     const { id, key, params = [] } = query as StorageModuleQuery;
 
     if (!cache[id]) {
-      const values: Array<any> = params.map(({ value }) => value);
-      const type = key.meta
-        ? key.meta.type.toString()
+      const values: any[] = params.map(({ value }) => value);
+      const type = key.creator.meta
+        ? key.creator.meta.type.toString()
         : 'Data';
       const defaultProps = { className: 'ui--output' };
 
@@ -67,7 +66,7 @@ class Query extends React.PureComponent<Props, State> {
     return cache[id];
   }
 
-  static createComponent (type: string, Component: React.ComponentType<any>, defaultProps: DefaultProps, renderHelper: ComponentRenderer) {
+  public static createComponent (type: string, Component: React.ComponentType<any>, defaultProps: DefaultProps, renderHelper: ComponentRenderer) {
     return {
       Component,
       // In order to replace the default component during runtime we can provide a RenderFn to create a new 'plugged' component
@@ -84,9 +83,9 @@ class Query extends React.PureComponent<Props, State> {
     };
   }
 
-  static getDerivedStateFromProps ({ value }: Props, prevState: State): State | null {
+  public static getDerivedStateFromProps ({ value }: Props) {
     const Component = Query.getCachedComponent(value).Component;
-    const inputs: Array<React.ReactNode> = isU8a(value.key)
+    const inputs: React.ReactNode[] = isU8a(value.key)
       ? []
       // FIXME We need to render the actual key params
       // const { key, params } = value;
@@ -103,20 +102,20 @@ class Query extends React.PureComponent<Props, State> {
     } as State;
   }
 
-  render () {
-    const { value } = this.props;
+  public render (): React.ReactNode {
+    const { className, value } = this.props;
     const { Component } = this.state;
     const { key } = value;
     const type = isU8a(key)
       ? 'Data'
       : (
-        key.meta.modifier.isOptional
-          ? `Option<${key.meta.type}>`
-          : key.meta.type.toString()
+        key.creator.meta.modifier.isOptional
+          ? `Option<${key.creator.meta.type}>`
+          : key.creator.meta.type.toString()
       );
 
     return (
-      <div className='storage--Query storage--actionrow'>
+      <div className={`storage--Query storage--actionrow ${className}`}>
         <div className='storage--actionrow-value'>
           <Labelled
             label={
@@ -149,7 +148,7 @@ class Query extends React.PureComponent<Props, State> {
       />
     ];
 
-    if (key.meta && ['Bytes', 'Data'].includes(key.meta.type.toString())) {
+    if (key.creator.meta && ['Bytes', 'Data'].includes(key.creator.meta.type.toString())) {
       // TODO We are currently not performing a copy
       // buttons.unshift(
       //   <Button
@@ -169,7 +168,7 @@ class Query extends React.PureComponent<Props, State> {
     return buttons;
   }
 
-  private keyToName (key: Uint8Array | StorageFunction): string {
+  private keyToName (key: Uint8Array | StorageEntryPromise): string {
     if (isU8a(key)) {
       const u8a = Compact.stripLengthPrefix(key);
 
@@ -179,7 +178,7 @@ class Query extends React.PureComponent<Props, State> {
         : u8aToHex(u8a);
     }
 
-    return `${key.section}.${key.method}`;
+    return `${key.creator.section}.${key.creator.method}`;
   }
 
   private spreadHandler (id: number) {
@@ -206,4 +205,16 @@ class Query extends React.PureComponent<Props, State> {
   }
 }
 
-export default translate(Query);
+export default translate(styled(Query as React.ComponentClass<Props>)`
+  margin-bottom: 0.25em;
+
+  .ui.disabled.dropdown.selection {
+    color: #aaa;
+    opacity: 1;
+  }
+
+  .ui--IdentityIcon {
+    margin: -10px 0;
+    vertical-align: middle;
+  }
+`);

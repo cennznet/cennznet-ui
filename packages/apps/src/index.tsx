@@ -2,7 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import settings from '../../ui-settings/src';
+// import first, get the load done
+import settings from '@polkadot/ui-settings';
+
 import '@polkadot/ui-app/i18n';
 import '@polkadot/ui-app/styles';
 
@@ -10,11 +12,12 @@ import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter } from 'react-router-dom';
 import store from 'store';
+import { ThemeProvider } from 'styled-components';
 import { getTypeRegistry } from '@polkadot/types';
 import { Api } from '@polkadot/ui-api';
-
 import { QueueConsumer } from '@polkadot/ui-app/Status/Context';
 import Queue from '@polkadot/ui-app/Status/Queue';
+
 import Apps from './Apps';
 
 const rootId = 'root';
@@ -39,23 +42,27 @@ try {
   console.error('Type registration failed', error);
 }
 
+const theme = {
+  theme: settings.uiTheme
+};
+
 ReactDOM.render(
   <Suspense fallback='...'>
     <Queue>
       <QueueConsumer>
-        {({ queueExtrinsic, queueSetTxStatus }) => {
-          return (
-            <Api
-              queueExtrinsic={queueExtrinsic}
-              queueSetTxStatus={queueSetTxStatus}
-              url={url}
-            >
-              <HashRouter>
+        {({ queueExtrinsic, queueSetTxStatus }): React.ReactNode => (
+          <Api
+            queueExtrinsic={queueExtrinsic}
+            queueSetTxStatus={queueSetTxStatus}
+            url={url}
+          >
+            <HashRouter>
+              <ThemeProvider theme={theme}>
                 <Apps />
-              </HashRouter>
-            </Api>
-          );
-        }}
+              </ThemeProvider>
+            </HashRouter>
+          </Api>
+        )}
       </QueueConsumer>
     </Queue>
   </Suspense>,

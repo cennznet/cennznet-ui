@@ -1,6 +1,6 @@
 {
   "name": "@polkadot/ui-api",
-  "version": "0.33.0-beta.38",
+  "version": "0.34.0-beta.67",
   "description": "A collection of RxJs React components the Polkadot JS API",
   "main": "index.js",
   "keywords": [
@@ -30,15 +30,9 @@
   },
   "homepage": "https://github.com/polkadot-js/ui/tree/master/packages/ui-reactive#readme",
   "dependencies": {
-    "@babel/runtime": "^7.4.3",
-    "@cennznet/api": "^0.14.1",
-    "@cennznet/crml-cennzx-spot": "0.5.6",
-    "@cennznet/crml-generic-asset": "^0.9.0",
-    "@cennznet/types": "^0.14.1",
-    "@cennznet/util": "^0.14.1",
-    "@plugnet/api": "^0.81.100",
-    "@plugnet/keyring": "^0.93.101",
-    "@polkadot/api": "^0.78.0-beta.11",
+    "@babel/runtime": "^7.5.4",
+    "@polkadot/api": "^0.82.0-beta.60",
+    "@polkadot/extension-dapp": "^0.3.1",
     "rxjs-compat": "^6.4.0"
   }
 }

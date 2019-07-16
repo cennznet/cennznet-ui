@@ -4,54 +4,48 @@
 
 import { I18nProps } from '@polkadot/ui-app/types';
 
+import BN from 'bn.js';
 import React from 'react';
-import { Tuple } from '@polkadot/types';
+import { Proposal } from '@polkadot/types';
 import { withCalls, withMulti } from '@polkadot/ui-api';
+import { Column } from '@polkadot/ui-app';
 
-import Proposal from './Proposal';
+import ProposalDisplay from './Proposal';
 import translate from '../translate';
 
-type Props = I18nProps & {
-  democracy_publicProps?: Array<Tuple>
-};
+interface Props extends I18nProps {
+  democracy_publicProps?: [BN, Proposal][];
+}
 
-type State = {
-  isProposeOpen: boolean
-};
+interface State {
+  isProposeOpen: boolean;
+}
 
 class Proposals extends React.PureComponent<Props> {
-  state: State = {
+  public state: State = {
     isProposeOpen: false
   };
 
-  render () {
+  public render (): React.ReactNode {
     const { t } = this.props;
 
     return (
-      <section className='democracy--Proposals'>
-        <h1>
-          {t('proposals')}
-        </h1>
+      <Column
+        emptyText={t('No available proposals')}
+        headerText={t('proposals')}
+      >
         {this.renderProposals()}
-      </section>
+      </Column>
     );
   }
 
   private renderProposals () {
-    const { democracy_publicProps, t } = this.props;
+    const { democracy_publicProps = [] } = this.props;
 
-    if (!democracy_publicProps || !democracy_publicProps.length) {
-      return (
-        <div className='ui disabled'>
-          {t('no available proposals')}
-        </div>
-      );
-    }
-
-    return democracy_publicProps.map((proposal) => (
-      <Proposal
-        idNumber={proposal[0]}
-        key={proposal[0].toString()}
+    return democracy_publicProps.map(([idNumber, proposal]) => (
+      <ProposalDisplay
+        idNumber={idNumber}
+        key={idNumber.toString()}
         value={proposal}
       />
     ));

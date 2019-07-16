@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { ApiProps, CallState, Subtract } from '../types';
+import { ApiProps, CallState, SubtractProps } from '../types';
 import { Options } from './types';
 
 import React from 'react';
@@ -13,30 +13,37 @@ import echoTransform from '../transform/echo';
 import withApi from './api';
 
 interface Method {
-  (...params: Array<any>): Promise<any>;
-  at: (hash: Uint8Array | string, ...params: Array<any>) => Promise<any>;
+  (...params: any[]): Promise<any>;
+  at: (hash: Uint8Array | string, ...params: any[]) => Promise<any>;
+  multi: (params: any[], cb: (value?: any) => void) => Promise<any>;
 }
+
+type ApiMethodInfo = [Method, any[], boolean];
 
 type State = CallState;
 
-const NOOP = () => {
+const NOOP = (): void => {
   // ignore
 };
 
-export default function withCall<P extends ApiProps> (endpoint: string, { at, atProp, callOnResult, params = [], paramName, paramValid = false, propName, transform = echoTransform }: Options = {}): (Inner: React.ComponentType<ApiProps>) => React.ComponentType<any> {
-  return (Inner: React.ComponentType<ApiProps>): React.ComponentType<Subtract<P, ApiProps>> => {
+export default function withCall<P extends ApiProps> (endpoint: string, { at, atProp, callOnResult, isMulti = false, params = [], paramName, paramPick, paramValid = false, propName, transform = echoTransform }: Options = {}): (Inner: React.ComponentType<ApiProps>) => React.ComponentType<any> {
+  return (Inner: React.ComponentType<ApiProps>): React.ComponentType<SubtractProps<P, ApiProps>> => {
     class WithPromise extends React.Component<P, State> {
-      state: State = {
+      public state: State = {
         callResult: void 0,
         callUpdated: false,
         callUpdatedAt: 0
       };
+
       private destroy?: () => void;
+
       private isActive: boolean = false;
+
       private propName: string;
+
       private timerId: number = -1;
 
-      constructor (props: P) {
+      public constructor (props: P) {
         super(props);
 
         const [, section, method] = endpoint.split('.');
@@ -44,9 +51,9 @@ export default function withCall<P extends ApiProps> (endpoint: string, { at, at
         this.propName = `${section}_${method}`;
       }
 
-      componentDidUpdate (prevProps: any) {
-        const newParams = this.getParams(this.props);
+      public componentDidUpdate (prevProps: any): void {
         const oldParams = this.getParams(prevProps);
+        const newParams = this.getParams(this.props);
 
         if (this.isActive && !isEqual(newParams, oldParams)) {
           this
@@ -56,9 +63,9 @@ export default function withCall<P extends ApiProps> (endpoint: string, { at, at
         }
       }
 
-      componentDidMount () {
+      public componentDidMount (): void {
         this.isActive = true;
-        this.timerId = window.setInterval(() => {
+        this.timerId = window.setInterval((): void => {
           const elapsed = Date.now() - (this.state.callUpdatedAt || 0);
           const callUpdated = elapsed <= 1500;
 
@@ -73,7 +80,7 @@ export default function withCall<P extends ApiProps> (endpoint: string, { at, at
           .catch(NOOP);
       }
 
-      componentWillUnmount () {
+      public componentWillUnmount (): void {
         this.isActive = false;
 
         this.unsubscribe()
@@ -85,21 +92,18 @@ export default function withCall<P extends ApiProps> (endpoint: string, { at, at
         }
       }
 
-      private nextState (state: Partial<State>) {
+      private nextState (state: Partial<State>): void {
         if (this.isActive) {
           this.setState(state as State);
         }
       }
 
-      private getParams (props: any): [boolean, Array<any>] {
-        let paramValue;
-        if (Array.isArray(paramName)) {
-          paramValue = paramName.map(name => props[name]);
-        } else {
-          paramValue = paramName
+      private getParams (props: any): [boolean, any[]] {
+        const paramValue = paramPick
+          ? paramPick(props)
+          : paramName
             ? props[paramName]
             : undefined;
-        }
 
         if (atProp) {
           at = props[atProp];
@@ -122,7 +126,7 @@ export default function withCall<P extends ApiProps> (endpoint: string, { at, at
         return [true, values];
       }
 
-      private getApiMethod (newParams: Array<any>): [Method, Array<any>, boolean] {
+      private getApiMethod (newParams: any[]): ApiMethodInfo {
         const { api } = this.props;
 
         if (endpoint === 'subscribe') {
@@ -139,7 +143,7 @@ export default function withCall<P extends ApiProps> (endpoint: string, { at, at
 
         assert(area.length && section.length && method.length && others.length === 0, `Invalid API format, expected <area>.<section>.<method>, found ${endpoint}`);
         assert(['rpc', 'query', 'derive'].includes(area), `Unknown api.${area}, expected rpc, query or derive`);
-        assert(!at || area === 'query', 'Only able todo an at query on the api.query interface');
+        assert(!at || area === 'query', `Only able to do an 'at' query on the api.query interface`);
 
         const apiSection = (api as any)[area][section];
 
@@ -160,39 +164,52 @@ export default function withCall<P extends ApiProps> (endpoint: string, { at, at
         ];
       }
 
-      private async subscribe ([isValid, newParams]: [boolean, Array<any>]) {
+      private async subscribe ([isValid, newParams]: [boolean, any[]]): Promise<void> {
         if (!isValid) {
           return;
         }
 
         const { api } = this.props;
+        let info: ApiMethodInfo | undefined;
 
         await api.isReady;
 
         try {
-          const [apiMethod, params, isSubscription] = this.getApiMethod(newParams);
-
           assert(at || !atProp, 'Unable to perform query on non-existent at hash');
 
-          await this.unsubscribe();
+          info = this.getApiMethod(newParams);
+        } catch (error) {
+          console.error(endpoint, '::', error);
+        }
 
+        if (!info) {
+          return;
+        }
+
+        const [apiMethod, params, isSubscription] = info;
+        const updateCb = (value?: any): void =>
+          this.triggerUpdate(this.props, value);
+
+        await this.unsubscribe();
+
+        try {
           if (isSubscription) {
-            this.destroy = await apiMethod(...params, (value?: any) =>
-              this.triggerUpdate(this.props, value)
-            );
+            this.destroy = isMulti
+              ? await apiMethod.multi(params, updateCb)
+              : await apiMethod(...params, updateCb);
           } else {
-            const value: any = at
-              ? await apiMethod.at(at, ...params)
-              : await apiMethod(...params);
-
-            this.triggerUpdate(this.props, value);
+            updateCb(
+              at
+                ? await apiMethod.at(at, ...params)
+                : await apiMethod(...params)
+            );
           }
         } catch (error) {
           // console.error(endpoint, '::', error);
         }
       }
 
-      private async unsubscribe () {
+      private async unsubscribe (): Promise<void> {
         if (this.destroy) {
           this.destroy();
           this.destroy = undefined;
@@ -219,7 +236,7 @@ export default function withCall<P extends ApiProps> (endpoint: string, { at, at
         }
       }
 
-      render () {
+      public render (): React.ReactNode {
         const { callUpdated, callUpdatedAt, callResult } = this.state;
         const _props = {
           ...this.props,

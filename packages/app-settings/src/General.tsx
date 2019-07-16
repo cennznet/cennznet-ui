@@ -3,41 +3,34 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { AppProps, I18nProps } from '@polkadot/ui-app/types';
-import { SettingsStruct } from '../../ui-settings/src/types';
+import { SettingsStruct } from '@polkadot/ui-settings/types';
 
 import React from 'react';
-import { Button, Dropdown, Input } from '@polkadot/ui-app';
+import styled from 'styled-components';
+import { Button, Dropdown, Input, Toggle } from '@polkadot/ui-app';
 import { ActionStatus } from '@polkadot/ui-app/Status/types';
-import uiSettings from '../../ui-settings/src';
-
-import './index.css';
+import uiSettings from '@polkadot/ui-settings';
 
 import translate from './translate';
 
 type Props = AppProps & I18nProps & {
-  onStatusChange: (status: ActionStatus) => void
+  onStatusChange: (status: ActionStatus) => void;
 };
 
-type State = {
-  isCustomNode: boolean,
-  isUrlValid: boolean,
-  settings: SettingsStruct
-};
+interface State {
+  isCustomNode: boolean;
+  isUrlValid: boolean;
+  settings: SettingsStruct;
+}
 
 class General extends React.PureComponent<Props, State> {
-  constructor (props: Props) {
+  public constructor (props: Props) {
     super(props);
 
     const settings = uiSettings.get();
-
-    let isCustomNode = true;
-
-    // check to see if user has saved a custom node by seeing if their URL is equal to any preset
-    for (let i = 0; i < uiSettings.availableNodes.length; i++) {
-      if (uiSettings.availableNodes[i].value === settings.apiUrl) {
-        isCustomNode = false;
-      }
-    }
+    const isCustomNode = uiSettings.availableNodes.reduce((isCustomNode, { value }): boolean => {
+      return isCustomNode && value !== settings.apiUrl;
+    }, true);
 
     this.state = {
       isCustomNode,
@@ -46,17 +39,18 @@ class General extends React.PureComponent<Props, State> {
     };
   }
 
-  render () {
-    const { t } = this.props;
+  public render (): React.ReactNode {
+    const { className, t } = this.props;
     const { isUrlValid, settings: { i18nLang, uiMode, uiTheme } } = this.state;
 
     return (
-      <div className='settings-General'>
+      <div className={className}>
         {this.renderEndpoint()}
         <div className='ui--row'>
           <div className='medium'>
             <Dropdown
               defaultValue={uiTheme}
+              help={t('The logo and colors for the app along with the identity icon theme.')}
               label={t('default interface theme')}
               onChange={this.onChangeUiTheme}
               options={uiSettings.availableUIThemes}
@@ -65,6 +59,7 @@ class General extends React.PureComponent<Props, State> {
           <div className='medium'>
             <Dropdown
               defaultValue={uiMode}
+              help={t('Adjust the mode from basic (with a limited number of beginner-user-friendly apps) to full (with all basic & advanced apps available)')}
               label={t('interface operation mode')}
               onChange={this.onChangeUiMode}
               options={uiSettings.availableUIModes}
@@ -93,26 +88,18 @@ class General extends React.PureComponent<Props, State> {
     );
   }
 
-  private renderEndpoint = () => {
+  private renderEndpoint = (): React.ReactNode => {
     const { t } = this.props;
     const { isCustomNode, isUrlValid, settings: { apiUrl } } = this.state;
 
     return (
       <>
-        <Button.Group isBasic>
-          <Button
-            isBasic
-            isNegative={!isCustomNode}
-            label={t('preset')}
-            onClick={this.toggleCustomNode}
-          />
-          <Button
-            isBasic
-            isNegative={isCustomNode}
-            label={t('custom')}
-            onClick={this.toggleCustomNode}
-          />
-        </Button.Group>
+        <Toggle
+          className='settings--cutomToggle'
+          defaultValue={isCustomNode}
+          label={t('custom endpoint')}
+          onChange={this.onChangeCustom}
+        />
         <div className='ui--row'>
           {
             isCustomNode
@@ -166,22 +153,17 @@ class General extends React.PureComponent<Props, State> {
     }));
   }
 
-  private toggleCustomNode = (): void => {
-    this.setState(({ isCustomNode, settings }: State) => {
-      // reset URL to a preset when toggled to preset
-      const apiUrl = isCustomNode
-        ? uiSettings.availableNodes[0].value
-        : settings.apiUrl;
-
-      return {
-        isCustomNode: !isCustomNode,
-        isUrlValid: true,
-        settings: {
-          ...settings,
-          apiUrl
-        }
-      };
-    });
+  private onChangeCustom = (isCustomNode: boolean): void => {
+    this.setState(({ settings }: State) => ({
+      isCustomNode,
+      isUrlValid: true,
+      settings: {
+        ...settings,
+        apiUrl: isCustomNode
+          ? settings.apiUrl
+          : uiSettings.availableNodes[0].value
+      }
+    }));
   }
 
   private isValidUrl (apiUrl: string): boolean {
@@ -203,4 +185,23 @@ class General extends React.PureComponent<Props, State> {
   }
 }
 
-export default translate(General);
+export default translate(styled(General)`
+  .settings--cutomToggle {
+    text-align: right;
+  }
+
+  .ui.menu {
+    justify-content: flex-end;
+    margin-bottom: 0;
+
+    .active.item {
+      font-weight: bold;
+    }
+  }
+
+  .sub-label {
+    cursor: pointer;
+    padding: 0rem .5833rem;
+    text-align: right;
+  }
+`);

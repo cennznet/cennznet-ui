@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { ApiProps, Subtract } from '../types';
+import { ApiProps, SubtractProps } from '../types';
 import { DefaultProps } from './types';
 
 import React from 'react';
@@ -11,11 +11,13 @@ import { assert } from '@polkadot/util';
 import { ApiConsumer } from '../ApiContext';
 
 export default function withApi <P extends ApiProps> (Inner: React.ComponentType<P>, defaultProps: DefaultProps = {}): React.ComponentType<any> {
-  return class WithApi extends React.PureComponent<Subtract<P, ApiProps>> {
-    render () {
+  return class WithApi extends React.PureComponent<SubtractProps<P, ApiProps>> {
+    private component: any = React.createRef();
+
+    public render (): React.ReactNode {
       return (
         <ApiConsumer>
-          {(apiProps?: ApiProps) => {
+          {(apiProps?: ApiProps): React.ReactNode => {
             assert(apiProps && apiProps.api, `Application root must be wrapped inside 'rx-react/Api' to provide API context`);
 
             return (
@@ -24,6 +26,7 @@ export default function withApi <P extends ApiProps> (Inner: React.ComponentType
                 {...defaultProps}
                 {...apiProps}
                 {...this.props}
+                ref={this.component}
               />
             );
           }}

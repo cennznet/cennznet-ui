@@ -8,44 +8,38 @@ import { ComponentProps } from './types';
 
 import React from 'react';
 import { Method, Proposal } from '@polkadot/types';
-import { Button, Icon, Extrinsic, TxButton } from '@polkadot/ui-app';
+import { Button, Icon, Extrinsic, TxButton, TxComponent } from '@polkadot/ui-app';
 import { withApi, withMulti } from '@polkadot/ui-api';
 
 import translate from './translate';
 
 type Props = I18nProps & ApiProps & ComponentProps & {
-  onChange: (accountId?: string) => void
+  onChange: (accountId?: string) => void;
 };
 
-type State = {
-  method: Method | null,
-  isValid: boolean
-};
+interface State {
+  method: Method | null;
+  isValid: boolean;
+}
 
-class Propose extends React.PureComponent<Props> {
-  state: State = {
+class Propose extends TxComponent<Props, State> {
+  public state: State = {
     method: null,
     isValid: false
   };
 
-  render () {
-    const { api, apiDefaultTx, isMine, sudoKey, t } = this.props;
+  public render (): React.ReactNode {
+    const { apiDefaultTxSudo, isMine, sudoKey, t } = this.props;
     const { method, isValid } = this.state;
 
-    const defaultExtrinsic = (() => {
-      try {
-        return api.tx.consensus.setCode;
-      } catch (error) {
-        return apiDefaultTx;
-      }
-    })();
-
-    return isMine ? (
+    return isMine
+      ? (
         <section>
           <Extrinsic
-            defaultValue={defaultExtrinsic}
+            defaultValue={apiDefaultTxSudo}
             label={t('submit the following change')}
             onChange={this.onChangeExtrinsic}
+            onEnter={this.sendTx}
           />
           <br />
           <Button.Group>
@@ -55,10 +49,12 @@ class Propose extends React.PureComponent<Props> {
               tx='sudo.sudo'
               isDisabled={!method || !isValid}
               params={method ? [new Proposal(method)] : []}
+              ref={this.button}
             />
           </Button.Group>
         </section>
-      ) : (
+      )
+      : (
         <article className='error padded'>
           <div>
             <Icon name='ban' />
@@ -68,7 +64,7 @@ class Propose extends React.PureComponent<Props> {
       );
   }
 
-  private nextState (newState: State): void {
+  private nextState (newState: Partial<State>): void {
     this.setState(
       (prevState: State): State => {
         const { method = prevState.method } = newState;
@@ -87,7 +83,7 @@ class Propose extends React.PureComponent<Props> {
       return;
     }
 
-    this.nextState({ method } as State);
+    this.nextState({ method });
   }
 }
 

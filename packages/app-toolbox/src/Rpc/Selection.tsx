@@ -5,41 +5,38 @@
 import { RpcMethod } from '@polkadot/jsonrpc/types';
 import { RawParam } from '@polkadot/ui-params/types';
 import { I18nProps } from '@polkadot/ui-app/types';
-import { QueueTx$RpcAdd } from '@polkadot/ui-app/Status/types';
-
-import './index.css';
+import { QueueTxRpcAdd } from '@polkadot/ui-app/Status/types';
 
 import React from 'react';
 import rpc from '@polkadot/jsonrpc';
 import { getTypeDef } from '@polkadot/types';
-import { Button, InputRpc } from '@polkadot/ui-app';
+import { Button, InputRpc, TxComponent } from '@polkadot/ui-app';
 import Params from '@polkadot/ui-params';
 
-// import Account from './Account';
 import translate from './translate';
 
-type Props = I18nProps & {
-  queueRpc: QueueTx$RpcAdd
-};
+interface Props extends I18nProps {
+  queueRpc: QueueTxRpcAdd;
+}
 
-type State = {
-  isValid: boolean,
-  accountId?: string | null,
-  rpc: RpcMethod,
-  values: Array<RawParam>
-};
+interface State {
+  isValid: boolean;
+  accountId?: string | null;
+  rpc: RpcMethod;
+  values: RawParam[];
+}
 
 const defaultMethod = rpc.author.methods.submitExtrinsic;
 
-class Selection extends React.PureComponent<Props, State> {
-  state: State = {
+class Selection extends TxComponent<Props, State> {
+  public state: State = {
     isValid: false,
     accountId: null,
     rpc: defaultMethod,
     values: []
   };
 
-  render () {
+  public render (): React.ReactNode {
     const { t } = this.props;
     const { isValid, rpc } = this.state;
     const params = rpc.params.map(({ name, type }) => ({
@@ -51,13 +48,14 @@ class Selection extends React.PureComponent<Props, State> {
       <section className='rpc--Selection'>
         <InputRpc
           defaultValue={defaultMethod}
+          help={t('The actual JSONRPC module and function to make a call to.')}
           label={t('call the selected endpoint')}
           onChange={this.onChangeMethod}
         />
-        {this.renderAccount()}
         <Params
           key={`${rpc.section}.${rpc.method}:params` /* force re-render on change */}
           onChange={this.onChangeValues}
+          onEnter={this.submit}
           params={params}
         />
         <Button.Group>
@@ -66,39 +64,20 @@ class Selection extends React.PureComponent<Props, State> {
             isPrimary
             onClick={this.onSubmit}
             label={t('Submit RPC call')}
+            ref={this.button}
           />
         </Button.Group>
       </section>
     );
   }
 
-  // FICME Currently the UI doesn't support signing for rpc-submitted calls
-  private renderAccount () {
-    // const { rpc: { isSigned = false }, publicKey } = this.state;
-
-    return null;
-
-    // if (!isSigned) {
-    //   return null;
-    // }
-
-    // return (
-    //   <Account
-    //     defaultValue={publicKey}
-    //     onChange={this.onChangeAccount}
-    //   />
-    // );
-  }
-
   private nextState (newState: State): void {
     this.setState(
       (prevState: State): State => {
         const { rpc = prevState.rpc, accountId = prevState.accountId, values = prevState.values } = newState;
-        const hasNeededKey = true; // rpc.isSigned !== true || (!!publicKey && publicKey.length === 32);
-        const isValid = values.reduce((isValid, value) => {
+        const isValid = values.reduce((isValid, value): boolean => {
           return isValid && value.isValid === true;
-        }, rpc.params.length === values.length && hasNeededKey);
-
+        }, rpc.params.length === values.length);
         return {
           isValid,
           rpc,
@@ -109,21 +88,14 @@ class Selection extends React.PureComponent<Props, State> {
     );
   }
 
-  // private onChangeAccount = (publicKey: Uint8Array | undefined | null, accountNonce: BN): void => {
-  //   this.nextState({
-  //     accountNonce,
-  //     publicKey
-  //   } as State);
-  // }
-
   private onChangeMethod = (rpc: RpcMethod): void => {
     this.nextState({
       rpc,
-      values: [] as Array<RawParam>
+      values: [] as RawParam[]
     } as State);
   }
 
-  private onChangeValues = (values: Array<RawParam>): void => {
+  private onChangeValues = (values: RawParam[]): void => {
     this.nextState({ values } as State);
   }
 

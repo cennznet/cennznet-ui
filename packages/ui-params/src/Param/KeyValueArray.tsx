@@ -17,17 +17,17 @@ import KeyValue from './KeyValue';
 
 type Props = BaseProps & WithTranslation;
 
-type State = {
+interface State {
   placeholder?: string;
-};
+}
 
-type Parsed = {
-  isValid: boolean,
-  value: Array<{
-    key: Uint8Array,
-    value: Uint8Array
-  }>
-};
+interface Parsed {
+  isValid: boolean;
+  value: {
+    key: Uint8Array;
+    value: Uint8Array;
+  }[];
+}
 
 const BYTES_TYPE = {
   type: 'Bytes',
@@ -37,7 +37,7 @@ const BYTES_TYPE = {
 class KeyValueArray extends React.PureComponent<Props, State> {
   private placeholderEmpty: string;
 
-  constructor (props: Props) {
+  public constructor (props: Props) {
     super(props);
 
     this.placeholderEmpty = props.t('click to select or drag and drop JSON key/value (hex-encoded) file');
@@ -46,7 +46,7 @@ class KeyValueArray extends React.PureComponent<Props, State> {
     };
   }
 
-  render () {
+  public render (): React.ReactNode {
     const { className, isDisabled, isError, label, style, withLabel } = this.props;
     const { placeholder } = this.state;
 
@@ -68,32 +68,38 @@ class KeyValueArray extends React.PureComponent<Props, State> {
     );
   }
 
-  private renderReadOnly () {
-    const { className, defaultValue: { value }, label, style } = this.props;
+  private renderReadOnly (): React.ReactNode {
+    const { className, defaultValue: { value }, label, onEnter, style } = this.props;
     const pairs = value as Vector<Pair>;
 
     return (
-      <Base
-        className={className}
-        label={label}
-        size='full'
-        style={style}
-      >
-        {pairs.map(({ key, value }) => {
-          const keyHex = u8aToHex(key.toU8a(true));
+      <>
+        <Base
+          className={className}
+          label={label}
+          size='full'
+          style={style}
+        >
+          <div />
+        </Base>
+        <div className='ui--Params'>
+          {pairs.map(({ key, value }): React.ReactNode => {
+            const keyHex = u8aToHex(key.toU8a(true));
 
-          return (
-            <Bytes
-              defaultValue={{ value } as RawParam}
-              isDisabled
-              key={keyHex}
-              label={keyHex}
-              name={keyHex}
-              type={BYTES_TYPE}
-            />
-          );
-        })}
-      </Base>
+            return (
+              <Bytes
+                defaultValue={{ value } as unknown as RawParam}
+                isDisabled
+                key={keyHex}
+                label={keyHex}
+                name={keyHex}
+                onEnter={onEnter}
+                type={BYTES_TYPE}
+              />
+            );
+          })}
+        </div>
+      </>
     );
   }
 
@@ -126,7 +132,7 @@ class KeyValueArray extends React.PureComponent<Props, State> {
     const json = JSON.parse(u8aToString(raw));
     const keys = Object.keys(json);
     let isValid = keys.length !== 0;
-    const value = keys.map((key) => {
+    const value = keys.map((key): { key: Uint8Array; value: Uint8Array } => {
       const value = json[key];
 
       assert(isHex(key) && isHex(value), `Non-hex key/value pair found in ${key.toString()} => ${value.toString()}`);

@@ -12,38 +12,41 @@ import Labelled from './Labelled';
 
 type Input$Type = 'number' | 'password' | 'text';
 
-type Props = BareProps & {
-  autoFocus?: boolean,
-  children?: React.ReactNode,
-  defaultValue?: any,
-  help?: React.ReactNode,
-  icon?: React.ReactNode,
-  isAction?: boolean,
-  isDisabled?: boolean,
-  isEditable?: boolean,
-  isError?: boolean,
-  isHidden?: boolean,
-  label?: React.ReactNode,
-  max?: any,
-  maxLength?: number,
-  min?: any,
-  name?: string,
-  onChange?: (value: string) => void,
-  onBlur?: (event: React.KeyboardEvent<Element>) => void,
-  onKeyDown?: (event: React.KeyboardEvent<Element>) => void,
-  onKeyUp?: (event: React.KeyboardEvent<Element>) => void,
-  onKeyPress?: (event: React.KeyboardEvent<Element>) => void,
-  onPaste?: (event: React.ClipboardEvent<Element>) => void,
-  placeholder?: string,
-  tabIndex?: number,
-  type?: Input$Type,
-  value?: any,
-  withLabel?: boolean
-};
+interface Props extends BareProps {
+  autoFocus?: boolean;
+  children?: React.ReactNode;
+  defaultValue?: any;
+  help?: React.ReactNode;
+  icon?: React.ReactNode;
+  isAction?: boolean;
+  isDisabled?: boolean;
+  isEditable?: boolean;
+  isError?: boolean;
+  isHidden?: boolean;
+  isReadOnly?: boolean;
+  label?: React.ReactNode;
+  max?: any;
+  maxLength?: number;
+  min?: any;
+  name?: string;
+  onEnter?: () => void;
+  onChange?: (value: string) => void;
+  onBlur?: () => void;
+  onKeyDown?: (event: React.KeyboardEvent<Element>) => void;
+  onKeyUp?: (event: React.KeyboardEvent<Element>) => void;
+  onKeyPress?: (event: React.KeyboardEvent<Element>) => void;
+  onPaste?: (event: React.ClipboardEvent<Element>) => void;
+  placeholder?: string;
+  tabIndex?: number;
+  type?: Input$Type;
+  value?: any;
+  withLabel?: boolean;
+  withEllipsis?: boolean;
+}
 
-type State = {
+interface State {
   name: string;
-};
+}
 
 // Find decimal separator used in current locale
 const getDecimalSeparator = (): string => 1.1
@@ -69,7 +72,7 @@ const KEYS = {
   DECIMAL: getDecimalSeparator()
 };
 
-const KEYS_PRE: Array<any> = [KEYS.ALT, KEYS.CMD, KEYS.CTRL];
+const KEYS_PRE: any[] = [KEYS.ALT, KEYS.CMD, KEYS.CTRL];
 
 // reference: degrade key to keyCode for cross-browser compatibility https://www.w3schools.com/jsref/event_key_keycode.asp
 const isCopy = (key: string, isPreKeyDown: boolean): boolean =>
@@ -87,12 +90,12 @@ const isSelectAll = (key: string, isPreKeyDown: boolean): boolean =>
 let counter = 0;
 
 export default class Input extends React.PureComponent<Props, State> {
-  state: State = {
+  public state: State = {
     name: `in_${counter++}_at_${Date.now()}`
   };
 
-  render () {
-    const { autoFocus = false, children, className, defaultValue, help, icon, isEditable = false, isAction = false, isDisabled = false, isError = false, isHidden = false, label, max, maxLength, min, name, placeholder, style, tabIndex, type = 'text', value, withLabel } = this.props;
+  public render (): React.ReactNode {
+    const { autoFocus = false, children, className, defaultValue, help, icon, isEditable = false, isAction = false, isDisabled = false, isError = false, isHidden = false, isReadOnly = false, label, max, maxLength, min, name, placeholder, style, tabIndex, type = 'text', value, withEllipsis, withLabel } = this.props;
 
     return (
       <Labelled
@@ -100,6 +103,7 @@ export default class Input extends React.PureComponent<Props, State> {
         help={help}
         label={label}
         style={style}
+        withEllipsis={withEllipsis}
         withLabel={withLabel}
       >
         <SUIInput
@@ -116,7 +120,7 @@ export default class Input extends React.PureComponent<Props, State> {
               : undefined
           }
           disabled={isDisabled}
-          error={isError}
+          error={!isDisabled && isError}
           hidden={isHidden}
           id={name}
           iconPosition={
@@ -128,10 +132,12 @@ export default class Input extends React.PureComponent<Props, State> {
           maxLength={maxLength}
           min={min}
           name={name || this.state.name}
+          onBlur={this.onBlur}
           onChange={this.onChange}
           onKeyDown={this.onKeyDown}
           onKeyUp={this.onKeyUp}
           placeholder={placeholder}
+          readOnly={isReadOnly}
           tabIndex={tabIndex}
           type={type}
           value={value}
@@ -171,11 +177,24 @@ export default class Input extends React.PureComponent<Props, State> {
     }
   }
 
+  private onBlur = (): void => {
+    const { onBlur } = this.props;
+
+    if (onBlur) {
+      onBlur();
+    }
+  }
+
   private onKeyUp = (event: React.KeyboardEvent<Element>): void => {
-    const { onKeyUp } = this.props;
+    const { onEnter, onKeyUp } = this.props;
 
     if (onKeyUp) {
       onKeyUp(event);
+    }
+
+    if (onEnter && event.keyCode === 13) {
+      (event.target as any).blur();
+      onEnter();
     }
   }
 

@@ -13,8 +13,8 @@ import { bnToBn, formatNumber } from '@polkadot/util';
 import Bare from './Bare';
 
 export default class Amount extends React.PureComponent<Props> {
-  render () {
-    const { className, defaultValue: { value }, isDisabled, isError, label, style, withLabel } = this.props;
+  public render (): React.ReactNode {
+    const { className, defaultValue: { value }, isDisabled, isError, label, onEnter, style, withLabel } = this.props;
     const defaultValue = isDisabled
       ? (
         value instanceof AccountIndex
@@ -36,11 +36,13 @@ export default class Amount extends React.PureComponent<Props> {
           label={label}
           min={0}
           onChange={this.onChange}
+          onEnter={onEnter}
           type={
             isDisabled
               ? 'text'
               : 'number'
           }
+          withEllipsis
           withLabel={withLabel}
         />
       </Bare>

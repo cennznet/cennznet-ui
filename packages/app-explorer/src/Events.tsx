@@ -3,49 +3,34 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { I18nProps } from '@polkadot/ui-app/types';
+import { KeyedEvent } from './types';
 
 import React from 'react';
-import { EventRecord } from '@polkadot/types';
 import { Event as EventDisplay } from '@polkadot/ui-app';
 import { formatNumber } from '@polkadot/util';
 
 import translate from './translate';
 
-type Props = I18nProps & {
-  value?: Array<EventRecord>,
-  emptyLabel?: React.ReactNode,
-  eventClassName?: string,
-  withoutIndex?: boolean
-};
+interface Props extends I18nProps {
+  emptyLabel?: React.ReactNode;
+  events: KeyedEvent[];
+  eventClassName?: string;
+  withoutIndex?: boolean;
+}
 
 class Events extends React.PureComponent<Props> {
-  render () {
-    const { emptyLabel, eventClassName, value, t } = this.props;
+  public render (): React.ReactNode {
+    const { emptyLabel, events, t } = this.props;
 
-    if (!value || value.length === 0) {
-      return emptyLabel || t('no events available');
+    if (!events || events.length === 0) {
+      return <article>{emptyLabel || t('no events available')}</article>;
     }
 
-    return value
-      .filter(({ event }) => event) // event.section !== 'system')
-      .map((event, index) => {
-        const rendered = this.renderEvent(event, index);
-
-        return eventClassName
-          ? (
-            <div
-              className={eventClassName}
-              key={index}
-            >
-              {rendered}
-            </div>
-          )
-          : rendered;
-      });
+    return events.map(this.renderEvent);
   }
 
-  private renderEvent = ({ event, phase }: EventRecord, index: number) => {
-    const { withoutIndex } = this.props;
+  private renderEvent = ({ key, record: { event, phase } }: KeyedEvent): React.ReactNode => {
+    const { eventClassName, withoutIndex } = this.props;
     const extIndex = !withoutIndex && phase.type === 'ApplyExtrinsic'
       ? phase.asApplyExtrinsic
       : -1;
@@ -56,8 +41,8 @@ class Events extends React.PureComponent<Props> {
 
     return (
       <article
-        className='explorer--Container'
-        key={index}
+        className={`explorer--Container ${eventClassName}`}
+        key={key}
       >
         <div className='header'>
           <h3>
@@ -67,7 +52,6 @@ class Events extends React.PureComponent<Props> {
                 : ''
             }
           </h3>
-
         </div>
         <details>
           <summary>

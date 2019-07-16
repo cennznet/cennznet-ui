@@ -26,7 +26,7 @@
 
 .ui.dropdown {
   &.disabled {
-    background: #fefefe;
+    background: transparent;
     border-color: #eee;
     border-style: dashed;
     opacity: 1;
@@ -52,8 +52,7 @@
 }
 
 .ui.input {
-  /* from .ui.fluid.input */
-  display: flex;
+  width: 100%;
 
   &.disabled {
     opacity: 1;
@@ -85,6 +84,7 @@
 
 .ui.inverted.dimmer {
   background-color: rgba(255, 255, 255, 0.75);
+  padding: 0 1rem 1rem;
 }
 
 .ui.label:not(.ui--Bubble) {
@@ -100,23 +100,31 @@
   font-family: sans-serif;
 
   > .actions,
-  > .content,
-  > .header {
+  > .content {
     background: transparent;
   }
 
   > .actions {
     border-top: none;
     text-align: right;
+    padding: 1rem !important;
   }
 
-  > .content {
-    text-align: center;
+  > .header:not(.ui) {
+    background: #f5f5f5;
+    font-size: 1.25rem !important;
+    font-weight: normal;
+    line-height: 1.25rem;
+    padding: 1rem 1.5rem;
+
+    > label {
+      margin-top: 0.5rem;
+    }
   }
 
-  > .header {
-    border-bottom: none;
-    padding-bottom: 0;
+  > :first-child:not(.icon) {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
   }
 
   .description {
@@ -129,8 +137,14 @@
   display: flex !important;
 }
 
-.ui.progress .bar {
-  min-width: 0 !important;
+.ui.progress {
+  &.tiny {
+    font-size: .5rem;
+  }
+
+  .bar {
+    min-width: 0 !important;
+  }
 }
 
 .ui.secondary.vertical.menu > .item {

@@ -2,41 +2,43 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { DerivedBalances } from '@polkadot/api-derive/types';
 import { BareProps, CallProps } from '@polkadot/ui-api/types';
 
 import BN from 'bn.js';
 import React from 'react';
-import { Index } from '@polkadot/types';
-import { withCalls } from '@polkadot/ui-api';
 import { formatNumber } from '@polkadot/util';
+import { withCalls } from '@polkadot/ui-api';
 
 type Props = BareProps & CallProps & {
-  callOnResult?: (accountNonce: BN) => void,
-  children?: React.ReactNode,
-  label?: string,
-  params?: string,
-  system_accountNonce?: Index
+  accountNonce?: BN;
+  callOnResult?: (accountNonce: BN) => void;
+  children?: React.ReactNode;
+  label?: React.ReactNode;
+  params?: string;
 };
 
 export class Nonce extends React.PureComponent<Props> {
-  render () {
-    const { children, className, label = '', style, system_accountNonce } = this.props;
+  public render (): React.ReactNode {
+    const { accountNonce, children, className, label = '' } = this.props;
 
     return (
-      <div
-        className={className}
-        style={style}
-      >
+      <div className={className}>
         {label}{
-          system_accountNonce
-            ? formatNumber(system_accountNonce)
+          accountNonce
+            ? formatNumber(accountNonce)
             : '0'
-          }{children}
+        }{children}
       </div>
     );
   }
 }
 
 export default withCalls<Props>(
-  ['query.system.accountNonce', { paramName: 'params' }]
+  ['derive.balances.all', {
+    paramName: 'params',
+    propName: 'accountNonce',
+    transform: ({ accountNonce }: DerivedBalances): BN =>
+      accountNonce
+  }]
 )(Nonce);

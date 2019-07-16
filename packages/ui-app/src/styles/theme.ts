@@ -5,19 +5,16 @@
 import theme from 'styled-theming';
 
 export const primaryColor = theme('theme', {
-  centrality: '#DB2828',
   substrate: '#DB2828',
   polkadot: '#E6007A'
 });
 
 export const logoBackground = theme('theme', {
-  centrality: '#333',
   substrate: '#333',
   polkadot: 'none'
 });
 
 export const logoPadding = theme('theme', {
-  centrality: '4px',
   substrate: '4px',
   polkadot: '0px'
 });

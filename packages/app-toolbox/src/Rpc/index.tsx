@@ -5,8 +5,6 @@
 import { BareProps } from '@polkadot/ui-app/types';
 import { QueueProps } from '@polkadot/ui-app/Status/types';
 
-import './index.css';
-
 import React from 'react';
 import { QueueConsumer } from '@polkadot/ui-app/Status/Context';
 
@@ -16,10 +14,10 @@ import Selection from './Selection';
 type Props = BareProps;
 
 export default class RpcApp extends React.PureComponent<Props> {
-  render () {
+  public render (): React.ReactNode {
     return (
       <QueueConsumer>
-        {({ txqueue, queueRpc }: QueueProps) => (
+        {({ txqueue, queueRpc }: QueueProps): React.ReactNode => (
           <>
             <Selection queueRpc={queueRpc} />
             <Results queue={txqueue} />

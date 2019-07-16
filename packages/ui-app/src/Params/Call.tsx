@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { Props as BaseProps } from '@polkadot/ui-params/types';
 import { ApiProps } from '@polkadot/ui-api/types';
 
@@ -13,9 +14,9 @@ import Extrinsic from './Extrinsic';
 type Props = ApiProps & BaseProps;
 
 class Call extends React.PureComponent<Props> {
-  render () {
-    const { apiDefaultTx, api, className, isDisabled, isError, label, onChange, style, withLabel } = this.props;
-    const defaultValue = (() => {
+  public render (): React.ReactNode {
+    const { apiDefaultTx, api, className, isDisabled, isError, label, onChange, onEnter, style, withLabel } = this.props;
+    const defaultValue = ((): SubmittableExtrinsicFunction<'promise'> => {
       try {
         return api.tx.balances.transfer;
       } catch (error) {
@@ -32,6 +33,7 @@ class Call extends React.PureComponent<Props> {
         isPrivate={false}
         label={label}
         onChange={onChange}
+        onEnter={onEnter}
         style={style}
         withLabel={withLabel}
       />

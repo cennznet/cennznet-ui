@@ -11,20 +11,20 @@ import { hexToU8a, isHex, u8aToHex } from '@polkadot/util';
 
 import Bare from './Bare';
 
-type Props = BaseProps & {
-  children?: React.ReactNode,
-  length?: number,
-  size?: Size,
-  validate?: (u8a: Uint8Array) => boolean,
-  withLength?: boolean
-};
+interface Props extends BaseProps {
+  children?: React.ReactNode;
+  length?: number;
+  size?: Size;
+  validate?: (u8a: Uint8Array) => boolean;
+  withLength?: boolean;
+}
 
-const defaultValidate = (u8a: Uint8Array): boolean =>
+const defaultValidate = (): boolean =>
   true;
 
 export default class BaseBytes extends React.PureComponent<Props> {
-  render () {
-    const { children, className, defaultValue: { value }, isDisabled, isError, label, size = 'full', style, withLabel } = this.props;
+  public render (): React.ReactNode {
+    const { children, className, defaultValue: { value }, isDisabled, isError, label, onEnter, size = 'full', style, withLabel } = this.props;
     const defaultValue = value
       ? (
         isHex(value)
@@ -46,8 +46,10 @@ export default class BaseBytes extends React.PureComponent<Props> {
           isError={isError}
           label={label}
           onChange={this.onChange}
+          onEnter={onEnter}
           placeholder='0x...'
           type='text'
+          withEllipsis
           withLabel={withLabel}
         >
           {children}
@@ -60,7 +62,7 @@ export default class BaseBytes extends React.PureComponent<Props> {
     const { length = -1, onChange, validate = defaultValidate, withLength } = this.props;
 
     let value: Uint8Array;
-    let isValid: boolean = true;
+    let isValid = true;
 
     try {
       value = hexToU8a(hex);

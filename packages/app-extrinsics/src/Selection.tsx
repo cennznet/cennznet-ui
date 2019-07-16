@@ -4,13 +4,13 @@
 
 import BN from 'bn.js';
 import { I18nProps } from '@polkadot/ui-app/types';
-import { QueueTx$ExtrinsicAdd } from '@polkadot/ui-app/Status/types';
+import { QueueTxExtrinsicAdd } from '@polkadot/ui-app/Status/types';
 import { ApiProps } from '@polkadot/ui-api/types';
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
 
 import React from 'react';
 import { Method } from '@polkadot/types';
-import { Button, Extrinsic, InputAddress, Labelled, TxButton } from '@polkadot/ui-app';
+import { Button, Extrinsic, InputAddress, Labelled, TxButton, TxComponent } from '@polkadot/ui-app';
 import { withApi, withMulti } from '@polkadot/ui-api';
 import { Nonce } from '@polkadot/ui-reactive';
 
@@ -18,32 +18,28 @@ import Balance from './Balance';
 import translate from './translate';
 
 type Props = ApiProps & I18nProps & {
-  queueExtrinsic: QueueTx$ExtrinsicAdd
+  queueExtrinsic: QueueTxExtrinsicAdd;
 };
 
-type State = {
-  isValid: boolean,
-  method: Method | null,
-  accountNonce: BN,
-  accountId: string
-};
+interface State {
+  isValid: boolean;
+  isValidUnsigned: boolean;
+  method: Method | null;
+  accountNonce?: BN;
+  accountId?: string;
+}
 
-class Selection extends React.PureComponent<Props, State> {
-  state: State = {
-    isValid: false
-  } as State;
+class Selection extends TxComponent<Props, State> {
+  public state: State = {
+    isValid: false,
+    isValidUnsigned: false,
+    method: null
+  };
 
-  render () {
-    const { apiDefaultTx, api, t } = this.props;
-    const { isValid, accountId } = this.state;
-    const defaultExtrinsic = (() => {
-      try {
-        return api.tx.balances.transfer;
-      } catch (error) {
-        return apiDefaultTx;
-      }
-    })();
-    const extrinsic = this.getExtrinsic() || defaultExtrinsic;
+  public render (): React.ReactNode {
+    const { apiDefaultTxSudo, t } = this.props;
+    const { isValid, isValidUnsigned, accountId } = this.state;
+    const extrinsic = this.getExtrinsic() || apiDefaultTxSudo;
 
     return (
       <div className='extrinsics--Selection'>
@@ -71,14 +67,17 @@ class Selection extends React.PureComponent<Props, State> {
         </div>
         <br></br>
         <Extrinsic
-          defaultValue={defaultExtrinsic}
+          defaultValue={apiDefaultTxSudo}
           label={t('submit the following extrinsic')}
           onChange={this.onChangeExtrinsic}
+          onEnter={this.sendTx}
         />
         <br></br>
         <Button.Group>
           <TxButton
-            isDisabled={!isValid}
+            isBasic
+            isDisabled={!isValidUnsigned}
+            isUnsigned
             label={t('Submit Inherent')}
             extrinsic={extrinsic}
           />
@@ -89,13 +88,14 @@ class Selection extends React.PureComponent<Props, State> {
             isPrimary
             label={t('Submit Transaction')}
             extrinsic={extrinsic}
+            ref={this.button}
           />
         </Button.Group>
       </div>
     );
   }
 
-  private nextState (newState: State): void {
+  private nextState (newState: Partial<State>): void {
     this.setState(
       (prevState: State): State => {
         const { method = prevState.method, accountNonce = prevState.accountNonce, accountId = prevState.accountId } = newState;
@@ -108,6 +108,7 @@ class Selection extends React.PureComponent<Props, State> {
         return {
           method,
           isValid,
+          isValidUnsigned: !!method,
           accountNonce,
           accountId
         };
@@ -116,22 +117,22 @@ class Selection extends React.PureComponent<Props, State> {
   }
 
   private onChangeExtrinsic = (method: Method | null = null): void => {
-    this.nextState({ method } as State);
+    this.nextState({ method });
   }
 
   private onChangeNonce = (accountNonce: BN = new BN(0)): void => {
-    this.nextState({ accountNonce } as State);
+    this.nextState({ accountNonce });
   }
 
   private onChangeSender = (accountId: string): void => {
-    this.nextState({ accountId, accountNonce: new BN(0) } as State);
+    this.nextState({ accountId, accountNonce: new BN(0) });
   }
 
   private getExtrinsic (): SubmittableExtrinsic | null {
     const { api } = this.props;
-    const { method, isValid } = this.state;
+    const { method } = this.state;
 
-    if (!isValid || !method) {
+    if (!method) {
       return null;
     }
 

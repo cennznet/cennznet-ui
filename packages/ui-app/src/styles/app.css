@@ -17,6 +17,10 @@ body {
   height: 100%;
 }
 
+a {
+  cursor: pointer;
+}
+
 h1, h2, h3, h4, h5 {
   color: rgba(0, 0, 0, .6);
   font-family: sans-serif;
@@ -33,12 +37,12 @@ h3, h4, h5 {
 
 label {
   box-sizing: border-box;
-  color: rgba(78,78,78,.75);
+  color: rgba(78,78,78,.85);
   display: block;
   font-family: sans-serif;
   font-size: 1rem;
   font-weight: 100;
-  margin: 0.25rem;
+  /* margin: 0.25rem; */
 }
 
 /*
@@ -64,15 +68,23 @@ header > article {
 }
 
 article {
+  background: white;
+  border: 1px solid #f2f2f2;
   border-radius: 0.25rem;
-  /*box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);*/
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-sizing: border-box;
   margin: 0.25rem;
   padding: 1.25rem 1.5rem;
+  position: relative;
   text-align: left;
 
+  &:hover {
+    /* box-shadow: 0 4px 8px rgba(0,0,0,0.1); */
+    /* box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    border-color: transparent; */
+  }
+
   &.padded {
-    padding: 0.75rem 2.5rem;
+    padding: 0.75rem 1rem;
 
     > div {
       margin: 0.25rem;
@@ -93,5 +105,31 @@ article {
   > ul {
     margin: 0;
     padding: 0;
+  }
+
+  &:not(:hover) {
+    .ui.button:not(.disabled) {
+      background: #eee !important;
+      color: #555 !important;
+    }
+
+    .ui.button.mini {
+      visibility: hidden;
+    }
+  }
+}
+
+details {
+  cursor: pointer;
+
+  &[open] > summary {
+    white-space: normal;
+  }
+
+  > summary {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    outline: none;
   }
 }

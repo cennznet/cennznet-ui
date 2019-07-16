@@ -7,55 +7,63 @@ import { I18nProps } from '@polkadot/ui-app/types';
 import BN from 'bn.js';
 import React from 'react';
 import { AccountId, Balance, Option, Proposal, Tuple, Vector } from '@polkadot/types';
-import { AddressMini, Labelled, Static } from '@polkadot/ui-app';
+import { ActionItem, InputAddress, Labelled, Static } from '@polkadot/ui-app';
 import { withCalls, withMulti } from '@polkadot/ui-api';
 import { formatBalance } from '@polkadot/util';
 
-import Item from './Item';
 import translate from '../translate';
+import Seconding from './Seconding';
 
-type Props = I18nProps & {
-  democracy_depositOf?: Option<Tuple>,
-  idNumber: BN,
-  value: Tuple
-};
+interface Props extends I18nProps {
+  democracy_depositOf?: [Balance, Vector<AccountId>] | null;
+  idNumber: BN;
+  value: Proposal;
+}
 
 class ProposalDisplay extends React.PureComponent<Props> {
-  render () {
-    const { idNumber, value } = this.props;
+  public render (): React.ReactNode {
+    const { className, democracy_depositOf, idNumber, value } = this.props;
+    const depositors = democracy_depositOf
+      ? democracy_depositOf[1]
+      : [];
 
     return (
-      <Item
+      <ActionItem
+        className={className}
         idNumber={idNumber}
-        proposal={value[1] as Proposal}
-        proposalExtra={this.renderExtra()}
-      />
+        proposal={value}
+        accessory={
+          <Seconding
+            depositors={depositors}
+            proposalId={idNumber}
+          />
+        }
+      >
+        {this.renderInfo()}
+      </ActionItem>
     );
   }
 
-  private renderExtra () {
+  private renderInfo () {
     const { democracy_depositOf, t } = this.props;
 
-    if (!democracy_depositOf || democracy_depositOf.isNone) {
+    if (!democracy_depositOf) {
       return null;
     }
 
-    const value = democracy_depositOf.unwrap();
-    const balance = value[0] as Balance;
-    const addresses = value[1] as Vector<AccountId>;
+    const [balance, addresses] = democracy_depositOf;
 
     return (
-      <div className='democracy--Proposal-info'>
+      <div>
         <Labelled label={t('depositors')}>
-          <div>
-            {addresses.map((address, index) => (
-              <AddressMini
-                isPadded={false}
-                key={`${index}:${address}`}
-                value={address}
-              />
-            ))}
-          </div>
+          {addresses.map((address, index) => (
+            <InputAddress
+              isDisabled
+              key={`${index}:${address}`}
+              value={address}
+              withLabel={false}
+            />
+          ))}
         </Labelled>
         <Static label={t('balance')}>
           {formatBalance(balance)}
@@ -69,6 +77,10 @@ export default withMulti(
   ProposalDisplay,
   translate,
   withCalls<Props>(
-    ['query.democracy.depositOf', { paramName: 'idNumber' }]
+    ['query.democracy.depositOf', {
+      paramName: 'idNumber',
+      transform: (value: Option<Tuple>) =>
+        value.unwrapOr(null)
+    }]
   )
 );

@@ -5,37 +5,38 @@
 import { BareProps } from '@polkadot/ui-app/types';
 
 import React from 'react';
+import styled from 'styled-components';
 import { Button, IdentityIcon } from '@polkadot/ui-app';
 import { u8aToHex } from '@polkadot/util';
 
-type Props = BareProps & {
+interface Props extends BareProps {
   address: string;
   count: number;
   offset: number;
-  onCreateToggle: (seed: string) => void,
-  onRemove: (address: string) => void,
+  onCreateToggle: (seed: string) => void;
+  onRemove: (address: string) => void;
   seed: Uint8Array;
-};
+}
 
-type State = {
-  hexSeed: string
-};
+interface State {
+  hexSeed: string;
+}
 
-export default class Match extends React.PureComponent<Props, State> {
-  state: State = {} as State;
+class Match extends React.PureComponent<Props, State> {
+  public state: State = { hexSeed: '' };
 
-  static getDerivedStateFromProps ({ seed }: Props): State {
+  public static getDerivedStateFromProps ({ seed }: Props): State {
     return {
       hexSeed: u8aToHex(seed)
     };
   }
 
-  render () {
-    const { address, count, offset } = this.props;
+  public render (): React.ReactNode {
+    const { address, className, count, offset } = this.props;
     const { hexSeed } = this.state;
 
     return (
-      <div className='vanity--Match'>
+      <div className={className}>
         <div className='vanity--Match-item'>
           <IdentityIcon
             className='vanity--Match-icon'
@@ -69,16 +70,57 @@ export default class Match extends React.PureComponent<Props, State> {
     );
   }
 
-  onCreate = (): void => {
+  private onCreate = (): void => {
     const { onCreateToggle } = this.props;
     const { hexSeed } = this.state;
 
     onCreateToggle(hexSeed);
   }
 
-  onRemove = (): void => {
+  private onRemove = (): void => {
     const { address, onRemove } = this.props;
 
     onRemove(address);
   }
 }
+
+export default styled(Match as React.ComponentClass<Props>)`
+  text-align: center;
+
+  &:hover {
+    background: #f9f9f9;
+  }
+
+  .vanity--Match-addr {
+    font-size: 1.5rem;
+    padding: 0 1rem;
+
+    .no {
+      color: inherit;
+    }
+
+    .yes {
+      color: red;
+    }
+  }
+
+  .vanity--Match-buttons,
+  .vanity--Match-data,
+  .vanity--Match-icon {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .vanity--Match-item {
+    display: inline-block;
+    font-family: monospace;
+    margin: 0 auto;
+    padding: 0.5em;
+    position: relative;
+  }
+
+  .vanity--Match-seed {
+    opacity: 0.45;
+    padding: 0 1rem;
+  }
+`;

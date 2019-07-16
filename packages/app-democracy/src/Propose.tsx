@@ -11,41 +11,33 @@ import { RouteComponentProps } from 'react-router';
 import { withRouter } from 'react-router-dom';
 import { Method, Proposal } from '@polkadot/types';
 
-import { Button, Extrinsic, InputAddress, InputBalance, TxButton } from '@polkadot/ui-app';
+import { Button, Extrinsic, InputAddress, InputBalance, TxButton, TxComponent } from '@polkadot/ui-app';
 import { withApi, withMulti } from '@polkadot/ui-api';
 
 import translate from './translate';
 
 type Props = I18nProps & ApiProps & RouteComponentProps & {
-  basePath: string
+  basePath: string;
 };
 
-type State = {
-  accountId?: string,
-  method: Method | null,
-  value: BN,
-  isValid: boolean
-};
+interface State {
+  accountId?: string;
+  method: Method | null;
+  value: BN;
+  isValid: boolean;
+}
 
-class Propose extends React.PureComponent<Props, State> {
-  state: State = {
+class Propose extends TxComponent<Props, State> {
+  public state: State = {
     method: null,
     value: new BN(0),
     isValid: false
   };
 
-  render () {
-    const { api, apiDefaultTx, t } = this.props;
+  public render (): React.ReactNode {
+    const { apiDefaultTxSudo, t } = this.props;
     const { isValid, accountId, method, value } = this.state;
     const hasValue = !!value && value.gtn(0);
-
-    const defaultExtrinsic = (() => {
-      try {
-        return api.tx.consensus.setCode;
-      } catch (error) {
-        return apiDefaultTx;
-      }
-    })();
 
     return (
       <section>
@@ -57,9 +49,10 @@ class Propose extends React.PureComponent<Props, State> {
           onChange={this.onChangeAccount}
         />
         <Extrinsic
-          defaultValue={defaultExtrinsic}
+          defaultValue={apiDefaultTxSudo}
           label={t('propose')}
           onChange={this.onChangeExtrinsic}
+          onEnter={this.sendTx}
         />
         <InputBalance
           className='medium'
@@ -67,6 +60,7 @@ class Propose extends React.PureComponent<Props, State> {
           help={t('The amount that will be bonded to submit the proposal')}
           label={t('value')}
           onChange={this.onChangeValue}
+          onEnter={this.sendTx}
         />
         <Button.Group>
           <TxButton
@@ -79,6 +73,7 @@ class Propose extends React.PureComponent<Props, State> {
               ...(hasValue ? [value] : [])
             ]}
             onSuccess={this.onSubmitProposal}
+            ref={this.button}
           />
         </Button.Group>
       </section>
@@ -127,6 +122,6 @@ class Propose extends React.PureComponent<Props, State> {
 export default withMulti(
   Propose,
   translate,
-  withApi,
-  withRouter
+  withRouter,
+  withApi
 );

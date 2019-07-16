@@ -6,8 +6,6 @@ import { AppProps, I18nProps } from '@polkadot/ui-app/types';
 import { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
 import { ComponentProps } from './types';
 
-import './index.css';
-
 import React from 'react';
 import { Route, Switch } from 'react-router';
 import addressObservable from '@polkadot/ui-keyring/observable/addresses';
@@ -16,23 +14,23 @@ import Tabs, { TabItem } from '@polkadot/ui-app/Tabs';
 import { withMulti, withObservable } from '@polkadot/ui-api';
 
 import basicMd from './md/basic.md';
-import Creator from './Creator';
-import Editor from './Editor';
+import Overview from './Overview';
 import translate from './translate';
 
 type Props = AppProps & I18nProps & {
-  allAddresses?: SubjectInfo
+  allAddresses?: SubjectInfo;
 };
 
-type State = {
-  hidden: Array<string>,
-  items: Array<TabItem>
-};
+interface State {
+  hidden: string[];
+  items: TabItem[];
+  isCreateOpen: boolean;
+}
 
 class AddressBookApp extends React.PureComponent<Props, State> {
-  state: State;
+  public state: State;
 
-  constructor (props: Props) {
+  public constructor (props: Props) {
     super(props);
 
     const { allAddresses = {}, t } = props;
@@ -41,50 +39,47 @@ class AddressBookApp extends React.PureComponent<Props, State> {
       : AddressBookApp.hideEditState();
 
     this.state = {
-      ...baseState,
+      ...(baseState as State),
+      isCreateOpen: false,
       items: [
         {
-          name: 'edit',
-          text: t('Edit contact')
-        },
-        {
-          name: 'create',
-          text: t('Add contact')
+          isRoot: true,
+          name: 'overview',
+          text: t('My contacts')
         }
       ]
     };
   }
 
-  static showEditState () {
+  private static showEditState (): Partial<State> {
     return {
       hidden: []
     };
   }
 
-  static hideEditState () {
+  private static hideEditState (): Partial<State> {
     return {
       hidden: ['edit']
     };
   }
 
-  static getDerivedStateFromProps ({ allAddresses = {} }: Props, { hidden }: State) {
+  public static getDerivedStateFromProps ({ allAddresses = {} }: Props, { hidden }: State): State | null {
     const hasAddresses = Object.keys(allAddresses).length !== 0;
 
     if (hidden.length === 0) {
       return hasAddresses
         ? null
-        : AddressBookApp.hideEditState();
+        : AddressBookApp.hideEditState() as State;
     }
 
     return hasAddresses
-      ? AddressBookApp.showEditState()
+      ? AddressBookApp.showEditState() as State
       : null;
   }
 
-  render () {
+  public render (): React.ReactNode {
     const { basePath } = this.props;
     const { hidden, items } = this.state;
-    const renderCreator = this.renderComponent(Creator);
 
     return (
       <main className='address-book--App'>
@@ -97,21 +92,14 @@ class AddressBookApp extends React.PureComponent<Props, State> {
           />
         </header>
         <Switch>
-          <Route path={`${basePath}/create`} render={renderCreator} />
-          <Route
-            render={
-              hidden.includes('edit')
-                ? renderCreator
-                : this.renderComponent(Editor)
-            }
-          />
+          <Route render={this.renderComponent(Overview)} />
         </Switch>
       </main>
     );
   }
 
-  private renderComponent (Component: React.ComponentType<ComponentProps>) {
-    return () => {
+  private renderComponent (Component: React.ComponentType<ComponentProps>): () => React.ReactNode {
+    return (): React.ReactNode => {
       const { basePath, location, onStatusChange } = this.props;
 
       return (

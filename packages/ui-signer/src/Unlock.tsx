@@ -11,48 +11,51 @@ import keyring from '@polkadot/ui-keyring';
 
 import translate from './translate';
 
-type Props = I18nProps & {
-  autoFocus?: boolean,
-  error?: string,
-  onChange: (password: string) => void,
-  onKeyDown?: (event: React.KeyboardEvent<Element>) => void,
-  password: string,
-  tabIndex?: number,
-  value?: string | null
-};
+interface Props extends I18nProps {
+  autoFocus?: boolean;
+  error?: string;
+  onChange: (password: string) => void;
+  onEnter?: () => void;
+  password: string;
+  tabIndex?: number;
+  value?: string | null;
+}
 
-type State = {
-  isError: boolean,
-  isLocked: boolean,
-  pair: KeyringPair
-};
+interface State {
+  isError: boolean;
+  isInjected?: boolean;
+  isLocked: boolean;
+  pair?: KeyringPair;
+}
 
 class Unlock extends React.PureComponent<Props, State> {
-  state: State = {
+  public state: State = {
+    isError: false,
     isLocked: false
-  } as State;
+  };
 
-  static getDerivedStateFromProps ({ error, value }: Props): State | null {
+  public static getDerivedStateFromProps ({ error, value }: Props): State | null {
     const pair = keyring.getPair(value as string);
 
     if (!pair) {
       return null;
     }
 
-    const isLocked = pair.isLocked();
+    const { isLocked, meta: { isInjected = false } } = pair;
 
     return {
       isError: !!error,
+      isInjected,
       isLocked,
       pair
     };
   }
 
-  render () {
-    const { autoFocus, onChange, onKeyDown, password, t, tabIndex } = this.props;
-    const { isError, isLocked } = this.state;
+  public render (): React.ReactNode {
+    const { autoFocus, onChange, onEnter, password, t, tabIndex } = this.props;
+    const { isError, isInjected, isLocked } = this.state;
 
-    if (!isLocked) {
+    if (isInjected || !isLocked) {
       return null;
     }
 
@@ -63,7 +66,7 @@ class Unlock extends React.PureComponent<Props, State> {
           isError={isError}
           label={t('unlock account with password')}
           onChange={onChange}
-          onKeyDown={onKeyDown}
+          onEnter={onEnter}
           tabIndex={tabIndex}
           value={password}
         />

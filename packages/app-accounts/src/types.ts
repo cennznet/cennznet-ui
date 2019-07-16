@@ -3,11 +3,26 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { AppProps } from '@polkadot/ui-app/types';
+import { ActionStatus } from '@polkadot/ui-app/Status/types';
 
-export type LocationProps = {
+import { WithTranslation } from 'react-i18next';
+
+export interface LocationProps {
   match: {
-    params: { [index: string]: any }
-  }
-};
+    params: Record<string, string>;
+  };
+}
+
+export interface BareProps {
+  className?: string;
+  style?: Record<string, any>;
+}
+
+export type I18nProps = BareProps & WithTranslation;
 
 export type ComponentProps = AppProps & LocationProps;
+
+export interface ModalProps {
+  onClose: () => void;
+  onStatusChange: (status: ActionStatus) => void;
+}

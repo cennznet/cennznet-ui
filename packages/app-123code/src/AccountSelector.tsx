@@ -3,25 +3,28 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React from 'react';
+import styled from 'styled-components';
 import { Bubble, InputAddress } from '@polkadot/ui-app';
 import { AccountIndex, Balance, Nonce } from '@polkadot/ui-reactive';
 
-type Props = {
-  onChange: (accountId?: string) => void
-};
+interface Props {
+  className?: string;
+  onChange: (accountId?: string) => void;
+}
 
-type State = {
-  accountId?: string
-};
+interface State {
+  accountId?: string;
+}
 
-export default class AccountSelector extends React.PureComponent<Props, State> {
-  state: State = {};
+class AccountSelector extends React.PureComponent<Props, State> {
+  public state: State = {};
 
-  render () {
+  public render (): React.ReactNode {
+    const { className } = this.props;
     const { accountId } = this.state;
 
     return (
-      <section className='template--AccountSelector ui--row'>
+      <section className={`template--AccountSelector ui--row ${className}`}>
         <InputAddress
           className='medium'
           label='my default account'
@@ -46,8 +49,16 @@ export default class AccountSelector extends React.PureComponent<Props, State> {
   private onChange = (accountId?: string): void => {
     const { onChange } = this.props;
 
-    this.setState({ accountId }, () =>
+    this.setState({ accountId }, (): void =>
       onChange(accountId)
     );
   }
 }
+
+export default styled(AccountSelector)`
+  align-items: flex-end;
+
+  .summary {
+    text-align: center;
+  }
+`;

@@ -4,48 +4,55 @@
 
 import { Routing, Routes } from './types';
 
-import appSettings from '../../ui-settings/src';
+import appSettings from '@polkadot/ui-settings';
 
 import template from './123code';
-import xpay from './xpay';
 import accounts from './accounts';
 import addressbook from './addressbook';
 import contracts from './contracts';
+import council from './council';
 import dashboard from './dashboard';
 import democracy from './democracy';
 import explorer from './explorer';
 import extrinsics from './extrinsics';
 import js from './js';
+import parachains from './parachains';
 import settings from './settings';
 import staking from './staking';
 import storage from './storage';
 import sudo from './sudo';
 import toolbox from './toolbox';
 import transfer from './transfer';
+import treasury from './treasury';
 
 const routes: Routes = appSettings.uiMode === 'light'
   ? ([] as Routes).concat(
     dashboard,
-    transfer,
-    staking,
-    democracy,
-    null,
+    explorer,
     accounts,
     addressbook,
+    transfer,
+    null,
+    staking,
+    democracy,
+    council,
+    // TODO Not sure about the inclusion of treasury & parachains here
     null,
     settings,
-    template,
-    xpay
+    template
   )
   : ([] as Routes).concat(
     dashboard,
     explorer,
-    transfer,
-    staking,
-    democracy,
-    null,
     accounts,
     addressbook,
+    transfer,
+    null,
+    staking,
+    democracy,
+    council,
+    treasury,
+    parachains,
     null,
     contracts,
     storage,
@@ -55,13 +62,10 @@ const routes: Routes = appSettings.uiMode === 'light'
     settings,
     toolbox,
     js,
-    template,
-    xpay
+    template
   );
 
 export default ({
-  default: appSettings.uiMode === 'light'
-    ? 'transfer'
-    : 'explorer',
+  default: 'explorer',
   routes
 } as Routing);

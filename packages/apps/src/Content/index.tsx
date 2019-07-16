@@ -18,7 +18,7 @@ import translate from '../translate';
 import NotFound from './NotFound';
 
 type Props = I18nProps & ApiProps & {
-  location: Location
+  location: Location;
 };
 
 const Wrapper = styled.div`
@@ -51,10 +51,10 @@ const unknown = {
 };
 
 class Content extends React.Component<Props> {
-  render () {
+  public render (): React.ReactNode {
     const { isApiConnected, isApiReady, location, t } = this.props;
     const app = location.pathname.slice(1) || '';
-    const { Component, display: { needsApi }, name } = routing.routes.find((route) =>
+    const { Component, display: { needsApi }, name } = routing.routes.find((route): boolean =>
       !!(route && app.indexOf(route.name) === 0)
     ) || unknown;
 
@@ -69,7 +69,7 @@ class Content extends React.Component<Props> {
     return (
       <Wrapper>
         <QueueConsumer>
-          {({ queueAction, stqueue, txqueue }: QueueProps) => (
+          {({ queueAction, stqueue, txqueue }: QueueProps): React.ReactNode => (
             <>
               <Component
                 basePath={`/${name}`}
@@ -99,8 +99,11 @@ export default withMulti(
   withCalls<Props>(
     'derive.accounts.indexes',
     'derive.balances.fees',
-    'derive.staking.controllers',
-    'query.staking.nominators',
     'query.session.validators'
+    // This are very ineffective queries that
+    //   (a) adds load to the RPC node when activated globally
+    //   (b) is used in additional information (next-up)
+    // 'derive.staking.controllers'
+    // 'query.staking.nominators'
   )
 );

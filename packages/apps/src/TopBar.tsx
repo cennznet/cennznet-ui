@@ -6,12 +6,32 @@
 
 import React from 'react';
 import styled from 'styled-components';
-
 import { BestNumber, Chain, NodeName, NodeVersion } from '@polkadot/ui-reactive';
 
-type Props = {};
+interface Props {
+  className?: string;
+}
 
-const Wrapper = styled.div`
+class TopBar extends React.PureComponent<Props> {
+  public render (): React.ReactNode {
+    const { className } = this.props;
+
+    return (
+      <div className={className}>
+        <div>
+          <NodeName />&nbsp;
+          <NodeVersion label='v' />
+        </div>
+        <div>
+          <Chain />&nbsp;
+          <BestNumber label='#' />
+        </div>
+      </div>
+    );
+  }
+}
+
+export default styled(TopBar)`
   background: #f2f2f2;
   font-size: 0.85rem;
   line-height: 1rem;
@@ -38,20 +58,3 @@ const Wrapper = styled.div`
     }
   }
 `;
-
-export default class TopBar extends React.PureComponent<Props> {
-  render () {
-    return (
-      <Wrapper>
-        <div>
-          <NodeName />&nbsp;
-          <NodeVersion label='v' />
-        </div>
-        <div>
-          <Chain />&nbsp;
-          <BestNumber label='#' />
-        </div>
-      </Wrapper>
-    );
-  }
-}

@@ -9,68 +9,71 @@ import { Route } from '@polkadot/apps-routing/types';
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-// FIXME Use Tooltip from ui-app
-import ReactTooltip from 'react-tooltip';
-import { Icon, Menu } from '@polkadot/ui-app';
+import { Icon, Menu, Tooltip } from '@polkadot/ui-app';
 import accountObservable from '@polkadot/ui-keyring/observable/accounts';
-import { withApi,withCalls, withMulti, withObservable } from '@polkadot/ui-api';
+import { withApi, withCalls, withMulti, withObservable } from '@polkadot/ui-api';
 import { isFunction } from '@polkadot/util';
 
+import translate from '../translate';
+
 type Props = I18nProps & ApiProps & {
-  isCollapsed: boolean,
-  onClick: () => void,
-  allAccounts?: SubjectInfo,
-  route: Route,
-  sudo_key: string
+  isCollapsed: boolean;
+  onClick: () => void;
+  allAccounts?: SubjectInfo;
+  route: Route;
+  sudo_key: string;
 };
 
-interface Tooltip {
-  'data-tip': boolean;
-  'data-for': string;
-  'data-tip-disable'?: boolean;
-}
-
 class Item extends React.PureComponent<Props> {
-  componentWillUpdate () {
-    ReactTooltip.rebuild();
-  }
-
-  render () {
-
-    const { route: { i18n, icon, name }, t, isCollapsed } = this.props;
+  public render (): React.ReactNode {
+    const { route: { Modal, i18n, icon, name }, t, isCollapsed, onClick } = this.props;
 
     if (!this.isVisible()) {
       return null;
     }
 
-    const tooltip: Tooltip = {
-      'data-for': `nav-${name}`,
-      'data-tip': true,
-      'data-tip-disable': !isCollapsed
-    };
+    const body = (
+      <>
+        <Icon name={icon} />
+        <span className='text'>{t(`sidebar.${name}`, i18n)}</span>
+        <Tooltip
+          offset={{ right: -4 }}
+          place='right'
+          text={t(`sidebar.${name}`, i18n)}
+          trigger={`nav-${name}`}
+        />
+      </>
+    );
 
     return (
       <Menu.Item className='apps--SideBar-Item'>
-        <NavLink
-          activeClassName='apps--SideBar-Item-NavLink-active'
-          className='apps--SideBar-Item-NavLink'
-          onClick={this.props.onClick}
-          to={`/${name}`}
-          {...tooltip}
-        >
-          <Icon name={icon} />
-          <span className='text'>{t(`sidebar.${name}`, i18n)}</span>
-          <ReactTooltip
-           delayShow={750}
-           effect='solid'
-           id={`nav-${name}`}
-           offset={ { right: -4 } }
-           place='right'
-          >
-            <span>{t(`sidebar.${name}`, i18n)}
-          </span>
-          </ReactTooltip>
-        </NavLink>
+        {
+          Modal
+            ? (
+              <a
+                className='apps--SideBar-Item-NavLink'
+                data-for={`nav-${name}`}
+                data-tip
+                data-tip-disable={!isCollapsed}
+                onClick={onClick}
+              >
+                {body}
+              </a>
+            )
+            : (
+              <NavLink
+                activeClassName='apps--SideBar-Item-NavLink-active'
+                className='apps--SideBar-Item-NavLink'
+                data-for={`nav-${name}`}
+                data-tip
+                data-tip-disable={!isCollapsed}
+                onClick={onClick}
+                to={`/${name}`}
+              >
+                {body}
+              </NavLink>
+            )
+        }
       </Menu.Item>
     );
   }
@@ -86,10 +89,10 @@ class Item extends React.PureComponent<Props> {
     }
   }
 
-  private isVisible () {
+  private isVisible (): boolean {
     const { allAccounts = {}, isApiConnected, isApiReady, route: { display: { isHidden, needsAccounts, needsApi, needsSudo }, name }, sudo_key: sudoKey } = this.props;
     const hasAccounts = Object.keys(allAccounts).length !== 0;
-    const hasSudo = !!Object.keys(allAccounts).find(address => address === sudoKey);
+    const hasSudo = !!Object.keys(allAccounts).find((address): boolean => address === sudoKey);
 
     if (isHidden) {
       return false;
@@ -106,9 +109,9 @@ class Item extends React.PureComponent<Props> {
       }
     }
 
-    const notFound = needsApi.filter((endpoint: string | Array<string>) => {
+    const notFound = needsApi.filter((endpoint: string | string[]): boolean => {
       const hasApi = Array.isArray(endpoint)
-        ? endpoint.reduce((hasApi, endpoint) => hasApi || this.hasApi(endpoint), false)
+        ? endpoint.reduce((hasApi, endpoint): boolean => hasApi || this.hasApi(endpoint), false)
         : this.hasApi(endpoint);
 
       return !hasApi;
@@ -124,9 +127,13 @@ class Item extends React.PureComponent<Props> {
 
 export default withMulti(
   Item,
+  translate,
   withApi,
   withCalls<Props>(
-    ['query.sudo.key', { transform: key => key.toString() }]
+    ['query.sudo.key', {
+      transform: (key): string =>
+        key.toString()
+    }]
   ),
   withObservable(accountObservable.subject, { propName: 'allAccounts' })
 );

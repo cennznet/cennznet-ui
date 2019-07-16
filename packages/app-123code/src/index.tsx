@@ -12,9 +12,6 @@ import { AppProps, I18nProps } from '@polkadot/ui-app/types';
 // of this repo)
 import React from 'react';
 
-// our app-specific styles
-import './index.css';
-
 // local imports and components
 import AccountSelector from './AccountSelector';
 import SummaryBar from './SummaryBar';
@@ -23,14 +20,14 @@ import translate from './translate';
 
 // define out internal types
 type Props = AppProps & I18nProps;
-type State = {
-  accountId?: string
-};
+interface State {
+  accountId?: string;
+}
 
 class App extends React.PureComponent<Props, State> {
-  state: State = {};
+  public state: State = {};
 
-  render () {
+  public render (): React.ReactNode {
     const { accountId } = this.state;
 
     return (
